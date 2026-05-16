@@ -303,6 +303,8 @@ manuscript (preferred) or the SSRN version:
   title   = {Deep Learning for Solving and Estimating Dynamic Models in Economics and Finance},
   author  = {Scheidegger, Simon},
   year    = {2026},
+  month   = {5},
+  doi     = {10.2139/ssrn.6758340},
   url     = {https://ssrn.com/abstract=6758340},
   journal = {Available at SSRN 6758340}
 }

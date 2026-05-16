@@ -32,6 +32,9 @@ identifiers:
   - type: url
     value: "https://arxiv.org/abs/2605.14493"
     description: arXiv manuscript
+  - type: doi
+    value: "10.2139/ssrn.6758340"
+    description: SSRN DOI
   - type: url
     value: "https://ssrn.com/abstract=6758340"
     description: SSRN manuscript
