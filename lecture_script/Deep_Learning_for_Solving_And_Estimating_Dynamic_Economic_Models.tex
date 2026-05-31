@@ -2195,7 +2195,7 @@ Note that DEQNs operate squarely in the ``modern regime'' of Section~\ref{sec:ge
     \FOR{gradient step $t = 1, \ldots, T_{\mathrm{train}}$}
         \STATE Draw mini-batch $\mathcal{B} \subset \{\x_0, \ldots, \x_{T_{\mathrm{sim}}}\} \cup \mathrm{replay}$
         \STATE Compute loss:~$\ell_\rho = \frac{1}{|\mathcal{B}|}\sum_{\x_i \in \mathcal{B}} \|G(\x_i, \mathcal{N}_\rho(\x_i); \mathcal{Q})\|^2$ \textbf{[NEW: $\mathcal{Q}$ is the chosen path-average or Gauss--Hermite / monomial / QMC rule]}
-        \STATE Update:~$\rho \leftarrow \rho - \eta \cdot \nabla_\rho \ell_\rho$ \textbf{[NEW: wrap the per-step kernel in \texttt{@tf.function} / \texttt{torch.compile} / \texttt{@jax.jit} for $5$--$50\times$ speed-up]}
+        \STATE Update:~$\rho \leftarrow \rho - \eta \cdot \nabla_\rho \ell_\rho$ \textbf{[NEW: wrap the per-step kernel in \texttt{{@}tf.function} / \texttt{torch.compile} / \texttt{{@}jax.jit} for $5$--$50\times$ speed-up]}
     \ENDFOR
 \ENDFOR
 \STATE \textbf{Output:} Trained network $\mathcal{N}_{\rho^\star}$ approximating the policy function; report Euler residuals on $\x^{\mathrm{val}}$.
@@ -2209,7 +2209,7 @@ Several features of this algorithm deserve emphasis:
 \item \textbf{No labeled data.}  The algorithm requires no ``ground truth'' solutions, only the structural equations of the model.  The loss function has direct economic interpretation: it measures the violation of equilibrium conditions.
 \item \textbf{Stochastic optimization.}  Mini-batch SGD naturally handles the stochasticity of the model: different mini-batches sample different states, providing implicit exploration of the state space.
 \item \textbf{Scalability.}  The DEQN avoids explicit tensor-product state grids entirely: the per-iteration cost scales with network size, batch size, the number of equations, and the cost of integrating the conditional expectation; the input/output layer widths and the simulation step also depend on the state and shock dimensions, but only linearly.  This favorable empirical scaling does not eliminate all high-dimensional costs (sample complexity, expectation accuracy, optimization difficulty), but it does mitigate the practical grid-based curse of dimensionality.
-\item \textbf{JIT-compile every gradient step.}  In any production or classroom-scale implementation, the per-batch gradient step (lines~5--6 inside the inner loop) should be wrapped in \texttt{@tf.function} (TensorFlow), \texttt{torch.compile} (PyTorch), or \texttt{@jax.jit} (JAX).  The speed-up over an un-traced Python loop is typically $5$--$50\times$ for the per-step kernel, and the trace cost is amortized after the first call.  All companion notebooks in this course follow this convention; un-traced Python loops are simply too slow for classroom use, let alone for research-scale runs.
+\item \textbf{JIT-compile every gradient step.}  In any production or classroom-scale implementation, the per-batch gradient step (lines~5--6 inside the inner loop) should be wrapped in \texttt{{@}tf.function} (TensorFlow), \texttt{torch.compile} (PyTorch), or \texttt{{@}jax.jit} (JAX).  The speed-up over an un-traced Python loop is typically $5$--$50\times$ for the per-step kernel, and the trace cost is amortized after the first call.  All companion notebooks in this course follow this convention; un-traced Python loops are simply too slow for classroom use, let alone for research-scale runs.
 \end{itemize}
 
 \paragraph{Episode length $T_{\mathrm{sim}}$.}  The simulated-trajectory length~$T_{\mathrm{sim}}$ controls the effective size of the training set within an episode.  \citet{azinovicDEEPEQUILIBRIUMNETS2022} use $T_{\mathrm{sim}} = 10{,}000$ time steps (split into many short mini-batches) in their 113-dimensional 56-agent OLG benchmark.  Shorter episodes (e.g., $T_{\mathrm{sim}} = 1000$) speed up early training because the distribution is re-drawn more frequently, at the cost of higher variance; longer episodes produce smoother gradient estimates but run the risk of stale data if the policy has drifted during training.  A pragmatic rule is to start short, lengthen $T_{\mathrm{sim}}$ as the loss plateaus, and check out-of-sample accuracy on an \emph{independent} simulated trajectory.
@@ -2701,7 +2701,7 @@ $y = \mathrm{ReLU}(x)$ & $\partial y/\partial x = \mathbf{1}\{x > 0\}$ & \texttt
 \label{tab:ad_primitives}
 \end{table}
 
-This explanation also makes the \emph{limits} of AD concrete.  Operations absent from the table (a black-box solver call, a non-differentiable step like sorting or \texttt{argmax}) require either a custom rule (via \texttt{@tf.custom\_gradient}) or a redesign of the code.  The pitfalls in \S\ref{sec:ad_pitfalls} are essentially cases where either the table's entry is degenerate at a point (kinks, $\partial|x|/\partial x$ at $x=0$) or the composed gradient is numerically unstable even though each local rule is correct.
+This explanation also makes the \emph{limits} of AD concrete.  Operations absent from the table (a black-box solver call, a non-differentiable step like sorting or \texttt{argmax}) require either a custom rule (via \texttt{{@}tf.custom\_gradient}) or a redesign of the code.  The pitfalls in \S\ref{sec:ad_pitfalls} are essentially cases where either the table's entry is degenerate at a point (kinks, $\partial|x|/\partial x$ at $x=0$) or the composed gradient is numerically unstable even though each local rule is correct.
 
 \subsection{Computational graph; forward and reverse modes}
 \label{sec:ad_modes}
@@ -8708,7 +8708,8 @@ Calendar time itself enters as a state.  Because neural networks prefer bounded 
 
 The design choice of \S\ref{sec:nsdeqn_setup} translates into a single training algorithm.  The body below is a literal diff against the stationary DEQN of \S\ref{sec:deqn_algo}: unchanged lines are grayed, new or modified lines are bolded.
 
-\begin{definitionbox}[Algorithm: Non-Stationary DEQN Training]
+\begin{algorithm}[H]
+\caption{Non-Stationary DEQN Training}
 \label{alg:nsdeqn}
 \begin{algorithmic}
 \small
@@ -8724,7 +8725,7 @@ The design choice of \S\ref{sec:nsdeqn_setup} translates into a single training 
 \ENDFOR
 \STATE \textcolor{uzhgreydark!70}{\textbf{Output:} Trained network $\mathcal{N}_{\rho^\star}$ approximating the policy function}
 \end{algorithmic}
-\end{definitionbox}
+\end{algorithm}
 
 One delta against the stationary DEQN box.  The simulation step starts from a calibrated initial state $\bm x_0$ and integrates $K$ trajectories forward through calendar time, so the pool $\mathcal D$ contains time-stamped states $(\tau_t, \bm x_t)$ along finite-horizon trajectories rather than draws from an ergodic distribution.  With $\tau_t$ in the input the network learns a time-dependent policy; every other line of the box is the stationary DEQN of \S\ref{sec:deqn_algo} unchanged.
 
