@@ -10641,7 +10641,7 @@ Coding exercises.  Expected diagnostics:
 
 \emph{Exercise~\ref{ex:ch8:7}.}  On the one-asset stationary benchmark, finite differences should usually win on absolute wall-clock time and give the cleanest low-dimensional benchmark residuals.  A PINN may become more attractive when the same architecture is reused across many nearby parameter values, when warm starts work well, or when the state space is extended beyond what a grid handles comfortably.  Report the actual cold-start and warm-start timings from your machine, and treat memory use as hardware- and backend-dependent.
 
-\section{Chapter \ref{ch:gp}: Deep Surrogate Models and Gaussian Processes}
+\section{Chapter \ref{ch:gp}: Gaussian Processes}
 \label{sol:ch9}
 
 \paragraph{Exercise~\ref{ex:ch9:1} (statement: p.~\pageref{ex:ch9:1}): Posterior on three points.}
@@ -10718,7 +10718,7 @@ the prior variance.  Hence far from data the GP literally returns the prior $\ma
 
 Mitigations: use a Mat\'ern kernel with $\nu = 1/2$ or $\nu = 3/2$ (heavier-tailed than RBF, posterior reverts to prior more slowly), incorporate a polynomial mean function in the GP prior (so extrapolation grows with $x$ instead of decaying to zero), or use a boundary-aware acquisition function that explicitly penalizes exploitation outside the convex hull.  In economic applications (e.g., extrapolating an estimated value function to wealth levels outside the training range), the safest practice is to flag any query outside the convex hull of training data and refuse to predict, rather than to trust a prior-driven band that has no data behind it.
 
-\section{Chapter \ref{ch:estimation}: Structural Estimation via SMM}
+\section{Chapter \ref{ch:estimation}: Deep Surrogate Models and Structural Estimation}
 \label{sol:ch10}
 
 \paragraph{Exercise~\ref{ex:ch10:1} (statement: p.~\pageref{ex:ch10:1}): Identification.}
