@@ -301,7 +301,7 @@ The exposition is organized around four complementary methodologies:
 The unifying thesis is that economic structure drives the learning problem rather than being separated from it.  In DEQNs, PINNs, and EMINNs the structure is embedded directly into a neural-network loss as residual terms (equilibrium conditions, PDEs, Bellman equations), making the training objective itself unsupervised; in the surrogate and GP-based estimation chapters the structure instead appears upstream, in the model that generates the (input, output) training pairs the surrogate then learns in a standard supervised regression.  Either way, the four methodologies above are different surfaces for the same idea.
 
 \paragraph{How these notes are organized.}
-At a high level, Chapters~1--6 build the discrete-time toolkit (foundations, DEQNs, IRBC, architecture search and loss normalization, OLG, heterogeneous agents). Chapters~7--8 turn to continuous-time methods (PINNs, HJB--KFE for heterogeneous agents). Chapter~9 develops the deep-surrogate and Gaussian-process toolkit and deploys it on two distinct oracles: surrogates of the structural model itself, used downstream for estimation, uncertainty quantification, and policy search, and surrogates of the Bellman operator, used inside GP value-function iteration to solve high-dimensional dynamic programs.  Chapter~10 then uses these surrogates for structural estimation via SMM. Chapter~11 applies the toolbox to climate economics under deep uncertainty, and Chapter~12 closes by comparing methods and highlighting open problems. The next chapter, \emph{How to Read This Script}, expands this overview into a full reading guide: cover-to-cover and selective paths, notation and cross-references, the role of the companion notebooks, and the visual conventions used throughout.
+At a high level, Chapters~1--6 build the discrete-time toolkit (foundations, DEQNs, IRBC, architecture search and loss normalization, OLG, heterogeneous agents). Chapters~7--8 turn to continuous-time methods (PINNs, HJB--KFE for heterogeneous agents). Chapter~9 develops the Gaussian-process toolkit, including kernel design, Bayesian active learning, active subspaces, and a GP-based value-function-iteration scheme that solves high-dimensional dynamic programs by surrogating the Bellman operator itself.  Chapter~10 develops the deep-surrogate pseudo-state pattern that treats structural parameters as additional state variables and puts it to work for structural estimation via SMM, with a second GP layer on top of the moment map for high-throughput bootstrap and Bayesian post-processing. Chapter~11 applies the toolbox to climate economics under deep uncertainty, and Chapter~12 closes by comparing methods and highlighting open problems. The next chapter, \emph{How to Read This Script}, expands this overview into a full reading guide: cover-to-cover and selective paths, notation and cross-references, the role of the companion notebooks, and the visual conventions used throughout.
 
 \paragraph{Audience and prerequisites.}
 These notes are aimed at PhD students in economics, finance, and computational social science, as well as researchers at central banks and policy institutions who wish to apply these methods to their own models.  We assume familiarity with basic econometrics, Python programming, and undergraduate-level calculus and probability.  For readers who need a refresher on these foundations, we recommend \citet{goodfellow2016deep} for deep learning, \citet{judd1998numerical} for numerical methods in economics, the open-source QuantEcon lectures (\url{https://quantecon.org}) for Python programming and quantitative economics, and the Econ-ARK toolkit (\url{https://econ-ark.org}) for heterogeneous-agent modeling.
@@ -343,7 +343,7 @@ Readers who already know part of the material can take a shorter route, but the 
 \begin{itemize}[itemsep=2pt]
 \item \textbf{Discrete-time equilibrium methods:} read Chapters~1--6.  This path covers the DEQN template, expectation approximation, high-dimensional DSGE examples, loss normalization, OLG models, and histogram-based heterogeneous-agent distributions.
 \item \textbf{Continuous-time methods:} read Chapter~1 for neural-network basics, Chapter~7 for PINNs and PDE residuals, and Chapter~8 for the continuous-time heterogeneous-agent HJB--KFE system.  Chapter~6 is useful background if the distribution $\mu_t$ is unfamiliar.
-\item \textbf{Surrogates and estimation:} read Chapter~1 for optimization and approximation, Chapter~9 for deep surrogates, GPs, active subspaces, and GP-based dynamic programming, and Chapter~10 for the SMM pipeline.  Chapter~2 is the minimum DEQN background for the Brock--Mirman examples used there.
+\item \textbf{Surrogates and estimation:} read Chapter~1 for optimization and approximation, Chapter~9 for the Gaussian-process toolkit (kernels, Bayesian active learning, active subspaces, and GP-based dynamic programming), and Chapter~10 for the deep-surrogate pseudo-state pattern and the SMM pipeline that uses it.  Chapter~2 is the minimum DEQN background for the Brock--Mirman examples used there.
 \item \textbf{Climate economics:} read Chapter~11 together with Chapter~2 for DEQN solution logic and Chapter~9 for surrogate-based uncertainty quantification.  The climate chapter is written as an application chapter, not as a replacement for those methodological chapters.
 \end{itemize}
 
@@ -415,7 +415,7 @@ $\alpha$ & Capital share in Cobb--Douglas production (Ch.~\ref{ch:deqn},~\ref{ch
 $\zeta$ vs.\ $\alpha$ & Capital share is denoted $\zeta$ in Ch.~\ref{ch:irbc} (Azinovic et al.\ convention) and $\alpha$ everywhere else. \\
 $T$ & ReLoBRaLo softmax temperature (Ch.~\ref{ch:nas}); time horizon (Ch.~\ref{ch:pinn},~\ref{ch:climate}); atmospheric temperature $T^{\mathrm{AT}}_t$ in DICE (Ch.~\ref{ch:climate}); data sample size in SMM (Ch.~\ref{ch:estimation}). \\
 $\delta$ & Capital depreciation rate (most chapters); Dirac measure in master equation (Ch.~\ref{ch:young}); Huber-loss threshold in robust regression (Ch.~\ref{ch:intro}). \\
-$\psi$ & IES in Ch.~\ref{ch:climate} Epstein--Zin preferences (paired with $\gamma_u$ for risk aversion); Cobb--Douglas capital exponent in the GP surrogate model (Ch.~\ref{ch:gp}). \\
+$\psi$ & IES in Ch.~\ref{ch:climate} Epstein--Zin preferences (paired with $\gamma_u$ for risk aversion); Cobb--Douglas capital exponent in the GP-VFI growth model used to demonstrate active-subspace scaling (Ch.~\ref{ch:gp}, \S\ref{sec:gp_dp}). \\
 $\mu$ & Cross-sectional wealth distribution $\mu_t$ (Ch.~\ref{ch:young}--\ref{ch:ct_theory}); SGD momentum coefficient (Ch.~\ref{ch:intro}); Lagrange / KKT multiplier on investment irreversibility (Ch.~\ref{ch:irbc}); emissions abatement rate $\mu_t\in[0,1]$ (Ch.~\ref{ch:climate}). \\
 $\rho$ & Network parameters $\mathcal{N}_\rho$ (most chapters); RMSprop decay coefficient and recurrence spectral radius (Ch.~\ref{ch:intro}); discount rate in continuous-time HJB (Ch.~\ref{ch:pinn},~\ref{ch:ct_theory}); ReLoBRaLo baseline-mix coefficient (Ch.~\ref{ch:nas}). The variant $\varrho$ is reserved for shock persistence in Ch.~\ref{ch:deqn}.  TFP persistence is denoted $\rho_z$ in Ch.~\ref{ch:irbc} (Azinovic et al.\ convention) and $\varrho$ elsewhere. \\
 $\sigma$ & Logistic activation $\sigma(z)=1/(1+e^{-z})$ in Ch.~\ref{ch:intro} (single-output and final-layer use); the same symbol is used as a generic non-linearity in the RNN recurrence and as the LSTM gate non-linearity later in the same chapter, so the meaning is always logistic but the typographic role (specific vs.\ generic) shifts. Ch.~\ref{ch:climate} (climate) reserves $\sigma_t$ for emissions intensity, $\sigma_u$ for household CRRA. \\
@@ -548,7 +548,7 @@ The past decade has witnessed a remarkable convergence of three developments tha
 
 Deep learning has already demonstrated its potential across a broad range of economic applications.  In macroeconomics, neural networks serve as global approximators of policy and value functions in high-dimensional equilibria that classical grid-based methods cannot reach \citep{maliar2021deep, azinovicDEEPEQUILIBRIUMNETS2022}; heterogeneous-agent extensions encode cross-sectional distributions via histograms or permutation-invariant moment networks \citep{young2010, han2023deepham, yang2025structural}.  Search-and-matching models with aggregate shocks \citep{payne2025deepsam} and continuous-time macro-finance settings requiring HJB approximation or deep-BSDE solvers \citep{gopalakrishna2024aliens, duarte2024ml, han2018solving} add further coverage, as do optimal monetary policy rules under persistent supply shocks \citep{nuno2024monetary}.  In climate economics, surrogate-based workflows solve integrated assessment models and derive Pareto-improving carbon-tax rules in OLG--IAMs with deep uncertainty \citep{kubler2025using, Folini_2021, fernandezvillaverde2025climate}.  In finance, surrogate models accelerate option pricing, sovereign-default computation, and portfolio optimization \citep{hutchinson1994nonparametric, scheideggertreccani_2018, arellano2008default, gaegauf2023portfolio, chen2025private}.  For structural estimation, neural-network surrogates make inference tractable and enable global uncertainty quantification for IAMs \citep{kase2022estimating, friedlDeep2023, chen2026Deep}.  Finally, these methods connect to an earlier generation of neural-network function approximation in economic computation: adaptive learning \citep{chenwhite1998adaptive}, derivative pricing \citep{hutchinson1994nonparametric}, and parameterized expectations \citep{duffy2001approximating}, with \citet{valaitisvilla2024} showing how the parameterized-expectations approach extends to contemporary deep architectures; structural discrete-choice estimation rounds out the historical picture \citep{norets2012structural}.
 
-Two themes cut across these application areas and motivate the rest of the script.  First, every application area listed there involves a state space whose dimension grows with the number of agents, assets, shocks, or climate states; tensor-product grids become infeasible long before the modeling questions become uninteresting.  Second, neural networks are universal approximators with cost that scales with parameter count rather than with $N^d$, so they are the natural replacement function class once the problem becomes high-dimensional.  Subsequent chapters take this through-line and develop it: Chapter~\ref{ch:deqn} introduces the DEQN methodology that all macro / heterogeneous-agent / search applications above share; Chapter~\ref{ch:irbc} scales it to a 100+-country benchmark; Chapters~\ref{ch:pinn}--\ref{ch:ct_theory} develop the continuous-time analogue; Chapter~\ref{ch:gp} connects the deep-surrogate and Gaussian-process threads; and Chapters~\ref{ch:estimation}--\ref{ch:climate} return to structural estimation and integrated assessment.
+Two themes cut across these application areas and motivate the rest of the script.  First, every application area listed there involves a state space whose dimension grows with the number of agents, assets, shocks, or climate states; tensor-product grids become infeasible long before the modeling questions become uninteresting.  Second, neural networks are universal approximators with cost that scales with parameter count rather than with $N^d$, so they are the natural replacement function class once the problem becomes high-dimensional.  Subsequent chapters take this through-line and develop it: Chapter~\ref{ch:deqn} introduces the DEQN methodology that all macro / heterogeneous-agent / search applications above share; Chapter~\ref{ch:irbc} scales it to a 100+-country benchmark; Chapters~\ref{ch:pinn}--\ref{ch:ct_theory} develop the continuous-time analogue; Chapter~\ref{ch:gp} develops the Gaussian-process methodology, and Chapters~\ref{ch:estimation}--\ref{ch:climate} put the deep-surrogate and GP machinery to work on structural estimation and integrated assessment models.
 
 In this course, we focus on the recent advances enabled by \emph{deep} neural networks, modern hardware, and algorithmic innovations in training.
 
@@ -1209,7 +1209,7 @@ because $p(z)$ is symmetric about zero, so the negative half of the integrand is
 \begin{remarkbox}[Practical guidance]
 The applications in this course use different activations depending on the task:
 \textbf{(i)}~the introductory DEQN examples (Brock--Mirman, Chapter~\ref{ch:deqn}, \S\ref{sec:bm}) use \emph{ReLU} for its simplicity and fast training;
-\textbf{(ii)}~the multi-country IRBC model (Chapter~\ref{ch:irbc}) and the deep surrogate (Chapter~\ref{ch:gp}) use \emph{Swish} ($z\sigma(z)$) for its smooth gradients;
+\textbf{(ii)}~the multi-country IRBC model (Chapter~\ref{ch:irbc}) and the deep surrogate (Chapter~\ref{ch:estimation}) use \emph{Swish} ($z\sigma(z)$) for its smooth gradients;
 \textbf{(iii)}~all PINN examples (Chapter~\ref{ch:pinn}) use \emph{$\tanh$}, whose $C^\infty$ smoothness is essential when the loss involves second-order derivatives.
 For ReLU-family networks, He initialization (\texttt{kaiming\_normal\_} in PyTorch, \texttt{he\_normal} in Keras) is the natural default.  For $\tanh$ and sigmoid networks, Xavier/Glorot initialization is usually the cleaner starting point; Swish and related smooth non-monotone activations often work well with either He-style or Xavier-style scaling, so the notebooks state the chosen initializer explicitly when it matters.
 \end{remarkbox}
@@ -3534,18 +3534,42 @@ For example, with a budget of $N = 60$ evaluations in $d = 6$ dimensions, a grid
 
 \section{Bayesian Optimization}
 
-Bayesian optimization treats the validation loss $\ell(\bm{h})$ as an expensive black-box function of the hyperparameter vector $\bm{h}$, and uses a probabilistic surrogate model, typically a Gaussian process (see Chapter~\ref{ch:gp}) \citep{snoek2012practical, garnett2023bayesian}, to guide the search.  After evaluating $n$ configurations $\{(\bm{h}_i, \ell_i)\}_{i=1}^n$, the GP posterior provides both a prediction $\mu(\bm{h})$ and an uncertainty estimate $\sigma(\bm{h})$ at any untried configuration.
+Bayesian optimization (BO) treats the validation loss $\ell(\bm{h})$ as an expensive black-box function of the hyperparameter vector $\bm{h}$, and uses a probabilistic surrogate, fitted to the configurations evaluated so far, to decide where to evaluate next \citep{snoek2012practical}.  The standard surrogate is a Gaussian process (GP).  The next subsection gives a self-contained primer in the notation that Chapter~\ref{ch:gp} will reuse, so the reader can follow the BO logic without flipping ahead; the full kernel zoo, marginal-likelihood hyperparameter learning, and Bayesian active learning are developed there.  Throughout this section the GP input is the hyperparameter vector itself, $\x \equiv \bm{h}$, and the kernel length-scale symbol $\ell$ that appears in \eqref{eq:nas_kse} below is the standard GP notation of Chapter~\ref{ch:gp}; it is distinct from the validation-loss symbol $\ell(\bm{h})$ and the two are always clear from context.
 
-The next configuration to evaluate is selected by maximizing an \emph{acquisition function}.  The most common choice is Expected Improvement (EI):
+\subsection{A Brief Introduction to Gaussian Processes}
+\label{sec:nas_gp_primer}
+
+A Gaussian process is a probability distribution over real-valued functions, equivalently, a random function $f$ whose values at any finite collection of inputs $\x_1, \ldots, \x_n$ are jointly Gaussian \citep{Rasmussen:2005:GPM:1162254}.  It is fully specified by a mean function $\mu(\x)$ and a covariance (kernel) function $k(\x, \x')$ that says how correlated the function's values at two inputs are:
 \begin{equation}
-\mathrm{EI}(\bm{h}) = \E{\max\bigl(\ell^\star - \ell(\bm{h}),\; 0\bigr)},
+f(\x) \sim \mathcal{GP}\bigl(\mu(\x),\; k(\x, \x')\bigr).
 \end{equation}
-where $\ell^\star = \min_i \ell_i$ is the best loss observed so far.  Under the GP posterior, this has a closed-form expression:
+This means that, for any finite test set $\x_1, \ldots, \x_n$, the vector $\bm{f} = (f(\x_1), \ldots, f(\x_n))^\top$ is distributed as $\bm{f} \sim \mathcal{N}(\bm{\mu}, K)$ with kernel matrix $K_{ij} = k(\x_i, \x_j)$.  For concreteness, we use the squared-exponential (RBF) kernel throughout this section:
 \begin{equation}
-\mathrm{EI}(\bm{h}) = (\ell^\star - \mu(\bm{h}))\,\Phi(Z) + \sigma(\bm{h})\,\phi(Z),
-\qquad Z = \frac{\ell^\star - \mu(\bm{h})}{\sigma(\bm{h})},
+k_\mathrm{SE}(\x, \x') = \sigma_f^2\,\exp\!\left(-\frac{\|\x - \x'\|^2}{2\ell^2}\right),
+\label{eq:nas_kse}
 \end{equation}
-where $\Phi$ and $\phi$ are the standard normal CDF and PDF, respectively.  For the closed-form derivation under the GP posterior, see \citet[\S 5]{garnett2023bayesian}.  EI naturally balances exploitation ($\mu(\bm{h})$ is small, i.e., predicted to be good) and exploration ($\sigma(\bm{h})$ is large, i.e., uncertain).  Bayesian optimization is particularly effective when the number of hyperparameters is moderate ($d \leq 20$) and each evaluation is expensive, which describes many economic applications well.  Figure~\ref{fig:bayesopt} illustrates the GP posterior and EI acquisition rule in one dimension.
+where $\ell$ is the kernel length scale (the distance in input space over which two function values remain correlated) and $\sigma_f^2$ is the signal variance (the typical squared amplitude of the function).  Both are kernel hyperparameters that one would normally fit by marginal-likelihood maximization; here we treat them as fixed at sensible values, since BO calls the GP once per outer iteration and modest mis-tuning only changes the candidate ranking marginally.
+
+\paragraph{Posterior conditioning, in two formulas.}  Given $n$ training configurations $\mathcal{D} = \{(\x_i, y_i)\}_{i=1}^n$ with possibly noisy outputs $y_i = f(\x_i) + \varepsilon_i$ and $\varepsilon_i \sim \mathcal{N}(0, \sigma_y^2)$, write $\bm{y} = (y_1, \ldots, y_n)^\top$.  Three matrices and one vector enter the posterior: the kernel matrix $K \in \mathbb{R}^{n \times n}$ with $K_{ij} = k(\x_i, \x_j)$; its noise-augmented version $K_y = K + \sigma_y^2 I$; the prior-mean vector $\bm{\mu}_X$ whose $i$-th entry is $\mu(\x_i)$; and the cross-covariance $\bm{k}_* \in \mathbb{R}^n$ whose $i$-th entry is $k(\x_*, \x_i)$, where $\x_*$ is any query point.  Conditioning the joint Gaussian $(\bm{y}, f(\x_*))$ on the observations yields a Gaussian posterior over the latent value $f(\x_*)$, with closed-form mean and variance:
+\begin{align}
+\bar{f}_* &= \mu(\x_*) + \bm{k}_*^\top K_y^{-1}\bigl(\bm{y} - \bm{\mu}_X\bigr), \label{eq:nas_gp_mean}\\
+\sigma_{f,*}^2 &= k(\x_*, \x_*) - \bm{k}_*^\top K_y^{-1} \bm{k}_*. \label{eq:nas_gp_var}
+\end{align}
+These two equations carry all of the GP intuition we will use below.  In the noiseless limit $\sigma_y^2 \to 0$, the posterior mean $\bar{f}_*$ passes exactly through every observation, so the GP is an interpolator, and the posterior variance $\sigma_{f,*}^2$ collapses to zero at observation points and grows in the gaps between them.  The pair $\bar{f}_* \pm 2\sigma_{f,*}$ therefore traces an honest error bar: tight where the data are dense and loose where they are sparse.  Chapter~\ref{ch:gp} derives \eqref{eq:nas_gp_mean}--\eqref{eq:nas_gp_var} step by step, works a hand-traceable 1D example, and explains the marginal-likelihood Occam's razor that selects $(\ell, \sigma_f, \sigma_y)$ from data; for the BO logic that follows, \eqref{eq:nas_gp_mean}--\eqref{eq:nas_gp_var} are sufficient.
+
+\subsection{Expected Improvement}
+\label{sec:nas_ei}
+
+We now plug the GP posterior into a decision rule for choosing the next configuration to evaluate.  Specialize the GP input to the hyperparameter vector, $\x = \bm{h}$, and treat each observation $y_i = \ell_i = \ell(\bm{h}_i)$ as the validation loss at the $i$-th evaluated configuration.  At any untried $\bm{h}$ the GP returns a posterior mean $\bar{f}(\bm{h})$ and posterior standard deviation $\sigma_f(\bm{h})$, where we drop the $*$ subscript when $\bm{h}$ is understood as the query point.  We score each candidate $\bm{h}$ by how much, in expectation under the GP, its loss would beat the best loss seen so far, $\ell^\star = \min_i \ell_i$:
+\begin{equation}
+\mathrm{EI}(\bm{h}) = \E{\max\bigl(\ell^\star - \ell(\bm{h}),\; 0\bigr)}.
+\end{equation}
+Reading this as ``the GP believes the loss at $\bm{h}$ is roughly $\bar{f}(\bm{h})$ plus a Gaussian fluctuation of size $\sigma_f(\bm{h})$, and we credit only the improvement, not the deterioration,'' gives the intuition.  Under the GP posterior the expectation evaluates in closed form:
+\begin{equation}
+\mathrm{EI}(\bm{h}) = \bigl(\ell^\star - \bar{f}(\bm{h})\bigr)\,\Phi(Z) + \sigma_f(\bm{h})\,\phi(Z),
+\qquad Z = \frac{\ell^\star - \bar{f}(\bm{h})}{\sigma_f(\bm{h})},
+\end{equation}
+where $\Phi$ and $\phi$ are the standard normal CDF and PDF, respectively \citep[\S 5]{garnett2023bayesian}.  The first term rewards \emph{exploitation} (the predicted mean $\bar{f}$ lies below the current best $\ell^\star$); the second rewards \emph{exploration} ($\sigma_f$ is large where no data constrain the loss).  EI peaks where the two conspire, which is exactly the place a sensible researcher would probe by hand.  Figure~\ref{fig:bayesopt} illustrates one iteration of this rule in one dimension, and the algorithmic box below collects it into a four-step recipe.  Bayesian optimization is particularly effective when the number of hyperparameters is moderate ($d \leq 20$) and each evaluation is expensive, which describes many economic applications well.
 
 \begin{figure}[ht]
 \centering
@@ -3576,7 +3600,7 @@ where $\Phi$ and $\phi$ are the standard normal CDF and PDF, respectively.  For 
     \addplot[very thick, softblue] coordinates {
       (0.000,+0.2686) (0.125,+0.2742) (0.250,+0.2755) (0.375,+0.2722) (0.500,+0.2640) (0.600,+0.2538) (0.750,+0.2327) (0.875,+0.2100) (1.000,+0.1832) (1.125,+0.1528) (1.250,+0.1197) (1.375,+0.0847) (1.500,+0.0488) (1.625,+0.0128) (1.750,-0.0223) (1.875,-0.0555) (2.000,-0.0862) (2.125,-0.1137) (2.250,-0.1375) (2.300,-0.1459) (2.500,-0.1730) (2.625,-0.1845) (2.750,-0.1921) (2.875,-0.1961) (3.000,-0.1969) (3.125,-0.1951) (3.250,-0.1912) (3.375,-0.1859) (3.500,-0.1796) (3.625,-0.1730) (3.750,-0.1664) (3.875,-0.1603) (4.000,-0.1549) (4.125,-0.1504) (4.250,-0.1467) (4.375,-0.1440) (4.500,-0.1420) (4.625,-0.1406) (4.750,-0.1394) (4.875,-0.1382) (5.000,-0.1368) (5.125,-0.1347) (5.250,-0.1317) (5.375,-0.1275) (5.500,-0.1221) (5.625,-0.1152) (5.750,-0.1068) (5.875,-0.0970) (6.000,-0.0859) (6.125,-0.0736) (6.250,-0.0605) (6.375,-0.0466) (6.500,-0.0325) (6.625,-0.0184) (6.750,-0.0046) (6.875,+0.0085) (7.000,+0.0206) (7.125,+0.0314) (7.250,+0.0408) (7.375,+0.0486) (7.500,+0.0546) (7.625,+0.0589) (7.750,+0.0614) (7.875,+0.0623) (8.000,+0.0616) (8.125,+0.0596) (8.250,+0.0563) (8.375,+0.0521) (8.500,+0.0472) (8.625,+0.0418) (8.750,+0.0361) (8.875,+0.0303) (9.000,+0.0246) (9.125,+0.0192) (9.250,+0.0142) (9.375,+0.0096) (9.400,+0.0087) (9.500,+0.0056) (9.625,+0.0021) (9.750,-0.0007) (9.875,-0.0030) (10.000,-0.0047)
     };
-    \addlegendentry{GP mean $\mu(h)$}
+    \addlegendentry{GP mean $\bar f(h)$}
     % Unknown truth (dashed): a smooth function with a hidden dip near h=4.2
     \addplot[thick, dashed, darkred] coordinates {
       (0.000,+0.1238) (0.500,+0.2382) (1.000,+0.2786) (1.500,+0.2082) (2.000,+0.0189) (2.500,-0.2730) (3.000,-0.6221) (3.500,-0.9293) (3.750,-1.0217) (4.000,-1.0505) (4.250,-1.0071) (4.500,-0.8939) (5.000,-0.5230) (5.500,-0.1221) (6.000,+0.1471) (6.500,+0.2334) (7.000,+0.1771) (7.500,+0.0546) (8.000,-0.0577) (8.500,-0.1050) (9.000,-0.0681) (9.500,+0.0315) (10.000,+0.1427)
@@ -3611,30 +3635,46 @@ where $\Phi$ and $\phi$ are the standard normal CDF and PDF, respectively.  For 
          (nextLbl.west) to[out=180, in=-30] (axis cs:3.85,0.97);
     \end{axis}
 \end{tikzpicture}
-\caption{Bayesian optimization in one dimension.  All curves come from a genuine Gaussian-process fit (RBF kernel, length scale $\ell = 1.2$, signal variance $\sigma_f^2 = 0.25$); the same setup is reproduced in the companion notebook.  \emph{Top:} the validation loss $\ell(h)$ is treated as an expensive black box.  After five evaluations (black dots) the GP posterior is summarized by its mean $\mu(h)$ (solid blue), which \emph{interpolates} every observation exactly, and by a $\pm 2$ s.d.\ credible band (shaded), which pinches to nearly zero at each observation and balloons in the wide gaps where no data constrain it.  The dashed red curve is the (in practice unknown) true loss; it has a pronounced minimum near $h \approx 4$ that these five points completely miss, and there it even slips below the $\pm 2$ s.d.\ band, an honest reminder that a Gaussian process with a long length scale can be over-confident between observations.  The horizontal grey line marks $\ell^\star$, the best loss observed so far (the point near $h \approx 2.3$).  \emph{Bottom:} the Expected-Improvement acquisition function $\mathrm{EI}(h) = \E{\max\!\bigl(\ell^\star - \ell(h),\, 0\bigr)}$ scores each untried $h$ by how much it is expected to beat $\ell^\star$ under the posterior.  It is essentially zero at the existing observations, where there is nothing to learn, rises in the unexplored gaps, and peaks at $h \approx 3.75$, the place that combines a predicted mean already below $\ell^\star$ with substantial residual uncertainty; that maximizer is selected as the next configuration to evaluate (red arrow).  EI therefore balances \emph{exploitation} (low predicted mean) against \emph{exploration} (high predicted variance), and here it steers the search straight at the neighborhood of the hidden true minimum.}
+\caption{Bayesian optimization in one dimension; the same setup is reproduced in the companion notebook.  \emph{Top:} after five evaluations (black dots), the GP posterior mean $\bar f(h)$ (solid blue) interpolates the observations and the $\bar f(h) \pm 2\sigma_f(h)$ credible band (shaded) pinches to zero at each observation and widens in the gaps; this is the picture predicted by \eqref{eq:nas_gp_mean}--\eqref{eq:nas_gp_var}.  The dashed red curve is the (in practice unknown) true loss; the horizontal grey line marks $\ell^\star$, the best observation so far (near $h\approx 2.3$).  \emph{Bottom:} Expected Improvement $\mathrm{EI}(h)$ is essentially zero at the existing data, where there is nothing to learn, rises in the unexplored gaps, and peaks at $h \approx 3.75$, which combines a predicted mean already below $\ell^\star$ with substantial residual uncertainty.  The maximizer (red arrow) is selected as the next configuration to evaluate; EI thus balances exploitation against exploration automatically, and here it steers the search at the neighborhood of the hidden true minimum.}
 \label{fig:bayesopt}
 \end{figure}
+
+\begin{definitionbox}[Bayesian Optimization with Expected Improvement]
+\begin{algorithmic}
+\small
+\STATE \textbf{Input:} initial design $\mathcal{D}_{n_0} = \{(\bm{h}_i, \ell_i)\}_{i=1}^{n_0}$, total budget $N$
+\FOR{$n = n_0, n_0+1, \ldots, N-1$}
+    \STATE Fit the GP posterior $(\bar{f}, \sigma_f)$ to $\mathcal{D}_n$ using \eqref{eq:nas_gp_mean}--\eqref{eq:nas_gp_var}
+    \STATE Evaluate $\mathrm{EI}(\bm{h})$ on a fine candidate grid (or via a local optimizer) over the search space
+    \STATE Select $\bm{h}_{n+1} = \arg\max_{\bm{h}} \mathrm{EI}(\bm{h})$
+    \STATE Evaluate the validation loss $\ell_{n+1} = \ell(\bm{h}_{n+1})$ and append to $\mathcal{D}_{n+1} = \mathcal{D}_n \cup \{(\bm{h}_{n+1}, \ell_{n+1})\}$
+\ENDFOR
+\STATE \textbf{Output:} best observed configuration $\arg\min_i \ell_i$
+\end{algorithmic}
+\end{definitionbox}
 
 \section{Hyperband and Successive Halving}
 \label{sec:hyperband}
 
-\citet{li2018hyperband} proposed an entirely different approach based on \emph{adaptive resource allocation}, building on the Successive Halving Algorithm popularized by \citet{jamieson2016nonstochastic}.  The key observation is that poor configurations can often be identified early in training, without running them to completion.  The Successive Halving Algorithm (SHA) formalizes this:
+\citet{li2018hyperband} proposed an entirely different approach based on \emph{adaptive resource allocation}, building on the Successive Halving Algorithm popularized by \citet{jamieson2016nonstochastic}.  The key observation is that poor configurations can often be identified early in training, without running them to completion.
+
+The Successive Halving Algorithm (SHA) turns this observation into a concrete schedule.  Start with $n_0$ configurations, give each a small initial budget of $r_0$ epochs, train, then keep only the top $1/\eta$ fraction of survivors and multiply the per-candidate budget by $\eta$ for the next round.  Two facts about this schedule do most of the explanatory work below.  First, the per-round compute is approximately constant: round $s$ runs $n_s$ survivors for $r_s$ epochs each, and the rule ``$\eta\times$ fewer candidates at $\eta\times$ the budget'' keeps the product $n_s r_s$ fixed.  Second, the cumulative cost across the cascade therefore scales with the \emph{number of rounds} rather than with the worst-case ``train every candidate to the final budget'' benchmark.  Both points are made concrete in the worked example that follows the pseudocode.
 
 \begin{definitionbox}[Successive Halving Algorithm]
 \begin{algorithmic}
 \small
-\STATE \textbf{Input:} Budget $B$, initial candidates $n$, reduction factor $\eta = 3$
-\STATE Allocate each candidate a budget of $r = B/(n \lceil\log_\eta n\rceil)$
-\FOR{round $s = 0, 1, \ldots, \lceil\log_\eta n\rceil - 1$}
-    \STATE Train all remaining candidates for $r$ additional resources (epochs)
-    \STATE Keep the top $1/\eta$ fraction; discard the rest
-    \STATE $r \leftarrow r \cdot \eta$
+\STATE \textbf{Input:} initial candidates $n_0$, initial per-candidate budget $r_0$ (epochs), reduction factor $\eta = 3$
+\STATE Draw a set $S_0$ of $n_0$ configurations from the search space
+\FOR{round $s = 0, 1, \ldots, \lceil\log_\eta n_0\rceil - 1$}
+    \STATE Train each of the $n_s$ survivors in $S_s$ for $r_s$ epochs and record their validation losses
+    \STATE Keep the top $1/\eta$ fraction of $S_s$ to form $S_{s+1}$
+    \STATE Set $n_{s+1} = \lceil n_s / \eta \rceil$ and $r_{s+1} = \eta\, r_s$
 \ENDFOR
-\STATE \textbf{Output:} Best surviving configuration
+\STATE \textbf{Output:} best surviving configuration
 \end{algorithmic}
 \end{definitionbox}
 
-For example, with $n = 81$ initial candidates and $\eta = 3$: round~0 trains all 81 for $r$ epochs and keeps the top 27; round~1 trains these 27 for $3r$ epochs and keeps the top 9; round~2 trains 9 for $9r$ epochs and keeps 3; round~3 trains 3 for $27r$ and selects the winner.  The total budget is $81r + 27\cdot 3r + 9\cdot 9r + 3\cdot 27r = 4 \cdot 81 r = 324\,r$, equivalent to about a dozen full $R = 27r$ trainings rather than the $81$ that naive parallel evaluation would require.  Figure~\ref{fig:hyperband} visualizes this resource-allocation cascade.
+To see the per-round invariant on a concrete schedule, take $n_0 = 81$, $r_0 = r$, and $\eta = 3$.  Round~0 trains all 81 candidates for $r$ epochs and keeps the top 27; round~1 trains those 27 for $3r$ epochs and keeps the top 9; round~2 trains the 9 for $9r$ and keeps 3; round~3 trains those 3 for $27r$ and selects the winner.  At each round the round-level compute is $n_s\, r_s = 81\,r$ (the $1/3$ shrink in survivors is exactly offset by the $3\times$ growth in budget), so the four rounds together cost $4 \cdot 81\,r = 324\,r$, equivalent to four full $R = 81r$-epoch training runs rather than the $81$ that naive parallel evaluation would require.  Figure~\ref{fig:hyperband} visualizes this resource-allocation cascade.
 
 \begin{figure}[ht]
 \centering
@@ -3695,7 +3735,27 @@ For example, with $n = 81$ initial candidates and $\eta = 3$: round~0 trains all
 \label{fig:hyperband}
 \end{figure}
 
-Hyperband extends SHA by running multiple SHA brackets with different trade-offs between the number of candidates $n$ and the per-candidate budget $r$, ensuring robustness to the unknown early-stopping behavior of different hyperparameter configurations.  The displayed sequence $(81,1) \to (27,3) \to (9,9) \to (3,27) \to (1,81)$ used in Algorithm~\ref{fig:hyperband} is the \emph{stage schedule} of the most exploratory SHA bracket, $s = s_{\max} = 4$, not Hyperband's full bracket set.  With maximum resource $R = 81$, reduction factor $\eta = 3$, and budget $B = (s_{\max}+1)R = 405$, Hyperband itself cycles through five SHA brackets indexed by $s = 0,\ldots,4$: each bracket starts with $n_s = \lceil (B/R)\,\eta^s/(s+1) \rceil$ configurations at initial resource $r_s = R\,\eta^{-s}$, then runs the SHA halving rule to convergence, so more aggressive brackets (large $s$) start with many cheap configurations while more conservative brackets (small $s$) start with fewer, longer-trained configurations.  The companion notebook implements the SHA inner loop only; running the full Hyperband schedule is a straightforward outer loop that iterates the inner loop across these five $(n_s, r_s)$ starting points.
+Hyperband extends SHA by running not one but several SHA cascades, each starting from a different trade-off between the number of candidates and the per-candidate initial budget; the intuition is hedging.  A bracket that starts with many cheap candidates (large $s$) is well suited to problems where the eventual winner reveals itself early, while a bracket that starts with fewer well-trained candidates (small $s$) is better when ranks shuffle late in training, and Hyperband simply runs both kinds.  The cascade shown in Figure~\ref{fig:hyperband}, $(81,1) \to (27,3) \to (9,9) \to (3,27) \to (1,81)$, is the most exploratory of the brackets ($s = s_{\max} = 4$); Table~\ref{tab:hyperband_brackets} unrolls the full canonical schedule for maximum resource $R = 81$ and reduction factor $\eta = 3$.
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabular}{c c l c}
+\toprule
+\textbf{Bracket $s$} & \textbf{$(n_s, r_s)$} & \textbf{Unrolled schedule (candidates~@~epochs)} & \textbf{Total cost $B_s$} \\
+\midrule
+$4$ & $(81, 1)$  & $81$@$1 \to 27$@$3 \to 9$@$9 \to 3$@$27 \to 1$@$81$ & $5R$ \\
+$3$ & $(27, 3)$  & $27$@$3 \to 9$@$9 \to 3$@$27 \to 1$@$81$            & $4R$ \\
+$2$ & $(9, 9)$   & $9$@$9 \to 3$@$27 \to 1$@$81$                        & $3R$ \\
+$1$ & $(6, 27)$  & $6$@$27 \to 2$@$81$                                  & $4R$ \\
+$0$ & $(5, 81)$  & $5$@$81$                                              & $5R$ \\
+\bottomrule
+\end{tabular}
+\caption{Hyperband bracket schedule for $R = 81$, $\eta = 3$, following Table~1 of \citet{li2018hyperband}.  Each bracket $s$ is a standalone SHA cascade with $n_s$ initial candidates and per-candidate initial budget $r_s$ epochs; the survivors are then halved according to the rule of Algorithm~\ref{fig:hyperband}.  Large $s$ probes many cheap candidates and halves them aggressively (exploration); small $s$ trains a handful of candidates to the full $R$-epoch budget from the start (exploitation).  Per-bracket totals $B_s$ are reported in units of $R$ and are not monotone in $s$ because $n_s$ is integer-rounded.  Hyperband runs all five brackets and returns the best surviving configuration across them.}
+\label{tab:hyperband_brackets}
+\end{table}
+
+The companion notebook \tpath{03_NAS_RandomSearch_Hyperband.ipynb} implements the SHA inner loop only; the full Hyperband schedule is a straightforward outer loop that iterates this inner loop across the five $(n_s, r_s)$ starting points in Table~\ref{tab:hyperband_brackets}.
 
 \section{Method Comparison}
 
@@ -3731,9 +3791,11 @@ To keep the algorithms transparent, the companion notebook \tpath{03_NAS_RandomS
 
 In many applications, including DEQNs and PINNs, the loss function is a weighted sum of several components:
 \begin{equation}
-\ell = \sum_{k=1}^{K} w_k \, \ell_k.
+\ell = \sum_{k=1}^{K} w_k \, \ell_k,
 \end{equation}
-From a multi-objective-optimization standpoint, the vector $(\ell_1, \dots, \ell_K)$ is the object of interest: the equilibrium is defined by all $K$ residuals being zero, and any nonzero weight vector $\bm{w}$ picks a particular scalarization of the same underlying Pareto problem.  When the components are on comparable scales, uniform weights work; when they are not, the scalarized problem is dominated by a single component and the optimizer effectively ignores the others.  Adaptive weighting methods (discussed below) can be seen as online strategies for traversing the Pareto front rather than committing to a single scalarization up front.
+where $\ell_k \ge 0$ is the $k$-th \emph{loss component} (one individual residual, e.g.\ a per-country Euler equation, a market-clearing identity, a complementarity-condition residual in an OLG model, or a boundary or initial-condition penalty in a PINN), $w_k \ge 0$ is its scalar weight, and $K$ is the total number of components.  In the DEQN setting of this script, each $\ell_k$ is typically the mean-squared residual of a particular equilibrium equation evaluated on the training mini-batch, so $\ell_k = 0$ at a solution and $\ell$ is jointly minimized over the network parameters.
+
+From a multi-objective-optimization standpoint, the vector $(\ell_1, \dots, \ell_K)$ is the object of interest: the equilibrium is defined by all $K$ residuals being zero, and any nonzero weight vector $\bm{w}$ picks a particular scalarization of the same underlying Pareto problem.  When the components are on comparable scales, uniform weights work; when they are not, the scalarized problem is dominated by a single component and the optimizer effectively ignores the others.  Adaptive weighting methods (discussed below) can be seen as online strategies for traversing the Pareto frontier rather than committing to a single scalarization up front.
 If the individual components $\ell_k$ differ in magnitude by several orders of magnitude, training can become unstable or converge slowly.  Consider a concrete example from the IRBC model with $N=10$ countries: at initialization, the Euler equation residual for country~1 might be $\ell_1 \approx 50$, while for country~10 it might be $\ell_{10} \approx 0.05$, a ratio of $10^3$.  With uniform weights, the gradient is dominated by $\nabla \ell_1$, and the optimizer essentially ignores $\ell_{10}$ until $\ell_1$ is nearly converged.  This sequential convergence pattern can be $5$--$10\times$ slower than balanced convergence.
 
 The fundamental difficulty is that the gradient of the total loss $\nabla \ell = \sum_k w_k \nabla \ell_k$ is dominated by the components with the largest $|w_k \nabla \ell_k|$.  Even if all components are equally important for the economic solution, the optimizer cannot ``see'' the small components through the noise of the large ones.
@@ -3910,7 +3972,7 @@ When implementing ReLoBRaLo:
 \item\label{ex:ch4:2} \textbf{[Computational] Bayesian optimization toy problem.}  Implement a Gaussian-process-based BO loop on the 1D function $f(x) = -\sin(3x) - x^2 + 0.7x$ over $x \in [-1,2]$.  How many BO evaluations are typically needed before it matches the best value found by a grid with step size $0.01$?
 \item\label{ex:ch4:3} \textbf{[Core] Hyperband budget allocation.}  For a Hyperband run with maximum resource $R=81$ and $\eta=3$, list the brackets $(n_i, r_i)$ used and the total resource consumed.  Compare with a naive ``train each candidate to $R$'' strategy at fixed candidate count $n_0 = 27$.
 \item\label{ex:ch4:4} \textbf{[Core] Loss balancing.}  In a multi-component PINN loss with three terms of magnitude $10^0$, $10^{-2}$, $10^{-4}$, write down what fixed weights $\lambda_i$ would be needed to equalise their gradient contributions.  Why does this become impractical when the gradients are correlated?
-\item\label{ex:ch4:5} \textbf{[Core] Pareto front geometry.}  Consider the toy two-component loss $\mathcal{L}(\theta;\lambda) = \lambda\,(\theta - a)^2 + (1-\lambda)(\theta - b)^2$ with $\theta \in \mathbb{R}$, $a < b$, and $\lambda \in [0,1]$.  (i)~Solve for the minimizer $\theta^\star(\lambda)$ in closed form.  (ii)~Compute the per-component residuals $\ell_1^\star(\lambda) = (\theta^\star - a)^2$ and $\ell_2^\star(\lambda) = (\theta^\star - b)^2$.  (iii)~Eliminate $\lambda$ to express the Pareto frontier in the $(\ell_1, \ell_2)$ plane and show it is the curve $\sqrt{\ell_1} + \sqrt{\ell_2} = b - a$ for $\ell_1, \ell_2 \ge 0$, hence convex.  (iv)~Sketch the front and identify which point on it corresponds to the equal-weight choice $\lambda = 1/2$.  (v)~In higher-dimensional parameter spaces, explain why nonzero gradient inner products $\langle\nabla \ell_1, \nabla \ell_2\rangle$ make fixed scalar weights fragile.  Contrast ReLoBRaLo's relative-loss progress rule with GradNorm's direct gradient-norm balancing.
+\item\label{ex:ch4:5} \textbf{[Core] Pareto frontier geometry.}  Consider the toy two-component loss $\mathcal{L}(\theta;\lambda) = \lambda\,(\theta - a)^2 + (1-\lambda)(\theta - b)^2$ with $\theta \in \mathbb{R}$, $a < b$, and $\lambda \in [0,1]$.  (i)~Solve for the minimizer $\theta^\star(\lambda)$ in closed form.  (ii)~Compute the per-component residuals $\ell_1^\star(\lambda) = (\theta^\star - a)^2$ and $\ell_2^\star(\lambda) = (\theta^\star - b)^2$.  (iii)~Eliminate $\lambda$ to express the Pareto frontier in the $(\ell_1, \ell_2)$ plane and show it is the curve $\sqrt{\ell_1} + \sqrt{\ell_2} = b - a$ for $\ell_1, \ell_2 \ge 0$, hence convex.  (iv)~Sketch the frontier and identify which point on it corresponds to the equal-weight choice $\lambda = 1/2$.  (v)~In higher-dimensional parameter spaces, explain why nonzero gradient inner products $\langle\nabla \ell_1, \nabla \ell_2\rangle$ make fixed scalar weights fragile.  Contrast ReLoBRaLo's relative-loss progress rule with GradNorm's direct gradient-norm balancing.
 \item\label{ex:ch4:6} \textbf{[Computational] ReLoBRaLo vs.\ GradNorm.}  In notebook \texttt{04\_Loss\_Normalization}, swap the ReLoBRaLo balancer for a GradNorm balancer (\citealt{chen2018gradnorm}; see the chapter for the per-component gradient-norm equalization rule).  Run both on the same multi-scale regression target with components of magnitude $10^0, 10^{-2}, 10^{-4}$.  Report (i)~wall-clock training time per epoch, (ii)~final residual on each component, (iii)~the gradient-balance ratio $\|\nabla\ell_k\|/\sum_j \|\nabla\ell_j\|$ at convergence.  Comment on the cost--benefit trade-off: under what circumstances is the extra per-step cost of GradNorm worth it?
 \item\label{ex:ch4:7} \textbf{[Core] HPO vs.\ full NAS decision.}  You have access to either (a)~a single consumer GPU (RTX 3060, $\sim 12$ GB) or (b)~one A100 ($80$ GB), for one week of compute.  Your search problem is either (i)~a fixed-topology MLP with unknown depth $\in \{1,\ldots,5\}$, width $\in \{32,\ldots,512\}$, activation $\in \{\mathrm{ReLU}, \mathrm{Swish}, \tanh\}$, learning rate (log-uniform), or (ii)~a flexible network that can be MLP / RNN / shallow Transformer with unknown layer connectivity (graph-level NAS).  For each of the four (hardware $\times$ problem) cells, recommend in three to five sentences whether to use Random Search with Successive Halving, Bayesian Optimization, or full graph-level NAS.  Justify by referencing the per-method overhead and search-space size.
 \end{enumerate}
@@ -6884,169 +6946,17 @@ For stationary, low-dimensional problems, finite differences remain fast and rel
 % ============================================================================
 % CHAPTER 9: SURROGATES AND GPs
 % ============================================================================
-\chapter{Deep Surrogate Models and Gaussian Processes}
+\chapter{Gaussian Processes}
 \label{ch:gp}
 
-The DEQNs and PINNs of previous chapters solve a single model configuration at a time, to high accuracy.  This chapter takes a different angle: every method developed below is \emph{supervised regression on the output of an expensive numerical oracle}, where the oracle is queried at modestly many designed inputs and the fitted surrogate then stands in for it everywhere else.  The script uses that move on two distinct oracles.  The first is the structural model itself, evaluated across many parameter or scenario vectors $\theta$ for downstream estimation, uncertainty quantification, and optimal policy design (Chapter~\ref{ch:estimation}, Chapter~\ref{ch:climate}).  The second is the Bellman operator $TV$ at a fixed model, evaluated at many state-space points inside a value-function-iteration loop, for solving high-dimensional dynamic programs (\S\ref{sec:gp_dp}).  Both settings call for the same GP machinery, the same diagnostics, and the same active-learning logic; only the labels change.  A \emph{surrogate} is, in effect, a twenty-first-century lookup table: not a static grid of precomputed answers, but a trained, smooth, differentiable function that interpolates the oracle's output across a high-dimensional space of states and parameters and can be queried in microseconds \citep{chen2026Deep}.  Surrogates produce thousands of evaluations per second, enabling parametric estimation, sensitivity analysis, and uncertainty quantification that would be infeasible if every evaluation required a full numerical solve.  The methodological foundations are the GP textbook of \citet{Rasmussen:2005:GPM:1162254} and the Bayesian-active-learning ideas dating back to \citet{mackay1992information} and \citet{krause2008near}.  Embedding GPs inside dynamic programming was pioneered by \citet{deisenroth2009gaussian} (GPDP) and \citet{engel2005reinforcement} (GP temporal-difference learning); within economics, applications include high-dimensional growth models \citep{SCHEIDEGGER201968}, dynamic incentive problems \citep{rennerscheidegger_2018}, and deep uncertainty quantification for integrated assessment models \citep{friedlDeep2023}.  We also cover Bayesian active learning for optimal training-point selection, sparse approximations \citep{titsias2009variational, hensman2013gaussian} that extend GPs beyond their cubic scaling limit, active subspaces for dimensionality reduction, GP-based value function iteration for dynamic programming, and deep kernel learning for combining neural network feature extraction with GP inference.
-
-\section{Motivation: The Computational Bottleneck}
-
-Every workflow this chapter targets puts an expensive numerical solve inside an outer loop.  For estimation, uncertainty quantification, and optimal policy design, the outer loop runs over a parameter or scenario vector $\theta$ and the inner solve is a full model solution, a Bellman fixed point, a PDE solve, or a Monte Carlo run that costs seconds to hours, repeated at the $10^3$ to $10^6$ outer iterations these tasks demand.
-
-For dynamic programming, the outer loop is the Bellman iteration itself: at iteration $s$ the inner ``solve'' is one evaluation of the operator $(TV^{s-1})(\x)$ at a state $\x$, which itself requires a constrained nonlinear program over controls plus a quadrature over the next-period shock, then a global fit of $V^s$ to those labels (\S\ref{sec:gp_dp_supervised_view}).  In both cases the obstacle is the same: the per-inner-solve cost times the per-outer-iteration count.
-
-The key insight is that since we \emph{own} the structural model, we can generate training data by solving the model on a carefully chosen set of input configurations (a \emph{design of experiments}).  A cheap-to-evaluate function approximator trained on this synthetic dataset, a \emph{surrogate model}, then replaces the expensive original model for all downstream tasks.  Any suitable function approximator can serve as the surrogate; the right choice depends on the dimensionality of the input space and the cost of generating each training point.
-
-\paragraph{Cutting out the outer loop.}  The point of a surrogate is to break this nesting.  One pays a one-time offline cost: pick a design of experiments $\theta^{(1)},\dots,\theta^{(N)}$, solve the model at those $N$ configurations, and fit a surrogate $\phi(s,\theta)$ to the results.  From then on the expensive inner solve is gone, and the estimation, uncertainty-quantification, or policy-search outer loop evaluates a function that costs microseconds and returns exact gradients, so it can run at the $10^3$ to $10^6$ scale those tasks need.  The model is solved at a handful of configurations and the surrogate \emph{interpolates between them}, which is almost always far cheaper than re-solving at every new $\theta$; Figure~\ref{fig:surrogate_outer_loop} contrasts the two workflows.  The surrogate-based SMM estimation of Chapter~\ref{ch:estimation} and the surrogate-then-optimize policy search of Chapter~\ref{ch:climate} are both instances of this move, as is the GP value-function iteration of \S\ref{sec:gp_dp}, where the ``outer loop'' is the Bellman iteration itself.  In the GP-VFI variant the surrogate is refit every Bellman step and the ``offline'' phase becomes a per-iteration update; that is the second of the two oracles announced at the start of the chapter.
-
-\begin{figure}[ht]
-\centering
-\begin{tikzpicture}[
-    box/.style={rectangle, draw=uzhblue, fill=uzhgreylight,
-        text width=3.0cm, align=center, minimum height=0.85cm,
-        font=\footnotesize, rounded corners=2pt, thick},
-    sbox/.style={rectangle, draw=uzhblue, fill=softblue!25,
-        text width=3.0cm, align=center, minimum height=0.7cm,
-        font=\footnotesize, rounded corners=2pt, thick},
-    obox/.style={rectangle, draw=uzhblue, fill=softorange!30,
-        text width=3.0cm, align=center, minimum height=0.7cm,
-        font=\footnotesize, rounded corners=2pt, thick},
-    >=Stealth
-]
-% ---- left panel: direct, nested re-solve ----
-\node[font=\footnotesize\bfseries] (titleL) {Direct: nested re-solve};
-\node[obox, below=0.4cm of titleL] (outerL) {Outer loop: estimation / UQ / policy search};
-\node[box, below=1.15cm of outerL] (solveL) {Solve model: Bellman / PDE / Monte Carlo\\[1pt]{\scriptsize $\sim$\,seconds to hours}};
-\draw[->, thick] (outerL.south) -- node[right=1pt, font=\scriptsize] {for each $\theta$} (solveL.north);
-\draw[->, thick] (solveL.west) to[out=170, in=190] node[left=1pt, font=\scriptsize] {moment / value} (outerL.west);
-\node[below=0.55cm of solveL, font=\scriptsize, text width=3.6cm, align=center] {$10^3$--$10^6$ solves $\Rightarrow$ infeasible};
-% ---- right panel: surrogate, solve once then interpolate ----
-\node[font=\footnotesize\bfseries, right=3.2cm of titleL] (titleR) {Surrogate: solve once, then interpolate};
-\node[font=\scriptsize\itshape, below=0.18cm of titleR] (offl) {offline phase, once:};
-\node[sbox, below=0.18cm of offl] (doe) {Design of experiments $\theta^{(1)},\dots,\theta^{(N)}$};
-\node[sbox, below=0.32cm of doe] (solveN) {Solve model at the $N$ points};
-\node[sbox, below=0.32cm of solveN] (train) {Train surrogate $\phi(s,\theta)$};
-\draw[->, thick] (doe) -- (solveN);
-\draw[->, thick] (solveN) -- (train);
-\node[obox, below=0.7cm of train] (outerR) {Outer loop: estimation / UQ / policy search};
-\node[sbox, below=1.15cm of outerR] (queryR) {Query $\phi(s,\theta)$\\[1pt]{\scriptsize $\sim$\,microseconds, differentiable}};
-\draw[->, thick] (outerR.south) -- node[right=1pt, font=\scriptsize] {for each $\theta$} (queryR.north);
-\draw[->, thick] (queryR.west) to[out=170, in=190] node[left=1pt, font=\scriptsize] {value / loss} (outerR.west);
-\node[below=0.5cm of queryR, font=\scriptsize, text width=3.9cm, align=center] {$\phi$ interpolates between the $N$ solved configurations; downstream cost $\approx 0$};
-\end{tikzpicture}
-\caption{Why surrogates help. \emph{Left}: structural estimation, uncertainty quantification, and optimal policy design are outer loops over a parameter vector $\theta$, and the direct implementation re-solves the full model inside the loop, so the cost scales with the number of outer iterations times the per-solve cost. \emph{Right}: a surrogate moves that solve into a one-time offline phase, solving the model only at a design of experiments and fitting $\phi(s,\theta)$; the outer loop then queries a cheap, differentiable interpolant. The saving grows with both the number of outer iterations and the per-solve cost.  The same picture applies to GP value-function iteration with the outer loop relabeled as the Bellman iteration and the inner solve as one $TV$ evaluation; the offline phase is then replaced by a per-iteration GP refit at modest design size.}
-\label{fig:surrogate_outer_loop}
-\end{figure}
-
-\paragraph{Two surrogate strategies.}  This course covers two complementary approaches:
-
-\begin{enumerate}[itemsep=3pt]
-\item \textbf{Deep neural network (DNN) surrogates} are best suited for \emph{high-dimensional} settings ($d \gg 10$ inputs) where training data can be generated in large quantities, for example when each model solve takes seconds or when closed-form solutions exist.  DNNs scale gracefully with dimensionality, can be trained via mini-batch SGD on millions of samples, and provide exact gradients via automatic differentiation.  \citet{chen2026Deep} formalize this approach and demonstrate speedups of several orders of magnitude for option pricing (the same surrogate-for-finance idea was implemented earlier with adaptive sparse grids by \citet{scheideggertreccani_2018}); \citet{friedlDeep2023} apply it to uncertainty quantification in high-dimensional integrated assessment models.
-
-\item \textbf{Gaussian process (GP) surrogates} are preferable for \emph{intermediate-dimensional} settings ($d \lesssim 10$--$15$) where each training point is numerically expensive, for example solving a full DSGE model at one parameter configuration may take minutes or hours.  GPs are \emph{data-efficient}: the Bayesian posterior extracts maximum information from each observation.  Crucially, the posterior variance provides a built-in uncertainty estimate that can guide \emph{where} to evaluate next, enabling Bayesian Active Learning (BAL) strategies that allocate the computational budget optimally \citep{SCHEIDEGGER201968}.
-\end{enumerate}
-
-\begin{table}[ht]
-\centering
-\small
-\begin{tabular}{@{}p{3.5cm}p{5.0cm}p{5.0cm}@{}}
-\toprule
-& \textbf{DNN surrogate} & \textbf{GP surrogate} \\
-\midrule
-Best for & high-dim.\ ($d \gg 10$), large $N$ & moderate-dim.\ ($d \lesssim 15$), small $N$ \\
-Data efficiency & data-hungry; wants a large training set & data-efficient; informative from a small one \\
-Key advantage & scales to very high $d$ via SGD & built-in UQ and active learning \\
-\bottomrule
-\end{tabular}
-\caption{Two complementary surrogate strategies. DNN surrogates are attractive when the input dimension and available training set are large; GP surrogates are attractive when each simulator call is expensive and calibrated posterior uncertainty is useful for active learning.}
-\label{tab:surrogate_strategy_comparison}
-\end{table}
-
-Table~\ref{tab:surrogate_strategy_comparison} summarizes the main trade-off.  The two approaches are not mutually exclusive: one can use a GP to build an initial low-data surrogate with uncertainty estimates, and later switch to a DNN when more training data becomes available.  A detailed comparison covering computational cost, gradient access, and further trade-offs is given in Section~\ref{sec:gp_vs_dnn} after the GP methodology has been introduced.
-
-\paragraph{Speed gains.}  This is the payoff sketched in Figure~\ref{fig:surrogate_outer_loop}: regardless of whether a DNN or GP is used, once the surrogate is trained the per-iteration cost of the downstream outer loop, estimation, sensitivity analysis, or optimal policy design, collapses to a function evaluation.  \citet{chen2026Deep} report speedups of several orders of magnitude for option pricing, where evaluating the DNN surrogate replaces expensive FFT-based Fourier inversion (their Bates-model benchmark documents two-to-three orders of magnitude over the numerical pricing baseline).  As a rough rule of thumb, the gain scales with the cost of the underlying pricing routine: the orders-of-magnitude gains arise for models requiring a PDE solve (roughly $1$\,ms/eval $\to$ $1$\,$\mu$s/eval through a surrogate) or high-dimensional Monte Carlo, regimes in which $10^3$--$10^4\times$ speedups are typical.  The gains are even larger for gradient computations: while finite-difference gradients require $d+1$ model evaluations (one per parameter), the gradient through the surrogate (autograd for DNNs, closed-form for GPs) requires only a single pass, regardless of the number of parameters.
-
-\section{Pseudo-States: Parameters as ``State'' Variables}
-
-The central innovation of the deep surrogate framework is to treat model parameters $\theta$ as additional ``pseudo-state'' variables:
-\begin{equation}
-\tilde{\x} = \bigl(\underbrace{s_1,\dots,s_n}_{\text{states}},\;\underbrace{\theta_1,\dots,\theta_p}_{\text{parameters}}\bigr) \in \R^{d}, \quad d = n + p.
-\end{equation}
-
-\begin{figure}[ht]
-\centering
-\begin{tikzpicture}[
-    mlstep/.style={rectangle, draw=uzhblue, fill=uzhgreylight,
-        minimum width=2cm, minimum height=0.6cm, font=\footnotesize,
-        rounded corners=2pt, thick}, >=Stealth
-]
-\node[mlstep] (states) {States $s$};
-\node[mlstep, below=0.2cm of states, fill=softorange!30] (params) {Params $\theta$};
-\node[mlstep, right=2cm of states, fill=softblue!30,
-      minimum width=2.2cm, minimum height=1.6cm] (surr) {\large Surrogate $\phi$};
-\node[mlstep, right=2cm of surr] (output) {$y = \phi(\tilde{\x}|\theta_\mathrm{NN})$};
-\draw[->, thick] (states.east) -- ++(0.4,0) |- ([yshift=0.2cm]surr.west);
-\draw[->, thick] (params.east) -- ++(0.4,0) |- ([yshift=-0.2cm]surr.west);
-\draw[->, thick] (surr) -- (output);
-\end{tikzpicture}
-\caption{Pseudo-state surrogate architecture. Economic states $s$ and model parameters $\theta$ are concatenated into the augmented input $\tilde{\x} = (s, \theta)$ and fed to a single approximator $\phi(\tilde{\x}\,|\,\theta_\mathrm{NN})$ with weights $\theta_\mathrm{NN}$, yielding a target quantity $y$ (price, policy, moment) as a continuous, differentiable function of both the state and the parameter vector. After one offline training pass, the surrogate is queried instantly across the parameter space without re-solving the original model.}
-\label{fig:pseudo_state_surrogate}
-\end{figure}
-
-The surrogate is trained once over the full augmented space and can then be queried instantly for any parameter configuration, without re-solving the model.  This is fundamentally different from simply re-running the model: the surrogate provides a continuous, differentiable mapping from parameters to outputs, enabling gradient-based optimization and uncertainty propagation that would be impossible with the original model.  Figure~\ref{fig:pseudo_state_surrogate} sketches this concatenated input.
-
-\citet{scheideggertreccani_2018} achieve the surrogate-for-finance idea with adaptive sparse grids; \citet{friedlDeep2023} apply the surrogate idea to uncertainty quantification in integrated assessment models of climate change; \citet{chen2026Deep} demonstrate speedups of several orders of magnitude for option pricing with the deep-surrogate approach.
-
-\paragraph{Comparison of approximation methods.}  The surrogate approach is one of several function approximation strategies used in computational economics.  Table~\ref{tab:approximation_methods_comparison} situates it relative to alternatives.
-
-\begin{table}[ht]
-\centering
-\small
-\begin{tabular}{@{}l c c c c@{}}
-\toprule
-\textbf{Method} & \textbf{Max dim.} & \textbf{Smoothness} & \textbf{Parametric} & \textbf{Differentiable} \\
-\midrule
-Cartesian grids & $d \leq 5$ & any & no & no \\
-Sparse grids & $d \leq 15$ & $C^k$ needed & no & limited \\
-Chebyshev polynomials & $d \leq 10$ & smooth & yes & yes \\
-DNN surrogate & $d \gg 10$ & any & yes & yes (autograd) \\
-GP surrogate & $d \leq 10$\textsuperscript{$\dagger$} & kernel-dependent & no & yes (closed-form) \\
-\bottomrule
-\multicolumn{5}{l}{\footnotesize $\dagger$\,Can be extended to $d \gg 10$ via active subspace methods \citep{SCHEIDEGGER201968}.}
-\end{tabular}
-\caption{Common approximation methods in computational economics.  Grid and polynomial methods are transparent but become difficult in high dimension; DNN and GP surrogates trade direct grid structure for sample-based learning and repeated fast evaluation.}
-\label{tab:approximation_methods_comparison}
-\end{table}
-
-\subsection{Worked Example: Black--Scholes Surrogate}
-
-To illustrate the surrogate pipeline concretely, consider the European call option pricing problem from Section~\ref{sec:bs_pinn}.  In the PINN approach (Chapter~\ref{ch:pinn}), the network learned the option price by minimizing the Black--Scholes PDE residual; no training data were needed, only the differential equation.  The surrogate approach takes the opposite route: we \emph{generate} training data by evaluating the closed-form Black--Scholes formula at a design of experiments, and train a neural network to interpolate this data.
-
-Specifically, we sample $N$ input tuples $(S_i, t_i, \sigma_i, r_i, K_i)$ from a Latin Hypercube design over the ranges of interest and evaluate the analytical price $V_i = V_\mathrm{BS}(S_i, t_i, \sigma_i, r_i, K_i)$ at each.  The surrogate $\hat{V} = \mathcal{N}_\rho(S, t, \sigma, r, K)$ is then trained via standard supervised learning:
-\begin{equation}
-\ell_\rho = \frac{1}{N}\sum_{i=1}^N \bigl|\mathcal{N}_\rho(S_i, t_i, \sigma_i, r_i, K_i) - V_i\bigr|^2.
-\end{equation}
-Once trained, the surrogate provides instant evaluation at any $(S, t, \sigma, r, K)$ in a single forward pass, instant Greeks ($\Delta$, $\Gamma$, Vega, etc.)\ via a single backward pass, and gradient-based implied volatility calibration, none of which require re-solving the PDE.  The key contrast with the PINN is that the surrogate requires \emph{solved} training data (here from the analytical formula; in general, from a numerical solver), but in return it treats the model parameters $(\sigma, r, K)$ as inputs, enabling re-evaluation across the entire parameter space without re-solving.  This is precisely the ``pseudo-state'' idea of the previous section.  See the companion notebook \texttt{01\_Surrogate\_Primer.ipynb} for the full implementation.
+\S\ref{sec:nas_gp_primer} introduced Gaussian processes at the picture level, with just enough machinery to follow the Bayesian-optimization argument of Chapter~\ref{ch:nas}: the definition $f(\x) \sim \mathcal{GP}(\mu(\x), k(\x, \x'))$, the squared-exponential kernel \eqref{eq:nas_kse}, and the closed-form posterior mean and variance \eqref{eq:nas_gp_mean}--\eqref{eq:nas_gp_var}.  Those formulas took the kernel and its hyperparameters $(\ell, \sigma_f, \sigma_y)$ as given.  The present chapter removes both shortcuts and develops the full machinery: it samples whole functions from the GP \emph{prior} (\S\ref{sec:gp_regression}), learns $(\ell, \sigma_f, \sigma_y)$ from data via the marginal-likelihood Occam's razor (\S\ref{sec:gp_kernels}), expands the kernel zoo beyond the squared-exponential to Mat\'ern and composite kernels (\S\ref{sec:matern}), uses the posterior variance to choose where to evaluate next via Bayesian Active Learning (\S\ref{sec:bal}), scales the whole machinery to high-dimensional inputs through active subspaces (\S\ref{sec:active_subspaces}), and embeds GPs inside value-function iteration for high-dimensional dynamic programming (\S\ref{sec:gp_dp}).  Two applications-driven chapters then put the machinery to work: structural estimation via surrogate-driven SMM (Chapter~\ref{ch:estimation}) and climate-policy uncertainty quantification (Chapter~\ref{ch:climate}).  Methodological foundations are the GP textbook of \citet{Rasmussen:2005:GPM:1162254} and the Bayesian-active-learning ideas dating back to \citet{mackay1992information} and \citet{krause2008near}.  Embedding GPs inside dynamic programming was pioneered by \citet{deisenroth2009gaussian} (GPDP) and \citet{engel2005reinforcement} (GP temporal-difference learning); within economics, applications include high-dimensional growth models \citep{SCHEIDEGGER201968}, dynamic incentive problems \citep{rennerscheidegger_2018}, and deep uncertainty quantification for integrated assessment models \citep{friedlDeep2023}.  Sparse approximations \citep{titsias2009variational, hensman2013gaussian} extend GPs beyond their cubic scaling limit; deep kernel learning combines neural-network feature extraction with GP inference and closes the chapter.
 
 \section{Gaussian Process Regression}
+\label{sec:gp_regression}
 
-A Gaussian Process (GP) is a nonparametric Bayesian approach to function approximation \citep{Rasmussen:2005:GPM:1162254} that is particularly well suited to settings where data is scarce but uncertainty quantification is essential.  Intuitively, a GP defines a probability distribution over functions whose support and sample-path regularity are determined by the covariance kernel: an RBF kernel implies extremely smooth (in fact, infinitely mean-square differentiable) sample paths, while a Mat\'ern kernel with small smoothness parameter implies rougher paths.  Upon observing data, Bayes' rule yields a posterior distribution that concentrates around functions consistent with the observations while maintaining calibrated uncertainty elsewhere.
+\paragraph{Sampling from the GP prior.}  Recall from \S\ref{sec:nas_gp_primer} that for any finite set of test inputs $\x_1, \ldots, \x_n$, the function values $\bm{f} = (f(\x_1), \ldots, f(\x_n))^\top$ are jointly Gaussian with prior mean $\bm{\mu}$ (the entries $\mu(\x_i)$) and covariance matrix $K_{ij} = k(\x_i, \x_j)$.  To draw a function from the GP prior at those test inputs, evaluate $K$, compute its Cholesky decomposition $K = L L^\top$, draw $\bm{u} \sim \mathcal{N}(\bm{0}, I)$, and set $\bm{f} = \bm{\mu} + L \bm{u}$.  The resulting paths have the smoothness, amplitude, and length scale dictated entirely by the kernel.
 
-A GP is fully specified by a mean function $\mu(\x)$ and a covariance (kernel) function $k(\x, \x')$:
-\begin{equation}
-f(\x) \sim \mathcal{GP}\bigl(\mu(\x), k(\x, \x')\bigr).
-\end{equation}
-This means that for any finite collection of test points $\x_1, \ldots, \x_n$, the function values $\bm{f} = (f(\x_1), \ldots, f(\x_n))^\top$ are jointly Gaussian:
-\begin{equation}
-\bm{f} \sim \mathcal{N}(\bm{\mu},\, K), \qquad \text{where } K_{ij} = k(\x_i, \x_j).
-\end{equation}
-To sample a function from the GP prior, one evaluates the kernel matrix $K$ at a grid of test points, computes its Cholesky decomposition $K = LL^\top$, draws $\bm{u} \sim \mathcal{N}(\bm{0}, I)$, and forms $\bm{f} = \bm{\mu} + L\bm{u}$.  This procedure generates smooth random functions whose properties (smoothness, amplitude, length scale) are controlled entirely by the kernel choice.
-
-The squared exponential (RBF) kernel is the most widely used choice; we briefly preview the practical recommendation here so the reader can keep it in mind through the derivations: in economic applications, the target function (value, policy, equilibrium price) often has \emph{kinks} from occasionally-binding constraints, and the Mat\'ern-$3/2$ kernel introduced in \S\ref{sec:matern} below is then a better default than RBF, since it does not oversmooth at non-differentiable features.  The RBF kernel remains the right default when the target is genuinely smooth (e.g.\ in the unconstrained interior of an ergodic set).
-\begin{equation}
-k_\mathrm{SE}(\x, \x') = \sigma_f^2 \exp\!\left(-\frac{\|\x - \x'\|^2}{2\ell^2}\right),
-\end{equation}
-where $\ell$ is the length scale (controlling smoothness) and $\sigma_f^2$ is the signal variance.
+\paragraph{Kernel choice.}  The squared-exponential kernel \eqref{eq:nas_kse} of \S\ref{sec:nas_gp_primer} remains the right default for genuinely smooth targets, e.g.\ in the unconstrained interior of an ergodic set.  In economic applications, however, the target function (value, policy, equilibrium price) often has \emph{kinks} from occasionally binding constraints, and the Mat\'ern-$3/2$ kernel introduced in \S\ref{sec:matern} below is then a better default than RBF, since it does not oversmooth at non-differentiable features.
 
 \begin{figure}[ht]
 \centering
@@ -7071,14 +6981,9 @@ where $\ell$ is the length scale (controlling smoothness) and $\sigma_f^2$ is th
 \label{fig:rbf_length_scale}
 \end{figure}
 
-Figure~\ref{fig:rbf_length_scale} shows how the RBF length scale controls the distance over which observations remain informative.  Given training data $\mathcal{D} = \{(\x_i, y_i)\}_{i=1}^n$, let $\bm{\mu}_X = (\mu(\x_1),\ldots,\mu(\x_n))^\top$, $\mu_*=\mu(\x_*)$, and $K_y = K + \sigma_y^2 I$.  The GP posterior at a test point $\x_*$ has a closed-form latent-function mean and variance:
-\begin{align}
-\bar{f}_* &= \mu_* + \bm{k}_*^\top K_y^{-1}(\bm{y}-\bm{\mu}_X), \label{eq:gp_mean}\\
-\sigma_{f,*}^2 &= k(\x_*, \x_*) - \bm{k}_*^\top K_y^{-1} \bm{k}_*, \label{eq:gp_var}
-\end{align}
-where $K$ is the kernel matrix, $\bm{k}_*$ is the vector of kernel evaluations between the test point and the training inputs, and $\sigma_y^2$ is the observation noise variance.  For a noisy future observation $y_*$, the predictive variance is $\sigma_{y,*}^2 = \sigma_{f,*}^2 + \sigma_y^2$.  The common zero-mean formulas are recovered by centering outputs or setting $\mu \equiv 0$.
+Figure~\ref{fig:rbf_length_scale} shows how the RBF length scale controls the distance over which observations remain informative.  For any training dataset $\mathcal{D} = \{(\x_i, y_i)\}_{i=1}^n$, the GP posterior at a test point $\x_*$ has the closed-form mean $\bar{f}_*$ and variance $\sigma_{f,*}^2$ stated in \eqref{eq:nas_gp_mean}--\eqref{eq:nas_gp_var}, with $K_{ij} = k(\x_i,\x_j)$ the kernel matrix on training inputs, $K_y = K + \sigma_y^2 I$ its noise-augmented version, $\bm{\mu}_X$ the prior-mean vector at training inputs, and $\bm{k}_*$ the cross-covariance whose $i$-th entry is $k(\x_*, \x_i)$.  For a noisy future observation $y_*$ the predictive variance is $\sigma_{y,*}^2 = \sigma_{f,*}^2 + \sigma_y^2$, and the common zero-mean formulas are recovered by centering outputs or setting $\mu \equiv 0$.
 
-\paragraph{A hand-traceable 1D example.}  To make~\eqref{eq:gp_mean}--\eqref{eq:gp_var} concrete, take $f(x) = \sin x$, observe $f$ noiselessly at $x_1 = 0$ and $x_2 = \pi$ (so $y_1 = y_2 = 0$), and query at $x_\star = \pi/2$.  Use the kernel $k(x, x') = \exp\!\bigl(-(x - x')^2/2\bigr)$ and a tiny noise floor $\sigma_y^2 = 10^{-6}$ for numerical stability.  The training kernel matrix is
+\paragraph{A hand-traceable 1D example.}  To make~\eqref{eq:nas_gp_mean}--\eqref{eq:nas_gp_var} concrete, take $f(x) = \sin x$, observe $f$ noiselessly at $x_1 = 0$ and $x_2 = \pi$ (so $y_1 = y_2 = 0$), and query at $x_\star = \pi/2$.  Use the kernel $k(x, x') = \exp\!\bigl(-(x - x')^2/2\bigr)$ and a tiny noise floor $\sigma_y^2 = 10^{-6}$ for numerical stability.  The training kernel matrix is
 \[
 K + \sigma_y^2 I \;=\;
 \begin{pmatrix} 1 & e^{-\pi^2/2} \\ e^{-\pi^2/2} & 1 \end{pmatrix}
@@ -7092,7 +6997,7 @@ where the off-diagonal $e^{-\pi^2/2} \approx 0.00719$ is small because $0$ and $
 \;\approx\;
 \begin{pmatrix} 0.2910 \\ 0.2910 \end{pmatrix},
 \]
-since $x_\star = \pi/2$ is equidistant from $0$ and $\pi$.  Because $\bm y = (0,0)^\top$, the posterior mean~\eqref{eq:gp_mean} is exactly $\bar f_\star = 0$.  For the variance,
+since $x_\star = \pi/2$ is equidistant from $0$ and $\pi$.  Because $\bm y = (0,0)^\top$, the posterior mean~\eqref{eq:nas_gp_mean} is exactly $\bar f_\star = 0$.  For the variance,
 \[
 (K + \sigma_y^2 I)^{-1} \bm k_\star \;\approx\; \tfrac{0.2910}{1 + 0.00719}\,(1, 1)^\top \;\approx\; (0.2890, 0.2890)^\top,
 \]
@@ -7968,10 +7873,10 @@ Reference              & \citet{Rasmussen:2005:GPM:1162254} & \citet{gal2016drop
 % ============================================================================
 % CHAPTER 10: STRUCTURAL ESTIMATION
 % ============================================================================
-\chapter{Structural Estimation via SMM}
+\chapter{Deep Surrogate Models and Structural Estimation}
 \label{ch:estimation}
 
-With the surrogate machinery of Chapter~\ref{ch:gp} in hand, we now turn to one of its most important applications: \emph{structural estimation}.  The chapter's companion notebooks use the Brock--Mirman growth model to estimate first the productivity persistence parameter $\varrho$, and then the pair $\theta=(\beta,\varrho)$, by Simulated Method of Moments (SMM).  The key computational idea is the same in both cases: train one policy surrogate with the structural parameter as an additional input, then reuse that trained network inside the estimator instead of re-solving the dynamic program at every candidate parameter value.  The econometric foundations are \citet{mcfadden1989method}, \citet{pakes1989simulation}, \citet{lee1991simulation}, \citet{duffie1993simulated}, and \citet{gourieroux1993indirect}; the surrogate logic follows the deep-surrogate and GP-surrogate pipelines in \citet{chen2026Deep} and \citet{SCHEIDEGGER201968}.  Recent applications of the same surrogate-then-estimate move include heterogeneous-agent estimation \citep{kase2022estimating}, search-and-matching \citep{payne2025deepsam}, and climate-economy policy design and uncertainty quantification \citep{kubler2025using, friedlDeep2023}.
+With the GP machinery of Chapter~\ref{ch:gp} in hand, this chapter builds the practical surrogate-driven workflows that make structural estimation tractable at research scale.  We start with the \emph{deep-surrogate pseudo-state pattern}, in which the structural parameter $\theta$ is concatenated into the network input so that a single trained policy net replaces one full model re-solve per $\theta$ with one forward pass.  We illustrate the pattern on a Black--Scholes example, then put it to work for Simulated Method of Moments (SMM) on the Brock--Mirman growth model, layer a Gaussian-process surrogate on top of the moment map for high-throughput bootstrap and Bayesian post-processing, and close with the natural extensions to indirect inference and simulation-based inference.  The econometric foundations are \citet{mcfadden1989method}, \citet{pakes1989simulation}, \citet{lee1991simulation}, \citet{duffie1993simulated}, and \citet{gourieroux1993indirect}; the surrogate logic follows the deep-surrogate and GP-surrogate pipelines in \citet{chen2026Deep} and \citet{SCHEIDEGGER201968}.  Recent applications of the same surrogate-then-estimate move include heterogeneous-agent estimation \citep{kase2022estimating}, search-and-matching \citep{payne2025deepsam}, and climate-economy policy design and uncertainty quantification \citep{kubler2025using, friedlDeep2023}.
 
 Before the current deep-learning boom, neural networks were already studied as nonlinear \emph{sieve} estimators in econometrics, with a rigorous asymptotic theory developed in parallel with the approximation-theory results of Chapter~\ref{ch:intro}.  \citet{chenwhite1999improved} establish convergence rates and asymptotic normality for single-hidden-layer network estimators, and \citet{chen2007sieve} integrates that line into the broader sieve treatment of semi-nonparametric models defined by conditional moment restrictions, which is precisely the structural-estimation setting of this chapter.  The modern continuation of this program uses deep architectures for efficient estimation in nonparametric instrumental-variable models \citep{chenChristensenKankanala2021npiv}.  The pipelines developed below should be read as the implementation-side companion to that theoretical tradition: the sieve literature tells us \emph{when} neural-network estimators consistently identify deep structural parameters; the surrogate pipelines tell us \emph{how} to make the resulting estimators cheap enough to deploy at research scale.
 
@@ -7981,6 +7886,145 @@ Before the current deep-learning boom, neural networks were already studied as n
 \item \textbf{Two-layer surrogates.}  Stack a Gaussian-process surrogate on top of the policy net (\S\ref{sec:smm_gp_moments}): Layer 1 (the policy net) turns ``one re-solve per $\theta$'' into ``one forward simulation per $\theta$'', and Layer 2 (a GP per moment) turns ``one forward simulation per $\theta$'' into ``one GP posterior per $\theta$''.  The result is a microseconds-per-call moment map, enabling bootstrap, Bayesian post-processing, and policy search at scale.
 \end{enumerate}
 \end{keyinsightbox}
+
+\section{Motivation: The Computational Bottleneck}
+
+Every workflow this chapter targets puts an expensive numerical solve inside an outer loop.  For estimation, uncertainty quantification, and optimal policy design, the outer loop runs over a parameter or scenario vector $\theta$ and the inner solve is a full model solution, a Bellman fixed point, a PDE solve, or a Monte Carlo run that costs seconds to hours, repeated at the $10^3$ to $10^6$ outer iterations these tasks demand.
+
+For dynamic programming, the outer loop is the Bellman iteration itself: at iteration $s$ the inner ``solve'' is one evaluation of the operator $(TV^{s-1})(\x)$ at a state $\x$, which itself requires a constrained nonlinear program over controls plus a quadrature over the next-period shock, then a global fit of $V^s$ to those labels (\S\ref{sec:gp_dp_supervised_view} of Chapter~\ref{ch:gp}).  In both cases the obstacle is the same: the per-inner-solve cost times the per-outer-iteration count.
+
+The key insight is that since we \emph{own} the structural model, we can generate training data by solving the model on a carefully chosen set of input configurations (a \emph{design of experiments}).  A cheap-to-evaluate function approximator trained on this synthetic dataset, a \emph{surrogate model}, then replaces the expensive original model for all downstream tasks.  Any suitable function approximator can serve as the surrogate; the right choice depends on the dimensionality of the input space and the cost of generating each training point.
+
+\paragraph{Cutting out the outer loop.}  The point of a surrogate is to break this nesting.  One pays a one-time offline cost: pick a design of experiments $\theta^{(1)},\dots,\theta^{(N)}$, solve the model at those $N$ configurations, and fit a surrogate $\phi(s,\theta)$ to the results.  From then on the expensive inner solve is gone, and the estimation, uncertainty-quantification, or policy-search outer loop evaluates a function that costs microseconds and returns exact gradients, so it can run at the $10^3$ to $10^6$ scale those tasks need.  The model is solved at a handful of configurations and the surrogate \emph{interpolates between them}, which is almost always far cheaper than re-solving at every new $\theta$; Figure~\ref{fig:surrogate_outer_loop} contrasts the two workflows.  The surrogate-based SMM estimation developed below and the surrogate-then-optimize policy search of Chapter~\ref{ch:climate} are both instances of this move, as is the GP value-function iteration of \S\ref{sec:gp_dp} in Chapter~\ref{ch:gp}, where the ``outer loop'' is the Bellman iteration itself; there the surrogate is refit every Bellman step and the ``offline'' phase becomes a per-iteration update.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+    box/.style={rectangle, draw=uzhblue, fill=uzhgreylight,
+        text width=3.0cm, align=center, minimum height=0.85cm,
+        font=\footnotesize, rounded corners=2pt, thick},
+    sbox/.style={rectangle, draw=uzhblue, fill=softblue!25,
+        text width=3.0cm, align=center, minimum height=0.7cm,
+        font=\footnotesize, rounded corners=2pt, thick},
+    obox/.style={rectangle, draw=uzhblue, fill=softorange!30,
+        text width=3.0cm, align=center, minimum height=0.7cm,
+        font=\footnotesize, rounded corners=2pt, thick},
+    >=Stealth
+]
+% ---- left panel: direct, nested re-solve ----
+\node[font=\footnotesize\bfseries] (titleL) {Direct: nested re-solve};
+\node[obox, below=0.4cm of titleL] (outerL) {Outer loop: estimation / UQ / policy search};
+\node[box, below=1.15cm of outerL] (solveL) {Solve model: Bellman / PDE / Monte Carlo\\[1pt]{\scriptsize $\sim$\,seconds to hours}};
+\draw[->, thick] (outerL.south) -- node[right=1pt, font=\scriptsize] {for each $\theta$} (solveL.north);
+\draw[->, thick] (solveL.west) to[out=170, in=190] node[left=1pt, font=\scriptsize] {moment / value} (outerL.west);
+\node[below=0.55cm of solveL, font=\scriptsize, text width=3.6cm, align=center] {$10^3$--$10^6$ solves $\Rightarrow$ infeasible};
+% ---- right panel: surrogate, solve once then interpolate ----
+\node[font=\footnotesize\bfseries, right=2.4cm of titleL] (titleR) {Surrogate: solve once, then interpolate};
+\node[font=\scriptsize\itshape, below=0.18cm of titleR] (offl) {offline phase, once:};
+\node[sbox, below=0.18cm of offl] (doe) {Design of experiments $\theta^{(1)},\dots,\theta^{(N)}$};
+\node[sbox, below=0.32cm of doe] (solveN) {Solve model at the $N$ points};
+\node[sbox, below=0.32cm of solveN] (train) {Train surrogate $\phi(s,\theta)$};
+\draw[->, thick] (doe) -- (solveN);
+\draw[->, thick] (solveN) -- (train);
+\node[obox, below=0.7cm of train] (outerR) {Outer loop: estimation / UQ / policy search};
+\node[sbox, below=1.15cm of outerR] (queryR) {Query $\phi(s,\theta)$\\[1pt]{\scriptsize $\sim$\,microseconds, differentiable}};
+\draw[->, thick] (outerR.south) -- node[right=1pt, font=\scriptsize] {for each $\theta$} (queryR.north);
+\draw[->, thick] (queryR.west) to[out=170, in=190] node[left=1pt, font=\scriptsize] {value / loss} (outerR.west);
+\node[below=0.5cm of queryR, font=\scriptsize, text width=3.9cm, align=center] {$\phi$ interpolates between the $N$ solved configurations; downstream cost $\approx 0$};
+\end{tikzpicture}
+\caption{Why surrogates help. \emph{Left}: structural estimation, uncertainty quantification, and optimal policy design are outer loops over a parameter vector $\theta$, and the direct implementation re-solves the full model inside the loop, so the cost scales with the number of outer iterations times the per-solve cost. \emph{Right}: a surrogate moves that solve into a one-time offline phase, solving the model only at a design of experiments and fitting $\phi(s,\theta)$; the outer loop then queries a cheap, differentiable interpolant. The saving grows with both the number of outer iterations and the per-solve cost.  The same picture applies to GP value-function iteration with the outer loop relabeled as the Bellman iteration and the inner solve as one $TV$ evaluation; the offline phase is then replaced by a per-iteration GP refit at modest design size.}
+\label{fig:surrogate_outer_loop}
+\end{figure}
+
+\paragraph{Two surrogate strategies.}  This course covers two complementary approaches:
+
+\begin{enumerate}[itemsep=3pt]
+\item \textbf{Deep neural network (DNN) surrogates} are best suited for \emph{high-dimensional} settings ($d \gg 10$ inputs) where training data can be generated in large quantities, for example when each model solve takes seconds or when closed-form solutions exist.  DNNs scale gracefully with dimensionality, can be trained via mini-batch SGD on millions of samples, and provide exact gradients via automatic differentiation.  \citet{chen2026Deep} formalize this approach and demonstrate speedups of several orders of magnitude for option pricing (the same surrogate-for-finance idea was implemented earlier with adaptive sparse grids by \citet{scheideggertreccani_2018}); \citet{friedlDeep2023} apply it to uncertainty quantification in high-dimensional integrated assessment models.
+
+\item \textbf{Gaussian process (GP) surrogates} are preferable for \emph{intermediate-dimensional} settings ($d \lesssim 10$--$15$) where each training point is numerically expensive, for example solving a full DSGE model at one parameter configuration may take minutes or hours.  GPs are \emph{data-efficient}: the Bayesian posterior extracts maximum information from each observation.  Crucially, the posterior variance provides a built-in uncertainty estimate that can guide \emph{where} to evaluate next, enabling Bayesian Active Learning (BAL) strategies that allocate the computational budget optimally \citep{SCHEIDEGGER201968}.
+\end{enumerate}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabular}{@{}p{3.5cm}p{5.0cm}p{5.0cm}@{}}
+\toprule
+& \textbf{DNN surrogate} & \textbf{GP surrogate} \\
+\midrule
+Best for & high-dim.\ ($d \gg 10$), large $N$ & moderate-dim.\ ($d \lesssim 15$), small $N$ \\
+Data efficiency & data-hungry; wants a large training set & data-efficient; informative from a small one \\
+Key advantage & scales to very high $d$ via SGD & built-in UQ and active learning \\
+\bottomrule
+\end{tabular}
+\caption{Two complementary surrogate strategies. DNN surrogates are attractive when the input dimension and available training set are large; GP surrogates are attractive when each simulator call is expensive and calibrated posterior uncertainty is useful for active learning.}
+\label{tab:surrogate_strategy_comparison}
+\end{table}
+
+Table~\ref{tab:surrogate_strategy_comparison} summarizes the main trade-off.  The two approaches are not mutually exclusive: one can use a GP to build an initial low-data surrogate with uncertainty estimates, and later switch to a DNN when more training data becomes available.  A detailed comparison covering computational cost, gradient access, and further trade-offs is given in Section~\ref{sec:gp_vs_dnn} of Chapter~\ref{ch:gp}, where it sits naturally alongside the GP machinery itself.
+
+\paragraph{Speed gains.}  This is the payoff sketched in Figure~\ref{fig:surrogate_outer_loop}: regardless of whether a DNN or GP is used, once the surrogate is trained the per-iteration cost of the downstream outer loop, estimation, sensitivity analysis, or optimal policy design, collapses to a function evaluation.  \citet{chen2026Deep} report speedups of several orders of magnitude for option pricing, where evaluating the DNN surrogate replaces expensive FFT-based Fourier inversion (their Bates-model benchmark documents two-to-three orders of magnitude over the numerical pricing baseline).  As a rough rule of thumb, the gain scales with the cost of the underlying pricing routine: the orders-of-magnitude gains arise for models requiring a PDE solve (roughly $1$\,ms/eval $\to$ $1$\,$\mu$s/eval through a surrogate) or high-dimensional Monte Carlo, regimes in which $10^3$--$10^4\times$ speedups are typical.  The gains are even larger for gradient computations: while finite-difference gradients require $d+1$ model evaluations (one per parameter), the gradient through the surrogate (autograd for DNNs, closed-form for GPs) requires only a single pass, regardless of the number of parameters.
+
+\section{Pseudo-States: Parameters as ``State'' Variables}
+
+The central innovation of the deep surrogate framework is to treat model parameters $\theta$ as additional ``pseudo-state'' variables:
+\begin{equation}
+\tilde{\x} = \bigl(\underbrace{s_1,\dots,s_n}_{\text{states}},\;\underbrace{\theta_1,\dots,\theta_p}_{\text{parameters}}\bigr) \in \R^{d}, \quad d = n + p.
+\end{equation}
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+    mlstep/.style={rectangle, draw=uzhblue, fill=uzhgreylight,
+        minimum width=2cm, minimum height=0.6cm, font=\footnotesize,
+        rounded corners=2pt, thick}, >=Stealth
+]
+\node[mlstep] (states) {States $s$};
+\node[mlstep, below=0.2cm of states, fill=softorange!30] (params) {Params $\theta$};
+\node[mlstep, right=2cm of states, fill=softblue!30,
+      minimum width=2.2cm, minimum height=1.6cm] (surr) {\large Surrogate $\phi$};
+\node[mlstep, right=2cm of surr] (output) {$y = \phi(\tilde{\x}|\theta_\mathrm{NN})$};
+\draw[->, thick] (states.east) -- ++(0.4,0) |- ([yshift=0.2cm]surr.west);
+\draw[->, thick] (params.east) -- ++(0.4,0) |- ([yshift=-0.2cm]surr.west);
+\draw[->, thick] (surr) -- (output);
+\end{tikzpicture}
+\caption{Pseudo-state surrogate architecture. Economic states $s$ and model parameters $\theta$ are concatenated into the augmented input $\tilde{\x} = (s, \theta)$ and fed to a single approximator $\phi(\tilde{\x}\,|\,\theta_\mathrm{NN})$ with weights $\theta_\mathrm{NN}$, yielding a target quantity $y$ (price, policy, moment) as a continuous, differentiable function of both the state and the parameter vector. After one offline training pass, the surrogate is queried instantly across the parameter space without re-solving the original model.}
+\label{fig:pseudo_state_surrogate}
+\end{figure}
+
+The surrogate is trained once over the full augmented space and can then be queried instantly for any parameter configuration, without re-solving the model.  This is fundamentally different from simply re-running the model: the surrogate provides a continuous, differentiable mapping from parameters to outputs, enabling gradient-based optimization and uncertainty propagation that would be impossible with the original model.  Figure~\ref{fig:pseudo_state_surrogate} sketches this concatenated input.
+
+\citet{scheideggertreccani_2018} achieve the surrogate-for-finance idea with adaptive sparse grids; \citet{friedlDeep2023} apply the surrogate idea to uncertainty quantification in integrated assessment models of climate change; \citet{chen2026Deep} demonstrate speedups of several orders of magnitude for option pricing with the deep-surrogate approach.
+
+\paragraph{Comparison of approximation methods.}  The surrogate approach is one of several function approximation strategies used in computational economics.  Table~\ref{tab:approximation_methods_comparison} situates it relative to alternatives.
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabular}{@{}l c c c c@{}}
+\toprule
+\textbf{Method} & \textbf{Max dim.} & \textbf{Smoothness} & \textbf{Parametric} & \textbf{Differentiable} \\
+\midrule
+Cartesian grids & $d \leq 5$ & any & no & no \\
+Sparse grids & $d \leq 15$ & $C^k$ needed & no & limited \\
+Chebyshev polynomials & $d \leq 10$ & smooth & yes & yes \\
+DNN surrogate & $d \gg 10$ & any & yes & yes (autograd) \\
+GP surrogate & $d \leq 10$\textsuperscript{$\dagger$} & kernel-dependent & no & yes (closed-form) \\
+\bottomrule
+\multicolumn{5}{l}{\footnotesize $\dagger$\,Can be extended to $d \gg 10$ via active subspace methods \citep{SCHEIDEGGER201968}.}
+\end{tabular}
+\caption{Common approximation methods in computational economics.  Grid and polynomial methods are transparent but become difficult in high dimension; DNN and GP surrogates trade direct grid structure for sample-based learning and repeated fast evaluation.}
+\label{tab:approximation_methods_comparison}
+\end{table}
+
+\subsection{Worked Example: Black--Scholes Surrogate}
+
+To illustrate the surrogate pipeline concretely, consider the European call option pricing problem from Section~\ref{sec:bs_pinn}.  In the PINN approach (Chapter~\ref{ch:pinn}), the network learned the option price by minimizing the Black--Scholes PDE residual; no training data were needed, only the differential equation.  The surrogate approach takes the opposite route: we \emph{generate} training data by evaluating the closed-form Black--Scholes formula at a design of experiments, and train a neural network to interpolate this data.
+
+Specifically, we sample $N$ input tuples $(S_i, t_i, \sigma_i, r_i, K_i)$ from a Latin Hypercube design over the ranges of interest and evaluate the analytical price $V_i = V_\mathrm{BS}(S_i, t_i, \sigma_i, r_i, K_i)$ at each.  The surrogate $\hat{V} = \mathcal{N}_\rho(S, t, \sigma, r, K)$ is then trained via standard supervised learning:
+\begin{equation}
+\ell_\rho = \frac{1}{N}\sum_{i=1}^N \bigl|\mathcal{N}_\rho(S_i, t_i, \sigma_i, r_i, K_i) - V_i\bigr|^2.
+\end{equation}
+Once trained, the surrogate provides instant evaluation at any $(S, t, \sigma, r, K)$ in a single forward pass, instant Greeks ($\Delta$, $\Gamma$, Vega, etc.)\ via a single backward pass, and gradient-based implied volatility calibration, none of which require re-solving the PDE.  The key contrast with the PINN is that the surrogate requires \emph{solved} training data (here from the analytical formula; in general, from a numerical solver), but in return it treats the model parameters $(\sigma, r, K)$ as inputs, enabling re-evaluation across the entire parameter space without re-solving.  This is precisely the ``pseudo-state'' idea of the previous section.  See the companion notebook \texttt{01\_Surrogate\_Primer.ipynb} for the full implementation.
 
 \section{Brock--Mirman with Parameters as Pseudo-States}
 
@@ -10235,7 +10279,7 @@ Let $\ell_i^{(t)}$ have magnitude $L_i \in \{10^0, 10^{-2}, 10^{-4}\}$ and per-c
 
 The scheme breaks down when the gradients are correlated: $\langle \nabla\ell_i, \nabla\ell_j\rangle \neq 0$ means that scaling up $\lambda_3$ to ``boost'' $\ell_3$ also moves $\theta$ along the $\nabla\ell_1$ direction, changing $\ell_1$.  The ``equal contribution'' targeted by the fixed weights is no longer a fixed point: each parameter update changes the local gradient geometry, and weights tuned at one iteration become wrong at the next.  Adaptive schemes (ReLoBRaLo, GradNorm) re-tune the $\lambda_i$ at every step, recovering the equalisation in a way that fixed weights cannot.
 
-\paragraph{Exercise~\ref{ex:ch4:5} (statement: p.~\pageref{ex:ch4:5}): Pareto front geometry.}
+\paragraph{Exercise~\ref{ex:ch4:5} (statement: p.~\pageref{ex:ch4:5}): Pareto frontier geometry.}
 \emph{(i)} Differentiate $\mathcal{L}(\theta;\lambda) = \lambda(\theta-a)^2 + (1-\lambda)(\theta-b)^2$ in $\theta$ and set to zero: $2\lambda(\theta - a) + 2(1-\lambda)(\theta - b) = 0$, hence
 \[
    \theta^\star(\lambda) \;=\; \lambda a + (1-\lambda) b.

@@ -7,7 +7,7 @@ A toolkit of cheap, differentiable approximations for expensive simulators: deep
 > 📑 **Slides:** [lecture_14_surrogates_and_gps.pdf](slides/lecture_14_surrogates_and_gps.pdf) (figures under [`slides/fig/`](slides/fig/))  
 > 📓 **Notebooks:** [start here](code/lecture_14_01_Surrogate_Primer.ipynb) (9 in [`code/`](code/))  
 > 📚 **Further reading:** [curated list](../../readings/links_by_lecture/lecture_14.md)  
-> 📖 **Script:** §9.1-9.2 (Deep surrogates), §9.3-9.6 (GPs and Bayesian active learning), §9.7 (Active subspaces), §9.8 (GP value-function iteration), §9.9 (Deep kernels), §9.10 (GPs among Bayesian cousins)
+> 📖 **Script:** §10.1-10.2 (Deep surrogates, pseudo-states, Black-Scholes worked example), §9.1-9.3 (GP regression, kernels, Bayesian active learning), §9.4 (GPs vs.\ DNNs), §9.5 (Active subspaces), §9.6 (GP value-function iteration), §9.7 (Deep kernels), §9.8 (GPs among Bayesian cousins)
 
 ## What this lecture covers
 
@@ -48,7 +48,7 @@ After this lecture you can:
 
 ## In the lecture script
 
-§9.1-9.2 (Deep surrogates), §9.3-9.6 (GPs and Bayesian active learning), §9.7 (Active subspaces), §9.8 (GP value-function iteration), §9.9 (Deep kernels), §9.10 (GPs among Bayesian cousins). The full chapter map is in [`script_to_lectures.md`](../../lecture_script/script_to_lectures.md).
+§10.1-10.2 (Deep surrogates, pseudo-states, Black-Scholes worked example), §9.1-9.3 (GP regression, kernels, Bayesian active learning), §9.4 (GPs vs. DNNs), §9.5 (Active subspaces), §9.6 (GP value-function iteration), §9.7 (Deep kernels), §9.8 (GPs among Bayesian cousins). The full chapter map is in [`script_to_lectures.md`](../../lecture_script/script_to_lectures.md).
 
 ## Readings
 
