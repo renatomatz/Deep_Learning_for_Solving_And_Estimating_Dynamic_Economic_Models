@@ -241,6 +241,19 @@ Main dependencies: NumPy, SciPy, pandas, Matplotlib, scikit-learn,
 TensorFlow ≥ 2.15, PyTorch ≥ 2.0, JAX (selected notebooks), GPyTorch
 and BoTorch (Lecture 13).
 
+### GPU notes (JAX)
+
+A few notebooks use JAX with CUDA. If JAX cannot locate your CUDA
+NVVM directory at import time, set the XLA flag in your shell before
+launching Jupyter:
+
+```bash
+export XLA_FLAGS="--xla_gpu_cuda_data_dir=/path/to/cuda"
+```
+
+This is environment-specific and is intentionally kept out of the
+notebooks themselves so they remain portable.
+
 ## Repository at a glance
 
 ```
