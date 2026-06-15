@@ -141,7 +141,6 @@
 \DeclareMathOperator*{\argmax}{arg\,max}
 \newcommand{\emphc}[1]{\textcolor{harvardcrimson}{\textbf{#1}}}
 \DeclareUrlCommand\tpath{\urlstyle{tt}}   % monospace with breakable _ . /
-\newcolumntype{L}[1]{>{\RaggedRight\arraybackslash}p{#1}}
 \makeatletter
 \renewcommand*{\theHfigure}{\thechapter.\arabic{figure}}
 \makeatother
@@ -316,7 +315,7 @@ All code examples are available as executable Jupyter notebooks in TensorFlow an
 Deep learning for quantitative economics and finance is evolving at an extraordinary pace, with new architectures, training algorithms, and applications appearing month after month.  Both this script and the accompanying lecture suite are therefore best read as a snapshot of a highly dynamically evolving field rather than as a definitive treatment, and they are necessarily incomplete: the algorithms, models, and references collected here are those that, at the time of writing, strike the author as the most useful entry points for an economist or finance researcher beginning to work with deep learning, but the frontier is moving quickly enough that some choices will inevitably look dated within a year or two, and many worthy contributions have had to be left out.  The companion GitHub repository will track revisions as the field matures, and readers are encouraged to consult it for the most recent versions of the code and references.
 
 \paragraph{Feedback and errata.}
-This script is a living document.  Corrections, suggestions, and pull requests are welcome on the companion GitHub repository's issue tracker.\footnote{\url{https://github.com/sischei/Deep_Learning_for_Solving_And_Estimating_Dynamic_Economic_Models/issues}}  Direct correspondence may be addressed to \href{mailto:simon.scheidegger@unil.ch}{simon.scheidegger@unil.ch}.
+This script is a living document.  Corrections, suggestions, and pull requests are welcome on the companion GitHub repository's issue tracker.\footnote{\url{https://github.com/sischei/Deep_Learning_for_Solving_And_Estimating_Dynamic_Economic_Models/issues}}  Direct correspondence may be addressed to \href{mailto:simon.scheidegger@unil.ch}{\nolinkurl{simon.scheidegger@unil.ch}}.
 
 \paragraph{Acknowledgments.}
 I am grateful to the many seminar and course participants whose questions and comments have shaped this material.  I also thank Marlon Azinovic, Johannes Brumm, Christopher Carroll, Hui Chen, Antoine Didisheim, Richard Evans, Lukas Frank, Jes\'us Fern\'andez-Villaverde, Aleksandra Friedl, Luca Gaegauf, Kenneth Gillingham, Pavel Ievlev, Mitsuru Igami, Felix K\"ubler, Gianni Lombardo, Maria Pia Lombardo, Marko Mlikota, Galo Nu\~no, Jonathan Payne, Philipp Renner, Andreas Schaab, Frank Schorfheide, Anna Smirnova, Oliver Surbek, Fabio Trojani, Yucheng Yang, and Jan {\v Z}emli{\v c}ka for the research and discussions that underpin this work.  Part of this manuscript was written while visiting the Bank for International Settlements (BIS); I thank the BIS for its hospitality.  This script also benefitted substantially from Anthropic's Claude as a writing and coding assistant, in particular for polishing earlier drafts of the manuscript and for modernising the companion code examples that had aged across several previous iterations of the course.  Most importantly, I want to thank my wife, Michaela, and my daughter, Kira, for making this work possible through their unwavering support.  The responsibility for any remaining errors of course rests with the author.
@@ -374,7 +373,7 @@ A few additional typographic conventions: file paths and code identifiers are se
 \addcontentsline{toc}{chapter}{Notation and Symbols}
 
 \begin{center}
-\begin{tabular}{@{}L{3.2cm} L{10.5cm}@{}}
+\begin{tabular}{@{}>{\RaggedRight\arraybackslash}p{3.2cm} >{\RaggedRight\arraybackslash}p{10.5cm}@{}}
 \toprule
 Symbol & Meaning \\
 \midrule
@@ -405,7 +404,7 @@ Where necessary, chapter-specific notation (e.g., HJB/PDE operators, kernel func
 \begin{center}
 \footnotesize
 \renewcommand{\arraystretch}{1.15}
-\begin{tabular}{l L{10cm}}
+\begin{tabular}{l >{\RaggedRight\arraybackslash}p{10cm}}
 \toprule
 Symbol & Meanings (by chapter) \\
 \midrule
@@ -485,7 +484,7 @@ The following table maps each manuscript chapter to its companion slide deck(s) 
 \textbf{Execution map: manuscript chapters, slides, and notebooks}\par\smallskip
 \scriptsize
 \renewcommand{\arraystretch}{1.2}
-\begin{tabular}{@{}c L{2.6cm} L{4.2cm} L{5.6cm}@{}}
+\begin{tabular}{@{}c >{\RaggedRight\arraybackslash}p{2.6cm} >{\RaggedRight\arraybackslash}p{4.2cm} >{\RaggedRight\arraybackslash}p{5.6cm}@{}}
 \toprule
 \textbf{Ch.} & \textbf{Topic} & \textbf{Lecture folder \& deck} & \textbf{Notebooks (role)} \\
 \midrule
@@ -5620,7 +5619,7 @@ A third notebook, \tpath{KrusellSmith_Tutorial_CPU.ipynb}, is a JAX/optax port o
 \begin{definitionbox}[Math-to-code glossary for the KS sequence-space tutorial]
 \footnotesize
 \renewcommand{\arraystretch}{1.15}
-\begin{tabular}{@{}L{2.6cm} L{6.2cm} L{4.4cm}@{}}
+\begin{tabular}{@{}>{\RaggedRight\arraybackslash}p{2.6cm} >{\RaggedRight\arraybackslash}p{6.2cm} >{\RaggedRight\arraybackslash}p{4.4cm}@{}}
 \toprule
 \textbf{Symbol} & \textbf{Meaning} & \textbf{Notebook name(s)} \\
 \midrule
@@ -6015,7 +6014,7 @@ In practice, PINN training often fails for optimization reasons rather than appr
 \begin{table}[ht]
 \centering
 \small
-\begin{tabular}{@{} L{3.0cm} L{4.0cm} L{5.5cm} @{}}
+\begin{tabular}{@{} >{\RaggedRight\arraybackslash}p{3.0cm} >{\RaggedRight\arraybackslash}p{4.0cm} >{\RaggedRight\arraybackslash}p{5.5cm} @{}}
 \toprule
 \textbf{Symptom} & \textbf{Typical cause} & \textbf{Practical remedy} \\
 \midrule
@@ -7181,7 +7180,7 @@ Now that the GP machinery (posterior inference, kernel design, and BAL) has been
 \begin{table}[ht]
 \centering
 \small
-\begin{tabular}{@{} L{3.2cm} L{5.6cm} L{5.6cm} @{}}
+\begin{tabular}{@{} >{\RaggedRight\arraybackslash}p{3.2cm} >{\RaggedRight\arraybackslash}p{5.6cm} >{\RaggedRight\arraybackslash}p{5.6cm} @{}}
 \toprule
 \textbf{Criterion} & \textbf{Gaussian Processes} & \textbf{Deep Neural Networks} \\
 \midrule
@@ -9745,7 +9744,7 @@ Table~\ref{tab:dl_failure_modes} summarizes recurring failure modes and their mi
 \begin{table}[ht]
 \centering
 \small
-\begin{tabular}{L{4.5cm} L{7.5cm}}
+\begin{tabular}{>{\RaggedRight\arraybackslash}p{4.5cm} >{\RaggedRight\arraybackslash}p{7.5cm}}
 \toprule
 \textbf{Failure Mode} & \textbf{Mitigation} \\
 \midrule
@@ -9955,7 +9954,7 @@ Every empirical statement in the main text relies on the companion notebooks lis
 \small
 \caption{Reproducibility conventions used by the companion notebooks.  The conventions pin random seeds and document hardware, software, and precision choices; bit-exact reproduction additionally requires the deterministic settings and caveats described below the table.}
 \label{tab:repro_conventions}
-\begin{tabular}{@{}L{3.0cm} L{10.0cm}@{}}
+\begin{tabular}{@{}>{\RaggedRight\arraybackslash}p{3.0cm} >{\RaggedRight\arraybackslash}p{10.0cm}@{}}
 \toprule
 \textbf{Item} & \textbf{Convention} \\
 \midrule
@@ -10250,7 +10249,7 @@ Hyperband with $R = 81$, $\eta = 3$ runs a ladder of brackets indexed by $s = s_
 \small
 \caption{Hyperband schedule for maximum resource $R=81$ and reduction factor $\eta=3$.  Each row reports the successive-halving rungs inside one bracket and the total resource consumed by that bracket.}
 \label{tab:hyperband_r81_eta3}
-\begin{tabular}{@{}r L{9.2cm} r@{}}
+\begin{tabular}{@{}r >{\RaggedRight\arraybackslash}p{9.2cm} r@{}}
 \toprule
 $s$ & \textbf{SHA rungs $(n\times r)$} & \textbf{Total} \\
 \midrule
