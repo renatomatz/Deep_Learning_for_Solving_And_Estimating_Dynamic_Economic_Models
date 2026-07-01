@@ -118,7 +118,7 @@ md"""
 
 The synthetic data are generated at \$\varrho_{\mathrm{true}}=0.90\$. Every candidate \$\varrho\$ on the grid is then evaluated with the same initial condition, burn-in, horizon, and shock sequence: `common_random_shocks` draws one shock path that is reused across all candidates. These common random numbers make the SMM criterion a deterministic and smooth function of \$\varrho\$.
 
-`simulate_smm_scalar_rho` rolls the surrogate forward for each candidate, and `smm_scalar_moments` reduces each simulated path \$(C, I, Y)\$ to four summary moments. The full Python notebook plots each moment against \$\varrho\$ to show how the dynamic moments respond to persistence.
+`simulate_smm_scalar_rho` rolls the surrogate forward for each candidate, and `smm_scalar_moments` reduces each simulated path \$(C, I, Y)\$ to four summary moments. The full Python notebook plots each moment against \$\varrho\$ to show how the dynamic moments respond to persistence. It also prints an analytic identification aside — for the AR(1) shock, \$\mathrm{Std}(\Delta \log z) = \sigma_z\sqrt{2/(1+\varrho)}\$ while the level variance is \$\sigma_z^2/(1-\varrho^2)\$ — which anchors the identifying consumption-growth moment to the underlying shock structure.
 """
 
 # ╔═╡ a0400ba2-a0b6-fabb-86ed-737b5a78fe5a
@@ -153,7 +153,7 @@ md"""
 
 The scalar notebook contains only the core teaching pipeline:
 
-- one pseudo-state policy surrogate is trained with \$\varrho\$ as an input;
+- one pseudo-state policy surrogate is trained with \$\varrho\$ as an input (\$\varrho\in[0.50,0.99]\$);
 - synthetic data are generated at \$\varrho_{\mathrm{true}}=0.90\$;
 - common random numbers turn the simulated moment map into a deterministic function of \$\varrho\$;
 - the SMM profile has a clear interior minimum and recovers the synthetic truth.

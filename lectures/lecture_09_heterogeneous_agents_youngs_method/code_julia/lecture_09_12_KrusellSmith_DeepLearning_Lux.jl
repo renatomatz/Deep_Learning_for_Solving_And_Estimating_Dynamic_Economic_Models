@@ -420,6 +420,8 @@ md"""
 The solve runs in two phases.
 
 **Phase A — exogenous sampling.** Draw random states from the bounded training domain and take Adam steps on the mean-squared relative Euler error. The aim is a policy that is approximately correct *everywhere* in the domain, so that Phase B's simulated panel does not diverge. This cell runs `hp.phase_a` iterations, logging loss, max relative Euler error, and the aggregate-capital gaps into the shared history arrays.
+
+> **Logging note.** `metrics.loss` is the pre-update, within-tape loss (matching the Python ground truth), whereas `ree_max` and `K_next` are recomputed from `ks_residual` *after* the Adam step has already updated the parameters — so those two diagnostics reflect the post-update policy and are effectively off by one gradient step relative to the logged loss. This differs from the Python notebook, which records all three from the same pre-update forward pass; it is a logging artifact only and does not affect the trained policy or economics. (The same pattern applies to the Phase-B loop below.)
 """
 
 # ╔═╡ aaaaaaaa-0912-4aaa-8aaa-aaaaaaaaaaaa
@@ -530,6 +532,8 @@ This cell computes everything the Python notebook plots in section 10:
 - **10.2 Ergodic behaviour of \$\bar{K}\$.** `state_moments` reports the mean and spread of aggregate capital by aggregate state on the post-burn-in Phase-B trajectory — expected to sit slightly higher in good times and lower in bad times.
 - **10.3 Krusell–Smith approximate aggregation.** `fit_law_of_motion` runs OLS of \$\log \bar{K}_{t+1}\$ on \$\log \bar{K}_t\$ separately for each aggregate state, reporting the \$R^2\$ of the log-linear forecasting rule \$\log \bar{K}_{t+1} = A(a_t) + B(a_t)\log \bar{K}_t\$ — which approaches \$1\$ when the policy has converged, without any separate forecasting-rule fit.
 - **10.4 Learned savings policy.** `final_policy` evaluates \$k'(k,\varepsilon,\bar{K},a)\$ for the final panel; a converged policy is monotone in \$k\$, has employed agents saving more than unemployed, and crosses the \$45°\$ line so the ergodic distribution is interior.
+
+> **In this Julia preview.** §10.4 is reduced to summary extrema of the learned policy on the final Phase-B panel — the diagnostic NamedTuple reports the min/max of savings, consumption, and the consumption share \$\phi\$ plus the borrowing slack on that single \$(\bar{K}, a)\$ state. The full Python notebook additionally sweeps a capital grid (`linspace(0.05\,K_{SS}, 5\,K_{SS}, 200)`) across *both* employment states and *both* aggregate states to plot the savings policy and to numerically verify monotonicity in \$k\$, employed \$>\$ unemployed, and the \$45°\$-line crossing. Those pedagogical comparisons are described in the bullet above but are not recomputed here; the "everything the Python notebook plots" claim above therefore covers the reported quantities, with the savings-policy plot itself reduced to panel extrema.
 """
 
 # ╔═╡ cccccccc-0912-4ccc-8ccc-cccccccccccc

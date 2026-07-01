@@ -91,6 +91,8 @@ The policy network outputs four cohort-specific blocks plus the bond price:
 \$\$
 
 for a total of \$4(A-1) + 1\$ outputs (`raw_dim = 4 * (params.n_ages - 1) + 1`). Softplus heads enforce \$\hat{k}_{t+1}^h, \hat{\lambda}_b^h, \hat{\mu}^h \ge 0\$ by construction (the bond holding is recovered as \$\hat{b}_{t+1}^h = (\hat{q}^h - \hat{k}_{t+1}^h)/\kappa\$). The borrowing and collateral inequalities are then enforced softly via the squared product-form KKT residuals of §4. In Lux the network is `make_mlp(benchmark_olg_feature_dim(params), (32, 32), raw_dim; activation = NNlib.tanh)`, the policy transform is in `benchmark_olg_policy_from_raw` / `benchmark_olg_residual`, and `setup_training` uses `Optimisers.Adam` with Float64 parameters.
+
+> The full Python notebook uses **ReLU** hidden activations (the production preset notes "1000 ReLU units") and **zero-initializes the final Dense layer** (kernel and bias), so raw zero outputs give the documented clean feasible start (\$d = 0\$, \$p \approx \beta\$, small multipliers). This Lux preview uses `tanh` hidden activations and Lux's default glorot-uniform initialization: feasibility still holds through the softplus/transform heads, but the ReLU activation class and the specific zeroed clean-start initialization are not reproduced here.
 """
 
 # ╔═╡ 44444444-0809-4444-8444-444444444444
@@ -121,6 +123,8 @@ with the analogous residual for the bond. Borrowing- and collateral-constraint c
 \$\$
 
 Both vanish exactly at any KKT point and have a differentiable squared form. (The Fischer–Burmeister alternative \$\Phi(a,b) = a + b - \sqrt{a^2 + b^2}\$ is used in the IRBC notebook of Chapter 3, where the irreversibility constraint binds more often.) Bond-market clearing is enforced as a residual, \$\sum_{h} b_{t+1}^h = 0\$. The total loss is the mean-squared sum of all \$4(A-1) + 1\$ residuals; `KKT_WEIGHT` and `MARKET_WEIGHT` put the complementarity and market-clearing residuals on the same scale as the Euler errors. In Julia this is `benchmark_olg_residual`, wrapped by `benchmark_loss`.
+
+> The full Python notebook also adds two **soft feasibility penalties** — one for negative consumption and one for a non-positive capital-adjustment factor — and weights them by `PENALTY_WEIGHT = 10.0` in the total loss. The shared Julia `benchmark_olg_residual` includes the same two penalty terms but at an implicit weight of `1.0` (the Euler / KKT / market weights do match), so this preview under-weights the soft feasibility penalties by \$10\times\$ relative to the Python ground truth, which shifts training dynamics and the reported loss magnitudes.
 """
 
 # ╔═╡ c538b2d8-c811-5bf8-600d-e9fa057820d1

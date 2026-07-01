@@ -16,6 +16,11 @@ the Python notebook's Approach A (exogenous sampling) and Approach B
 (simulation-based sampling). The shared Lecture 04 IRBC helpers use a different
 compact state and policy parameterization, so the economic residuals here stay
 notebook-local.
+
+Section headings keep the Python notebook's numbering, so under Pluto's
+define-before-use ordering they may render out of numeric order (e.g. §6 before
+§5, §11 before §4) — the numbers track the Python sections, not the scroll
+position.
 """
 
 # ╔═╡ 66f8e120-b474-3ea7-9a32-ce7e2458221f
@@ -52,8 +57,8 @@ and verify it agrees with the Day 3 *hand-derived* Euler residual to machine pre
    - **Approach B** — simulation-based (endogenous) sampling.
 
 ### What is *not* in this notebook
-- ReLoBRaLo loss balancing — covered in Day 3 nb 01 Approach D and the lecture script. The point here is the autodiff template, not loss balancing.
-- Pre-training (Day 3 Approach C). Approaches A and B already make the sampling-strategy comparison clean.
+- ReLoBRaLo loss balancing — covered in Day 3 nb 01 Approach D and the lecture script. The point here is the autodiff template, not loss balancing. Reintroducing ReLoBRaLo on top of the autodiff residual is a one-evening exercise.
+- Pre-training (Day 3 Approach C). Approaches A and B already make the sampling-strategy comparison clean. Could be added as a standalone block.
 
 The setup cell below loads Lux, DLEFJulia, `ForwardDiff`, `Zygote`, and `Optimisers` in place of the Python notebook's NumPy/TensorFlow/Keras imports.
 """

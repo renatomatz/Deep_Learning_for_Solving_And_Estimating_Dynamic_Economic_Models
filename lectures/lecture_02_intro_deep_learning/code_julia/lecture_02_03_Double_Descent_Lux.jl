@@ -72,7 +72,7 @@ We create a regression task with \$d = 5\$ input features whose target depends n
 
 \$\$y = \sin(x_1) + \tfrac{1}{2}\cos(\tfrac{3}{2}x_2) + \tfrac{1}{4}x_3 x_4 + \varepsilon.\$\$
 
-(The Python ground truth uses the two-coordinate target \$\sin(x_1) + \tfrac{1}{2}\cos(x_2) + \varepsilon\$; the Julia preview adds a mild interaction term.) The training/test sizes and the maximum feature count come from `run_mode_budget`: the smoke run uses \$n = 35\$ train points and sweeps up to \$p = 95\$ features, while the teaching/production budgets restore the Python-scale \$n = 50\$ with \$p\$ up to \$300\$–\$500\$.
+(The Python ground truth uses the two-coordinate target \$\sin(x_1) + \tfrac{1}{2}\cos(x_2) + \varepsilon\$ with noise scale \$\sigma = 0.3\$; the Julia preview adds a mild interaction term and halves the noise to \$\sigma = 0.15\$, which sharpens the signal-to-noise ratio and lowers the height of the double-descent peak.) The training/test sizes and the maximum feature count come from `run_mode_budget`: the smoke run uses \$n = 35\$ train points and sweeps up to \$p = 95\$ features, while the teaching/production budgets restore the Python-scale \$n = 50\$ with \$p\$ up to \$300\$–\$500\$.
 
 To sweep model complexity continuously we use **Random Fourier Features** (Rahimi & Recht, 2007). Each input \$\mathbf{x} \in \mathbb{R}^d\$ is mapped to a \$p\$-dimensional feature vector
 
@@ -133,7 +133,7 @@ begin
     end
 
     threshold_index = argmin(abs.(p_values .- hp.n_train))
-    overfit_index = argmin(test_mse)
+    best_index = argmin(test_mse)
 end
 
 # ╔═╡ 1ed0260f-ddcd-6cfc-e4fb-f7c90c5ca4d0
@@ -142,6 +142,8 @@ md"""
 ### 3. The double-descent curve
 
 We plot training and test MSE (log scale) against the number of random features \$p\$, with a dashed line at the interpolation threshold \$p = n\$. The classical U-shape appears for \$p < n\$; test error peaks at \$p \approx n\$, then *descends again* for \$p \gg n\$.
+
+*In this preview we show only the MSE curve. The full Python notebook also devotes a section to the weight norm — a standalone \$\lVert\boldsymbol{\theta}\rVert_2\$-versus-\$p\$ plot and a combined side-by-side MSE-and-norm figure — whose spike near \$p \approx n\$ is the visual mechanism behind double descent (the minimum-norm interpolant becomes smooth again for \$p \gg n\$). `weight_norm` is already computed in the sweep above, so it can be plotted directly.*
 """
 
 # ╔═╡ 66666666-0203-4666-8666-666666666666
@@ -185,8 +187,8 @@ The cell below returns machine-checkable diagnostics for this notebook's run.
 (
     interpolation_threshold = hp.n_train,
     test_mse_at_threshold = test_mse[threshold_index],
-    best_p = p_values[overfit_index],
-    best_test_mse = test_mse[overfit_index],
+    best_p = p_values[best_index],
+    best_test_mse = test_mse[best_index],
     final_test_mse = test_mse[end],
     finite_share = finite_share(test_mse),
 )

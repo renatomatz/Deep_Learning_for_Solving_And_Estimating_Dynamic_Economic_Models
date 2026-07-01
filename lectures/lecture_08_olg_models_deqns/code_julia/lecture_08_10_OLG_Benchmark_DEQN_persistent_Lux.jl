@@ -122,6 +122,8 @@ with the analogous residual for the bond. Borrowing- and collateral-constraint c
 \$\$
 
 Both vanish exactly at any KKT point and have a differentiable squared form. (The Fischer–Burmeister alternative \$\Phi(a,b) = a + b - \sqrt{a^2 + b^2}\$ is used in the IRBC notebook of Chapter 3.) Bond-market clearing is enforced as a residual, \$\sum_{h} b_{t+1}^h = 0\$. The total loss is the mean-squared sum of all \$4(A-1) + 1\$ residuals, with `KKT_WEIGHT` and `MARKET_WEIGHT` balancing the scales. In Julia this is `benchmark_olg_residual`, wrapped by `benchmark_loss`.
+
+> The full Python notebook also adds two feasibility penalties to the loss — one for negative consumption, one for bad capital-adjustment factors — scaled by `PENALTY_WEIGHT = 10.0`. The shared Julia helper keeps the same two feasibility penalties but at unit weight, so short smoke trials here tolerate infeasible (\$c \le 0\$, negative adjustment-factor) draws somewhat more before penalizing them.
 """
 
 # ╔═╡ afb5b148-cebb-7af8-8d5b-4136cfc253d9
@@ -135,6 +137,8 @@ The next cell defines the machinery and runs the segment loop:
 - `draw_benchmark_next_shocks` samples the next aggregate shock from the Markov transition row, and `simulate_benchmark_segment` rolls the economy forward under the current policy via `benchmark_olg_next_states`, applying the borrowing/collateral transforms and returning the segment path and terminal states.
 - The loop feeds each segment to `train_step!` (Adam, `max_grad_norm = 10`), then sets `cloud_head = cloud_end` — the explicit realization of the Python `X_segment, X_end = get_training_segment(...); X_start = X_end` continuation.
 - **Policy-stability (§7).** `benchmark_policy_fingerprint` evaluates the policy on a fixed holdout `anchor_states` and `relative_policy_drift_stats` reports `policy_drift_rms` / `policy_drift_max` after each segment; `benchmark_state_collateral_slack` tracks how close the simulated states sit to the collateral constraint.
+
+> The full Python notebook also runs a bad-state repair inside its `simulate_path` — flagging numerically invalid states (non-finite entries, aggregate capital outside its bounds, or collateral violations) and replacing them with fresh feasible-box draws. This preview omits the repair: the borrowing/collateral transforms already guarantee \$k > 0\$ and non-negative collateral slack, so short smoke segments stay bounded without it.
 """
 
 # ╔═╡ 55555555-0810-4555-8555-555555555555
@@ -241,7 +245,7 @@ begin
     end
     initial_loss = train_result.initial_loss
     history = train_result.history
-    cloud = train_result.cloud
+    cloud_final = train_result.cloud
     last_segment = train_result.last_segment
 end
 
@@ -251,7 +255,7 @@ md"""
 
 The diagnostics report the constraint- and equilibrium-condition residuals on two out-of-sample clouds — the **last training segment** and a **fresh simulated ergodic cloud** (`simulate_benchmark_segment` with `eval_burn_in` states dropped): max absolute capital and bond Euler residuals, minimum collateral slack, and mean absolute bond-market residual. This gives accuracy on the region induced by the learned policy.
 
-> The full Python notebook also draws lifecycle plots (cohort capital/consumption by shock state and the bond-market residual along a long simulated trajectory), replaced here by the returned diagnostics.
+> The full Python notebook also draws lifecycle plots (cohort capital/consumption by shock state and the bond-market residual along a long simulated trajectory), replaced here by the returned diagnostics. It further reports the same residuals on a third cloud — an **exogenous off-trajectory test cloud** (fresh `sample_benchmark_olg_states` draws) for robustness away from the ergodic set. That off-trajectory diagnostic is dropped here; the feedback-free companion notebook `lecture_08_09_OLG_Benchmark_DEQN_exogenous` trains and evaluates on exactly such an exogenous cloud.
 """
 
 # ╔═╡ 66666666-0810-4666-8666-666666666666

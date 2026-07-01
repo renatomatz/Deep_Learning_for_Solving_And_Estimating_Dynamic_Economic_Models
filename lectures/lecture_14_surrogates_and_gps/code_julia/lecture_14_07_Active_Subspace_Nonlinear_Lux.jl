@@ -108,7 +108,7 @@ md"""
 ### Take-aways
 
 - The cross-term \$x_2 x_3\$ **mixes** two input directions so the gradient direction varies across input space; the gradient outer product \$C_N\$ therefore picks up **more than one** nonzero eigendirection.
-- Adding a second active direction (\$d = 2\$) yields a substantial drop in surrogate error; a third buys a little more. The elbow of the eigenvalue spectrum aligns with the elbow of the error curve — the spectrum is a *predictive* diagnostic for how many active dimensions are worth keeping.
+- Adding a second active direction (\$d = 2\$) yields a substantial drop in surrogate error; a third buys more still. The elbow of the eigenvalue spectrum aligns with the elbow of the error curve — the spectrum is a *predictive* diagnostic for how many active dimensions are worth keeping.
 - When even \$d = 2\$ is too many, the active manifold may be **curved** rather than linear: two linear features combined through a nonlinear aggregator. Notebook `09` shows a constructed target where linear AS needs \$d = 2\$ but a deep encoder collapses the same problem to \$d = 1\$; notebook `10` runs the deep-vs-linear comparison on the borehole benchmark.
 
 The cell below returns the machine-checkable diagnostics: the top and third eigenvalues, the best relative \$L^2\$ error across \$d\$, and the errors at \$d = 1\$ and \$d = 3\$.

@@ -23,7 +23,7 @@ md"""
 
 *Julia/Lux/Pluto preview of* `lectures/lecture_08_olg_models_deqns/code/lecture_08_07_OLG_Analytic_DEQN_exogenous.ipynb`.
 
-> **Run mode.** The checked-in run uses `RUN_MODE = "smoke"` with fixed `SEED = 0` for a fast structural check. Set `RUN_MODE` to `"teaching"` or `"production"` in the config cell below to reproduce slide-scale accuracy (production switches to the 100/50 hidden-layer architecture of Appendix A.8).
+> **Run mode.** The checked-in run uses `RUN_MODE = "smoke"` with fixed `SEED = 0` for a fast structural check. Set `RUN_MODE` to `"teaching"` or `"production"` in the config cell below to raise the step count and batch size toward slide-scale accuracy. In this preview `RUN_MODE` drives only `steps` and `batch_size`: the network keeps a fixed `(32, 16)` width across all modes, whereas the full Python notebook additionally switches production to the 100/50 hidden-layer architecture of Appendix A.8.
 
 > **Sampling mode.** This is the exogenous-cloud ablation: every training batch is an independent feasible state cloud drawn from broad boxes, with no feedback from the current policy. The persistent-simulation companion `lecture_08_08_OLG_Analytic_DEQN_persistent.ipynb` trains on simulated trajectories under the current policy.
 """
@@ -94,6 +94,8 @@ The policy network is an MLP from the 40-dimensional augmented state to the savi
 The output head is a **sigmoid savings-fraction transform**: the raw network output is squashed to a fraction \$\hat\beta_h \in (0, 1)\$ of current income, and savings are \$\hat a_t^h = \hat\beta_h \cdot \mathrm{inc}_t^h\$. This guarantees \$\hat a_t^h \ge 0\$ *and* current consumption \$c_t^h = (1 - \hat\beta_h)\,\mathrm{inc}_t^h \ge 0\$ by construction, and it matches the closed-form structure ("save a fixed fraction \$\beta_h\$ of income"). Aggregate next-period capital \$K_{t+1} = \sum_h \hat a_t^h\$ then satisfies capital-market clearing by construction, and no Lagrange multipliers appear (borrowing constraints are non-binding under this calibration).
 
 In Lux the network is `make_mlp(analytic_olg_feature_dim(params), (32, 16), params.n_ages - 1; activation = NNlib.tanh)`; the sigmoid savings-fraction transform lives inside `analytic_olg_policy_from_raw` / `analytic_olg_residual`, and `setup_training` initializes Float64 parameters with an `Optimisers.Adam` optimizer. The model is called with the explicit `y, st = model(x, ps, st)` pattern on feature-by-batch arrays.
+
+> **In this preview.** The full Python notebook uses two hidden layers of 64 and 32 ReLU units with a zero-initialized final `Dense` layer (which gives a clean initial savings fraction near \$0.5\$) and a per-mode Adam learning rate (smoke \$3\times10^{-4}\$, teaching \$10^{-4}\$, production \$10^{-5}\$). This compact Lux preview instead uses a fixed \$(32, 16)\$ `tanh` MLP with Lux's default (non-zero) final-layer initialization and a single fixed `Adam(0.002)` learning rate across all run modes. The width, activation, initialization, and learning-rate schedule therefore differ from Python; the economics (residuals and closed-form validation) are unchanged.
 """
 
 # ╔═╡ 44444444-0807-4444-8444-444444444444
@@ -169,7 +171,7 @@ The trained policy is validated against the closed-form age-specific savings rat
   \qquad h = 1, \ldots, A - 1.
 \$\$
 
-Under log utility and i.i.d. shocks the optimal policy reduces to \$\hat a_t^h = \beta_h \cdot \mathrm{inc}_t^h\$: each cohort saves a fixed fraction of income, regardless of the shock. Here `analytic_olg_exact_policy` supplies the exact savings and `analytic_olg_policy_error` measures both the exact policy's residual (a sanity floor) and the learned network's deviation from \$\beta_h\$ — the one-line validation that gives this model its pedagogical role. The training loss itself stays unsupervised: the closed-form rates are reserved for validation, never used as training targets.
+Under log utility and i.i.d. shocks the optimal policy reduces to \$\hat a_t^h = \beta_h \cdot \mathrm{inc}_t^h\$: each cohort saves a fixed fraction of income, regardless of the shock. Here `analytic_olg_exact_policy` supplies the exact savings; evaluating `analytic_olg_residual(...; use_exact_policy = true)` on the closed-form policy reports its Euler residual (a genuine sanity floor — small but nonzero, confirming the closed form nearly zeros the Euler equation), while `analytic_olg_policy_error` measures the learned network's deviation from \$\beta_h\$ — the one-line validation that gives this model its pedagogical role. The training loss itself stays unsupervised: the closed-form rates are reserved for validation, never used as training targets.
 
 > The full Python notebook also runs a **policy-stability check** (§7): it evaluates the policy on a fixed holdout cloud after each monitoring interval and treats the run as stable once the RMS/max policy drift falls below tolerance. That drift machinery is omitted in this compact exogenous preview and carried by the persistent companion `08_08`. The Python notebook additionally draws loss/residual plots, replaced here by the returned diagnostics.
 """
@@ -178,8 +180,8 @@ Under log utility and i.i.d. shocks the optimal policy reduces to \$\hat a_t^h =
 begin
     eval_states = sample_analytic_olg_states(rng, params, 64)
     diagnostics, _ = analytic_olg_residual(state.model, state.ps, state.st, eval_states; params)
-    exact_policy = analytic_olg_exact_policy(eval_states; params)
-    exact_error = analytic_olg_policy_error(exact_policy.savings, eval_states; params).summary
+    exact_diagnostics, _ = analytic_olg_residual(state.model, state.ps, state.st, eval_states; params, use_exact_policy = true)
+    exact_error = residual_summary(exact_diagnostics.euler)
     learned_error = residual_summary(diagnostics.policy_error)
 end
 

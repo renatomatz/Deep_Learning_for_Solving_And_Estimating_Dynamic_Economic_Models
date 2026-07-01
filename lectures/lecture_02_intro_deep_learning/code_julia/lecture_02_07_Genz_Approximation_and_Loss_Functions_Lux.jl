@@ -98,7 +98,7 @@ Genz (1987) introduced six families of integrands on \$[0,1]^d\$ widely used as 
 | \$f_5\$ | Continuous | \$\exp\!\bigl(-\sum_i c_i \lvert x_i - w_i\rvert\bigr)\$ |
 | \$f_6\$ | Discontinuous | \$0\$ if \$x_1>w_1\$ or \$x_2>w_2\$; else \$\exp(\sum_i c_i x_i)\$ |
 
-The next cell implements \$f_1\$ (**oscillatory** — smooth and periodic) and \$f_3\$ (**corner peak** — a smooth ridge that steepens toward a corner) on \$[0,1]^2\$, and builds train/test samples for the corner-peak target. The Python ground truth instead showcases \$f_1\$, \$f_4\$ (Gaussian), and \$f_5\$ (continuous, with kinks); the pedagogical point — smooth vs. peaked vs. non-smooth — is the same.
+The next cell implements \$f_1\$ (**oscillatory** — smooth and periodic) and \$f_3\$ (**corner peak** — a smooth ridge that steepens toward a corner) on \$[0,1]^2\$, and builds train/test samples for the corner-peak target. The Python ground truth instead showcases \$f_1\$, \$f_4\$ (Gaussian), and \$f_5\$ (continuous, with kinks); the smooth-vs.-peaked contrast survives here (both \$f_1\$ and \$f_3\$ are smooth), but the non-smooth (kink) case — Python's \$f_5\$ — is deferred to the Python ground truth rather than reproduced in this preview.
 """
 
 # ╔═╡ 44444444-0207-4444-8444-444444444444
@@ -174,6 +174,8 @@ md"""
 ### 2. Visualising the approximation
 
 We plot the trained Lux MLP against the true corner-peak function along a slice through the unit square (\$x_2 = 0.5\$).
+
+*(The section numbers follow the outline's Python ordering. In this preview the visualisation is placed after §3/§5 because it reuses the network trained there, so the notebook's cell order runs 1, 3, 5, 2, 9 rather than strictly ascending.)*
 """
 
 # ╔═╡ 66666666-0207-4666-8666-666666666666

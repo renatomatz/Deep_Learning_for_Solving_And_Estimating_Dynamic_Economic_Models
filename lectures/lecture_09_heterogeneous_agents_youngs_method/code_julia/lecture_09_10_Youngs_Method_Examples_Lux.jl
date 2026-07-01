@@ -178,6 +178,8 @@ md"""
 ### 12. With Idiosyncratic Shocks: Two Employment States
 
 In a Krusell-Smith economy, agents face idiosyncratic employment shocks \$\varepsilon \in \{e, u\}\$. The histogram is now 2D: mass at each \$(k, \varepsilon)\$ pair. Young's method handles this by combining the policy-based mass redistribution with the Markov transition probabilities — exactly the `transition` keyword of `young_step`.
+
+**In this preview.** The 2D `young_step` is exercised below only on the script's worked 4-point example (§12b), which uses an *identity* shock transition, so the `transition` keyword carries no shock mixing here. The full Python notebook instead runs a complete two-state (employed/unemployed) Young forward simulation with a **non-identity** Markov transition (\$\pi_{ee}=0.95\$, \$\pi_{uu}=0.90\$) over 100 periods: it verifies the stationary employment fraction against theory and tracks the aggregate mean-capital and employment-rate dynamics together with the employed/unemployed conditional means. That non-trivial `transition` run is summarised here rather than re-executed; the Julia preview carries only the identity-transition example.
 """
 
 # ╔═╡ e7d0aec9-9a40-d009-f7ef-02cdf036cc15

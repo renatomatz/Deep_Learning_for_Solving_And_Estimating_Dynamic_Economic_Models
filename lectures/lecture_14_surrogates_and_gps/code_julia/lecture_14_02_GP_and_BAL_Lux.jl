@@ -86,9 +86,9 @@ Given training data \$\mathcal{D} = \{(x_i, f_i)\}_{i=1}^N\$ and test points \$X
 
 \$\$\mu_* = K_*^\top K^{-1}\mathbf{f}, \qquad \Sigma_* = K_{**} - K_*^\top K^{-1} K_*,\$\$
 
-where \$K = k(X, X)\$, \$K_* = k(X, X_*)\$, and \$K_{**} = k(X_*, X_*)\$. `gp_predict` returns exactly this posterior mean and variance.
+where \$K = k(X, X)\$, \$K_* = k(X, X_*)\$, and \$K_{**} = k(X_*, X_*)\$. `gp_predict` returns this posterior mean and variance, except that the in-house helper centres on the sample mean \$m = \mathrm{mean}(\mathbf{f})\$ — i.e. \$\mu_* = m + K_*^\top K^{-1}(\mathbf{f} - m)\$ — which reduces to the zero-mean formula above once the data are centred, whereas Python's `gp_predict` is genuinely zero-mean.
 
-> **The full Python notebook also covers** sampling functions from the GP *prior* via \$\mathbf{f} = L\mathbf{u}\$, \$\mathbf{u} \sim \mathcal{N}(0, I)\$; the effect of the length scale (small \$\ell\$ overfits, large \$\ell\$ underfits); noiseless vs. noisy regression; and **Part 2**, `scikit-learn`'s `GaussianProcessRegressor`, which optimises \$(\ell, \sigma_f)\$ by maximising the log marginal likelihood \$-\tfrac{1}{2}\mathbf{y}^\top K_y^{-1}\mathbf{y} - \tfrac{1}{2}\log|K_y| - \tfrac{N}{2}\log 2\pi\$ (RBF vs. Matérn-3/2). This preview fixes \$\ell = 0.18\$ and a small noise floor, so no hyperparameter search runs here.
+> **The full Python notebook also covers** sampling functions from the GP *prior* via \$\mathbf{f} = L\mathbf{u}\$, \$\mathbf{u} \sim \mathcal{N}(0, I)\$; the effect of the length scale (small \$\ell\$ overfits, large \$\ell\$ underfits); noiseless vs. noisy regression; and **Part 2**, `scikit-learn`'s `GaussianProcessRegressor`, which optimises \$(\ell, \sigma_f)\$ by maximising the log marginal likelihood \$-\tfrac{1}{2}\mathbf{y}^\top K_y^{-1}\mathbf{y} - \tfrac{1}{2}\log|K_y| - \tfrac{N}{2}\log 2\pi\$ (RBF vs. Matérn-3/2) and demonstrates how the fit and credible bands tighten as the training set grows (\$N = 5, 20, 50\$). This preview fixes \$\ell = 0.18\$ and a small noise floor, so no hyperparameter search runs here.
 """
 
 # ╔═╡ 468a64fa-302f-fdba-c032-36855f6c4019

@@ -128,7 +128,7 @@ This is the trusted benchmark, the "FD gospel": a standard Achdou et al. (2022a)
 
 - The inner solve: implicit-Euler upwind HJB at fixed prices, then the stationary KFE as the null vector of the generator transpose (one row replaced by the normalization).
 - The outer solve: bisect \$r\$ to clear the capital market (invert the firm FOC for \$K_r\$, solve the partial-equilibrium problem, compare with \$K_g=\int a\,g\$).
-- The gate reference: the dense fixed-price FD saving policy at the FD-equilibrium prices, the reference for the \$L^\infty\$ gate. Solving the HJB on the dense grid resolves the kink that interpolating a coarse policy would smear.
+- The gate reference: the FD **equilibrium** saving policy on the `n_a = n_quad` grid, evaluated at the FD-equilibrium prices — the reference for the \$L^\infty\$ gate. *The full Python notebook* instead re-solves the fixed-price FD HJB on a separate dense grid (`n_dense = 1000`) at those prices, so \$s_{\text{NN}}\$ and \$s_{\text{FD}}\$ share identical prices on a fine mesh that resolves the saving kink a coarse policy would smear; this preview gates against the coarse `n_a`-grid FD saving directly, which coincides with that reference once FD has converged.
 
 The FD reference deliberately uses `n_a = n_quad`, because the FD equilibrium \$K\$ is grid-sensitive and the SS solver bakes its own equilibrium into \$W\$; gating against a coarser FD would measure discretization mismatch, not solver error.
 
@@ -198,7 +198,7 @@ md"""
 
 **Shape penalty** \$L_{\text{shape}}=\text{mean}[\max(\partial_a W,0)^2]\$: the monotonicity prior \$V\$ concave. It costs nothing once satisfied (reads \$0.0\$ after warm-up) but blocks sign-flipped or oscillating \$W\$ during the transient, and is one of the two guards against the \$W\to 0\$ corner.
 
-**KFE, form `"fv"` (default)**: the paper's conservative upwind finite-volume operator (`ct_aiyagari_kfe_drift`) applied to the g-net masses on the quadrature grid. This is **not an FD solve**: no generator is assembled and no linear system is solved; the drift operator is an algebraic map (shifts, clamps, multiplies) from the net's values to the rate at which mass would flow, and the gradient flows through the masses into the g-net. Because it is conservative/upwind, total mass is conserved for any policy, the zero-flux BCs are built in, and the strong form's structural cheats are impossible by construction. The \$\mu/da\$ scaling makes the residual a density-rate, so the loss magnitude is grid-resolution-independent.
+**KFE, form `"fv"` (default)**: the paper's conservative upwind finite-volume operator (`ct_aiyagari_kfe_drift`) applied to the g-net masses on the quadrature grid. This is **not an FD solve**: no generator is assembled and no linear system is solved; the drift operator is an algebraic map (shifts, clamps, multiplies) from the net's values to the rate at which mass would flow, and the gradient flows through the masses into the g-net. Because it is conservative/upwind, total mass is conserved for any policy, the zero-flux BCs are built in, and the strong form's structural cheats are impossible by construction. The \$\mu/da\$ scaling makes the residual a density-rate, so the loss magnitude is grid-resolution-independent. As a validation-only check, this fv drift operator equals the FD generator transpose \$A^\top\$ to \$\sim 3\times 10^{-10}\$ (the FD solver enters only as the reference, so scrambling it leaves training bit-identical).
 
 **KFE, form `"strong"`**: pure mesh-free, the KFE enforced by exact autodiff at the collocation points, with the policy pair \$(s,\partial_a s)\$ detached (`Zygote.dropgrad`). Here *mesh-free* means precisely that the PDE is enforced by exact autodiff at sampled points; the integral identities may still be evaluated by quadrature of net *values*. The pointwise residual alone is not well posed, so exact identities close the gaps, each killing a failure mode diagnosed in the JAX runs:
 
@@ -222,7 +222,7 @@ There is **one joint loss, one backward pass, one Adam step over both nets** sim
 - \$r,w\$ are **detached** right after computation (inside `detached_prices_from_density`), so \$\partial L_{\text{hjb}}/\partial(\text{g-net})=0\$. The g-net cannot bend aggregates/prices to flatter the HJB residual; the W-net solves "the HJB at the current prices."
 - the policy values (\$s_q\$ on the grid; \$s,\partial_a s\$ at collocation in strong mode) are **detached** in every g-side term, so \$\partial(L_{\text{kfe}}+L_{\text{flux}}+L_{\text{agg}}+L_{\text{bc}})/\partial(\text{W-net})=0\$. The W-net cannot bend the policy to flatter the KFE; the g-net solves "the KFE under the current policy."
 
-Each net descends only its own equation given the other's current values — a continuous Gauss–Seidel iteration on the Aiyagari fixed point, which converges because that fixed point is economically stable. The HJB's own policy stays *live*: that is the net's optimality condition, not a coupling channel.
+Each net descends only its own equation given the other's current values — a continuous Gauss–Seidel iteration on the Aiyagari fixed point, which converges because that fixed point is economically stable. The HJB's own policy stays *live*: that is the net's optimality condition, not a coupling channel. (An audit test in the full Python notebook confirmed both cross-gradients are exactly \$0.0\$ at the trained point — the two `dropgrad` detachments zero them by construction.)
 """
 
 # ╔═╡ 55555555-1308-4555-8555-555555555555
@@ -347,11 +347,11 @@ md"""
 
 The cell below builds the two nets (`make_mlp(3, hp.hidden, 1; activation = NNlib.tanh)`, `setup_model` with `Float64` parameters and seeded RNGs), initializes the trainable tail slopes `ps_g.beta`, and defines the training helpers.
 
-**Pre-training** (model-implied targets, never FD): \$f\to -a/\bar a\$ (a generic decreasing exponential with prior capital \$K_0\$) and \$W\to u'(w_0 l + r_0 a)\$ (the marginal value of the *zero-saving* policy at the prices implied by the pretrain density's own \$(K_0, L_0)\$). The level matters: the HJB near \$a_{\min}\$ must cancel \$\psi'(a_{\min})\approx \kappa a_{lb}=3\$ against \$(\rho - r + \lambda)W\$, which needs \$W(a_{\min},l_1)\$ large. Both nets are warm-started to equal quality so neither overfits the other's noise. Pretraining (`pretrain_loss`) is deliberately crude; residual training does all the work.
+**Pre-training** (model-implied targets, never FD): \$f\to -a/\bar a\$ (a generic decreasing exponential with prior capital \$K_0\$) and \$W\to u'(w_0 l + r_0 a)\$ (the marginal value of the *zero-saving* policy at the prices implied by the pretrain density's own \$(K_0, L_0)\$). The level matters: the HJB near \$a_{\min}\$ must cancel \$\psi'(a_{\min})\approx \kappa a_{lb}=3\$ against \$(\rho - r + \lambda)W\approx 0.3\,W\$, which needs \$W(a_{\min},l_1)\sim u'(w_0 l_1)\approx 10\$ (so the \$\approx 0.3\times 10\$ level roughly balances the \$\approx 3\$ penalty gradient; the prior capital is \$K_0\approx 4.63\$). Both nets are warm-started to equal quality so neither overfits the other's noise. Pretraining (`pretrain_loss`) is deliberately crude; residual training does all the work. (Its reduction here is a mean over collocation points and both labor states; the Python original sums over the two labor states then means over points — a constant \$2\times\$ larger, immaterial at the zero-loss optimum but a factor on the transient pretrain gradient.)
 
 **Collocation sampling** (`draw_collocation`, fresh every step): a uniform fraction on \$[a_{\min},a_{\max}]\$, a focus fraction on \$[a_{\min},a_{\text{focus}}]\$ (over the constraint and density peak), and in strong mode an extra band near \$a_{\max}\$. The quadrature grid is fixed; sampling never moves it.
 
-**Optimization**: a single Adam (`Optimisers.Adam`) over both nets, learning rate linearly decayed \$lr_0\to lr_1\$ (`learning_rate_for_step`), the agg-identity ramp over the `agg_ramp` window (`agg_weight_for_step`). The Python original decays \$3\times10^{-4}\to 10^{-6}\$ over the full 40k-step production run; the smoke budget here uses tiny steps and grids, so it exercises the pipeline's structure, not its accuracy.
+**Optimization**: a single Adam (`Optimisers.Adam`) over both nets, learning rate linearly decayed \$lr_0\to lr_1\$ (`learning_rate_for_step`), the agg-identity ramp over the `agg_ramp` window (`agg_weight_for_step`). The Python original decays \$3\times10^{-4}\to 10^{-6}\$ over the full 40k-step production run; the smoke budget here uses tiny steps and grids, so it exercises the pipeline's structure, not its accuracy. The full Python notebook instantiates a *fresh* Adam after pretraining, resetting the moment estimates before residual descent; this preview reuses one optimizer state across both loops, so the pretrain moments carry into the first residual steps.
 """
 
 # ╔═╡ 66666666-1308-4666-8666-666666666666
@@ -422,11 +422,11 @@ The cell below runs the pipeline: `hp.pretrain_steps` of functional-form pretrai
 
 ### 9) The Saving \$L^\infty\$ Gate
 
-The gate is \$\lVert s_{\text{NN}} - s_{\text{FD}}\rVert_\infty\$ on a dense grid at matched FD-equilibrium prices, with \$s_{\text{NN}} = w_{\text{fd}}\,l + r_{\text{fd}}\,a - c_{\text{NN}}\$ (`ct_aiyagari_saving_linf`). Since \$c_{\text{NN}} = W^{-1/\gamma}\$ does not depend on prices, passing requires *both* the right policy shape and the right equilibrium: if \$r_{\text{nn}}\neq r_{\text{fd}}\$ the W-net solved a different problem and the comparison blows up. The pass threshold is \$\epsilon=10^{-2}\$ (`params.eps_gate`).
+The gate is \$\lVert s_{\text{NN}} - s_{\text{FD}}\rVert_\infty\$ on the FD `n_a = n_quad` grid at matched FD-equilibrium prices, with \$s_{\text{NN}} = w_{\text{fd}}\,l + r_{\text{fd}}\,a - c_{\text{NN}}\$ (`ct_aiyagari_saving_linf`). Since \$c_{\text{NN}} = W^{-1/\gamma}\$ does not depend on prices, passing requires *both* the right policy shape and the right equilibrium: if \$r_{\text{nn}}\neq r_{\text{fd}}\$ the W-net solved a different problem and the comparison blows up. The pass threshold is \$\epsilon=10^{-2}\$ (`params.eps_gate`).
 
-A full `production` run clears the gate (the JAX recipe reports `fv` ~3.9e-3, `strong` ~8.2e-3, with \$K_{\text{nn}}\approx 5.07\$ against \$K_{\text{fd}}\approx 5.10\$). The **`smoke` run reports FAIL by design**: the aggregate-saving ramp engages while the policy is still unconverged, so it does not reach the threshold. (If the FD solve itself has not converged in the smoke budget, `saving_gate_status` is reported as a diagnostic rather than pass/fail.)
+A full `production` run clears the gate (the JAX recipe reports `fv` ~3.9e-3, `strong` ~8.2e-3, with \$K_{\text{nn}}\approx 5.07\$ against \$K_{\text{fd}}\approx 5.10\$). The **`smoke` run reports FAIL by design**: the aggregate-saving ramp engages while the policy is still unconverged, so it does not reach the threshold. (If the FD solve itself has not converged in the smoke budget, `saving_gate_status` is reported as a diagnostic rather than pass/fail — the returned \$r_{\text{fd}}, w_{\text{fd}}\$ are the supply-implied prices, which equal the bisection rate only once the market has cleared.)
 
-Resolution matching matters: the FD equilibrium \$K\$ is grid-sensitive (5.27 at 93 points, 5.10 at 400, 5.07 at 800), so the reference deliberately uses `n_a = n_quad`.
+Resolution matching matters: the FD equilibrium \$K\$ is grid-sensitive (5.27 at 93 points, 5.10 at 400, 5.07 at 800), so the reference deliberately uses `n_a = n_quad`. *The full Python notebook* builds the gate reference by re-solving the fixed-price FD HJB on a separate dense grid (`n_dense = 1000`) at the FD-equilibrium prices, so \$s_{\text{NN}}\$ and \$s_{\text{FD}}\$ share identical prices on a mesh fine enough to resolve the policy kink; this preview compares against the coarse `n_a`-grid FD equilibrium saving directly. Notably, the trained \$K_{\text{nn}}\approx 5.0706\$ lands almost exactly on the dense FD(800) value \$\approx 5.0730\$ — closer to the continuum than its own 400-point reference — because the mesh-free HJB side pulls the equilibrium toward the continuum solution.
 """
 
 # ╔═╡ 77777777-1308-4777-8777-777777777777
@@ -575,18 +575,18 @@ The cell below returns the machine-checkable diagnostics summary for this notebo
 # ╟─8f70b8bc-0f5a-1e57-536c-a04379078f08
 # ╟─9a6b9280-8d27-135e-f6cb-4b28f9aa3cbc
 # ╠═33333333-1308-4333-8333-333333333333
+# ╟─411f6609-f432-9b68-aa9d-9745e56d6313
 # ╟─c2738022-aabf-e860-7bf2-2617d6d2dc03
 # ╠═44444444-1308-4444-8444-444444444444
-# ╟─411f6609-f432-9b68-aa9d-9745e56d6313
 # ╟─013c31a4-1b14-0563-ee2a-646ea5f015e5
 # ╟─afd0684e-661f-d63b-9bd6-03e3534448b8
 # ╟─63156af4-33b0-d4e4-6521-ad340d1a1429
 # ╠═55555555-1308-4555-8555-555555555555
 # ╟─9c925b08-b44c-85bb-f5e4-e0f7b6465f6f
 # ╠═66666666-1308-4666-8666-666666666666
+# ╟─f34615bb-9d94-0be2-29c9-9cf6b62a85c5
 # ╟─c6162f57-62e5-8ba7-d1a5-be5ee1b16dcc
 # ╠═77777777-1308-4777-8777-777777777777
-# ╟─f34615bb-9d94-0be2-29c9-9cf6b62a85c5
 # ╟─94b6147c-b3ae-f2a0-8bf5-87fe7e8f34e2
 # ╟─f1bf2934-677d-c487-d503-18de3e684dcb
 # ╟─ed664345-4eff-c428-36cf-d4c83483c6fa

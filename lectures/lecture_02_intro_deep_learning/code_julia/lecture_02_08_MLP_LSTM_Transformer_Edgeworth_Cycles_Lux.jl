@@ -82,6 +82,8 @@ md"""
 ### 2. Data preparation
 
 We predict \$x_{t+1}\$ from a window \$[x_{t-W+1},\dots,x_t]\$ of length \$W=10\$. The next cell generates the synthetic Edgeworth cycle (a jump-and-undercut sawtooth), slices it into overlapping windows, splits train/test, and builds the three feature maps: the last-price map keeps only the final window entry; the full-window map keeps all \$W\$ entries; the attention-summary map keeps the last value, a position-weighted average, and the first-to-last change. Same underlying data for all three, so any difference is purely in what each model is allowed to see.
+
+_In this preview the Edgeworth series is a redesigned **stochastic** data-generating process: accelerating undercutting (`-0.025 - 0.004·phase`) plus randomized resets — triggered by phase length, by the price dropping too low, or by a small per-step reset probability — with Gaussian noise. The Python ground truth instead uses a **deterministic period-20 linear sawtooth** (a fixed-slope ramp, `jump − jump·(t mod period)/period`) with small Gaussian noise. The Julia DGP is irregular where Python's is strictly periodic, though both share the same jump-and-undercut shape that drives the memory-ladder lesson._
 """
 
 # ╔═╡ 44444444-0208-4444-8444-444444444444
@@ -197,7 +199,7 @@ md"""
 
 **Recurrent memory (LSTM).** A recurrent hidden state \$h_t\$ accumulates information across the window. Its gating is a strong inductive bias for periodic, asymmetric series like Edgeworth cycles: the cell state can encode how far into the current cycle we are, and reset at a jump.
 
-**Attention (Transformer).** Drops recurrence entirely: self-attention lets every position read every other directly, in parallel. On a moderate window it recovers the cycle from the data alone. On this tiny, very regular problem the LSTM's recurrent prior is hard to beat; on long-context, large-data tasks the Transformer's \$\mathcal{O}(1)\$ direct path between positions wins.
+**Attention (Transformer).** Drops recurrence entirely: self-attention lets every position read every other directly, in parallel. On a moderate window it recovers the cycle from the data alone. On this tiny, very regular problem the LSTM's recurrent prior is hard to beat; on long-context, large-data tasks the Transformer's \$\mathcal{O}(1)\$ direct path between positions wins. (The "very regular" framing describes the Python ground truth's deterministic period-20 sawtooth; the Julia preview's series is noisier — stochastic resets and variable phase length, see §2 — so it is only quasi-periodic here.)
 
 **Take-home.** Architecture choice is about matching the model's inductive bias to the structure of the problem. The historical sequence MLP \$\to\$ LSTM \$\to\$ Transformer *removes* hard-coded structure and *adds* flexibility — helpful when data and context grow, overkill when neither does. The three feature maps in this preview stage the same lesson: the more of the window a model can see, the better it places itself in the cycle.
 

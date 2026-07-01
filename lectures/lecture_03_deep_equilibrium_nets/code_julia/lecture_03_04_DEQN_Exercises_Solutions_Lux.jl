@@ -84,6 +84,8 @@ The model of Notebook 2: state \$\mathbf{X}_t = [z_t, K_t]\$, policy \$K_{t+1} =
 \$\$0 = \frac{1}{C_t\,\beta\, E\!\left[\frac{1}{C_{t+1}}(1 - \delta + r_{t+1})\right]} - 1, \qquad r_t = \alpha z_t K_t^{\alpha-1},\$\$
 
 with the expectation taken by Gauss–Hermite quadrature. The cell below wires `BrockMirmanParams`, `gauss_hermite_rule(5)`, and `stochastic_bm_residual` together, maps the raw output to a feasible savings rate with a **sigmoid** (the hard feasibility constraint), samples states uniformly, and trains with `Optimisers.Adam(0.001)`.
+
+The full Python notebook also covers *simulating the policy forward* and *iterating between training and simulation* — building an ergodic set with `simulate_single_step`/`sim_periods` and retraining the DEQN on those simulated states. This preview trains on uniformly sampled states only and omits the simulation-forward loop.
 """
 
 # ╔═╡ 44444444-0304-4444-8444-444444444444
@@ -116,7 +118,7 @@ Labor is now a choice, so the policy \$\mathbf{f}(\mathbf{X}_t) = [K_{t+1}, L_t]
 
 \$\$0 = \psi\, L_t^{\gamma} - \frac{w_t}{C_t}, \qquad r_t = \alpha K_t^{\alpha-1} L_t^{1-\alpha}, \quad w_t = (1-\alpha)K_t^{\alpha} L_t^{-\alpha},\$\$
 
-where \$\gamma\$ is the labor-supply curvature (the \$\theta\$ of the write-up). The cell splits the network's two heads with `split_output_heads`, bounds savings with a **sigmoid** and labor with **`positive_softplus`** (labor must be positive), and sums the squared Euler and labor residuals into the loss. *(For speed the solution uses a compact one-step Euler proxy rather than the full expectation.)*
+where \$\gamma\$ is the labor-supply curvature (the \$\theta\$ of the write-up). The cell splits the network's two heads with `split_output_heads`, bounds savings with a **sigmoid** and labor with **`positive_softplus`** (labor must be positive), and sums the squared Euler and labor residuals into the loss. *(For speed the solution uses a compact one-step Euler proxy rather than the full expectation. This preview also sets the curvature to \$\gamma = 2.0\$, whereas the Python write-up uses \$\theta = 1.0\$, so the implied Frisch elasticity differs.)*
 """
 
 # ╔═╡ 55555555-0304-4555-8555-555555555555

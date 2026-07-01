@@ -114,7 +114,7 @@ We fix \$\alpha = 0.36\$, \$\beta = 0.99\$, and now **partial** depreciation \$\
 
 \$\$k^\star = \left(\frac{1/\beta - 1 + \delta}{\alpha}\right)^{1/(\alpha-1)},\$\$
 
-which is useful for choosing a sensible sampling range. `BrockMirmanParams` packages all of these.
+which is useful for choosing a sensible sampling range. `BrockMirmanParams` packages all of these. *(The full Python notebook also evaluates and prints \$k^\star\$ as the numeric anchor for the \$[\underline{K}, \overline{K}]\$ sampling box; this preview keeps only the closed-form expression.)*
 """
 
 # ╔═╡ a93982e9-c712-1d7c-7fcf-d06142d12045
@@ -168,7 +168,7 @@ The **sigmoid** savings share (\$s_t \in (0,1)\$, with \$K_{t+1} = s_t Y_t\$ and
 md"""
 #### Cost function with the expectation operator
 
-`stochastic_bm_residual` evaluates the relative-consumption residual \$\frac{1}{C_t\,\beta\, E[\frac{1}{C_{t+1}}(1-\delta+r_{t+1})]} - 1\$ on a batch of states. The conditional expectation is taken by summing the integrand over the Gauss–Hermite nodes for next-period productivity \$z_{t+1}\$, exactly the helper the Python notebook builds by iterating over the `n_int` states in \$t+1\$. The mean squared residual is the loss. Gradients come from `Zygote` inside `train_step!` (the analogue of TensorFlow's `GradientTape`, with gradient-norm clipping at 10), and `Optimisers.Adam(0.001)` updates the parameters.
+`stochastic_bm_residual` evaluates the relative-consumption residual \$\frac{1}{C_t\,\beta\, E[\frac{1}{C_{t+1}}(1-\delta+r_{t+1})]} - 1\$ on a batch of states. The conditional expectation is taken by summing the integrand over the Gauss–Hermite nodes for next-period productivity \$z_{t+1}\$, exactly the helper the Python notebook builds by iterating over the `n_int` states in \$t+1\$. The mean squared residual is the loss. Gradients come from `Zygote` inside `train_step!` (the analogue of TensorFlow's `GradientTape`, with gradient-norm clipping at 10), and `Optimisers.Adam(0.001)` updates the parameters. *(The full Python notebook lowers the Adam learning rate between phases — 0.0003 for the uniform-domain phase and 0.0001 for the more fragile simulation-based phase; this preview keeps a single fixed `Adam(0.001)` across both phases.)*
 """
 
 # ╔═╡ aed58310-9f7e-6930-143e-a81682cb65d8

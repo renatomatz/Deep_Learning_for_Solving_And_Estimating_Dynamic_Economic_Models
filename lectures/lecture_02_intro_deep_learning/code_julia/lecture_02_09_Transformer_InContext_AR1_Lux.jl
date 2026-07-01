@@ -81,6 +81,8 @@ md"""
 Each example is a sequence of length \$T\$ drawn from
 \$\$x_t = \rho\, x_{t-1} + \sigma \varepsilon_t, \qquad \varepsilon_t \sim \mathcal{N}(0, 1),\$\$
 with \$\rho\$ **drawn once per example** from \$\mathcal{U}(-0.9, 0.9)\$. The model never sees \$\rho\$; it only sees the realizations. The next cell samples these prompts and reduces each to its context features — the last value, the OLS-on-the-prompt slope \$\hat{\rho}_{\text{OLS}} = \frac{\sum_i x_i x_{i-1}}{\sum_i x_{i-1}^2}\$, and the volatility — alongside the OLS and naive (last-value) benchmark predictions.
+
+> **In this preview.** Paths start from \$x_1 \sim \mathcal{N}(0, \sigma)\$ rather than the Python notebook's stationary draw \$x_0 \sim \mathcal{N}\!\big(0, \sigma / \sqrt{1 - \rho^2}\big)\$, so persistent paths burn in toward stationary variance over the sequence; the test sweep likewise seeds \$x_1\$ with a fixed standard deviation. The full Python notebook also draws a sanity-check plot of four AR(1) sample paths at different \$\rho\$, which this preview omits.
 """
 
 # ╔═╡ 44444444-0209-4444-8444-444444444444
@@ -157,11 +159,13 @@ md"""
 
 For fresh test series with unseen \$\rho\$, we compare three predictors of \$x_{t+1}\$ given \$x_1,\dots,x_t\$:
 
-- **Oracle:** \$\rho\, x_t\$ (uses the true \$\rho\$; unattainable in practice).
+- **Naive last-value baseline:** \$x_t\$ (predict the last observed value; no persistence estimate).
 - **OLS-on-the-prompt:** \$\hat{\rho}_{\text{OLS}}\, x_t\$, with \$\hat{\rho}_{\text{OLS}}\$ estimated from the prompt itself.
 - **Lux context model:** the trained forecaster's prediction.
 
 The next cell sweeps \$\rho\$ over a grid and records the forecast RMSE of the OLS-on-the-prompt predictor, the Lux model, and the naive last-value baseline. If the regression interpretation holds, the Lux model should track OLS closely across \$\rho\$.
+
+> **In this preview.** The full Python notebook also plots an *oracle* curve — \$\rho\, x_t\$ using the true \$\rho\$ — as an unattainable RMSE lower bound, and sweeps 200 replicas across a \$\rho\$ grid of 19 points on \$[-0.9, 0.9]\$. This classroom-sized preview compares the OLS, Lux, and naive predictors only (no oracle curve) and keeps the sweep small: 40 replicas over 17 points on \$[-0.85, 0.85]\$.
 """
 
 # ╔═╡ 66666666-0209-4666-8666-666666666666

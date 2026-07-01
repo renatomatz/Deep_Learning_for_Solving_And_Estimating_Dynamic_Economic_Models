@@ -95,7 +95,7 @@ md"""
 ---
 ### A more complicated example: cricket chirp rate vs temperature
 
-Consider a simple linear regression: how does temperature affect the chirp rate of crickets? `SGD_data.txt` is a 16-row, two-column CSV with no header — column 1 is chirps per second (striped ground cricket, *Gryllus rubens*), column 2 is ambient temperature in degrees Fahrenheit. This is a standard introductory dataset (originally from G. W. Pierce, *The Songs of Insects*, Harvard University Press, 1948).
+Consider a simple linear regression: how does temperature affect the chirp rate of crickets? `SGD_data.txt` is a two-column CSV with no header (15 data rows, plus a trailing blank line for 16 lines in total) — column 1 is chirps per second (striped ground cricket, *Gryllus rubens*), column 2 is ambient temperature in degrees Fahrenheit. This is a standard introductory dataset (originally from G. W. Pierce, *The Songs of Insects*, Harvard University Press, 1948).
 
 Our goal is to fit the straight line \$h_\theta(x) = \theta_0 + \theta_1 x\$ by minimising the mean-squared cost
 
@@ -127,6 +127,8 @@ end
 # ╔═╡ ce39c8a8-671f-ceec-ba35-fe499e2a0927
 md"""
 Now we run **batch gradient descent** — recomputing the full-data gradient at every step — and compare it against the closed-form least-squares solution `hcat(ones(m), x) \ y` (Julia's analog of SciPy's `linregress`). The two should land close to each other, though gradient descent is much slower to get there.
+
+> **In this preview** batch gradient descent is capped at a fixed step budget (`max_steps`), and the loose tolerance is never met within it, so the run stops well short of convergence: it settles on a slower near-centroid fit (intercept ≈ 5, loss ≈ 8) rather than the closed-form parameters (intercept ≈ 25, loss ≈ 6). Reaching the closed-form fit by plain gradient descent here would take on the order of hundreds of thousands of steps; the cell illustrates the *mechanics*, not a converged fit.
 """
 
 # ╔═╡ 66666666-0202-4666-8666-666666666666
@@ -156,7 +158,7 @@ end
 md"""
 ### Stochastic gradient descent
 
-Batch gradient descent recomputes the gradient over the *entire* dataset at every step. With only 16 cricket observations that is cheap, but for very large datasets it is wasteful. **Stochastic gradient descent (SGD)** instead updates the parameters after looking at *each individual* example, so it makes progress right away:
+Batch gradient descent recomputes the gradient over the *entire* dataset at every step. With only 15 cricket observations that is cheap, but for very large datasets it is wasteful. **Stochastic gradient descent (SGD)** instead updates the parameters after looking at *each individual* example, so it makes progress right away:
 
 \$\$\theta_0 \leftarrow \theta_0 - \alpha\,(h_\theta(x_i)-y_i), \qquad \theta_1 \leftarrow \theta_1 - \alpha\,x_i\,(h_\theta(x_i)-y_i).\$\$
 
@@ -211,7 +213,7 @@ md"""
 ### Takeaway
 
 - **Gradient descent** steps downhill along \$-\nabla f\$; the constant step size (learning rate) trades convergence speed against stability, and adaptive or decaying schedules can help.
-- On the cricket-chirp regression, **batch gradient descent** and **stochastic gradient descent** both recover parameters close to the **closed-form** least-squares solution — SGD via cheap per-example updates rather than full-data gradients.
+- On the cricket-chirp regression, **stochastic gradient descent** (on standardized inputs) recovers parameters close to the **closed-form** least-squares solution via cheap per-example updates. **Batch gradient descent** — recomputing the full-data gradient at every step — heads toward the same fit but is much slower, and within this preview's fixed step budget it stops short of the closed-form parameters.
 
 The cell below returns a machine-checkable summary comparing the batch-GD, SGD, and closed-form losses for this notebook's run.
 """

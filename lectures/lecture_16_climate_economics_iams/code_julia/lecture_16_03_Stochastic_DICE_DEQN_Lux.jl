@@ -150,7 +150,7 @@ The state is \$s = (k, M_{AT}, M_{UO}, M_{LO}, T_{AT}, T_{OC}, \tau, z)\$ and th
 | 6 | \$\hat{\eta}_{AT}\$ | linear | shadow price on \$T_{AT}\$ |
 | 7 | \$\hat{\eta}_{OC}\$ | linear | shadow price on \$T_{OC}\$ |
 
-Two hidden layers (512 ReLU units at production scale; smaller under `smoke`). The state is min-max normalized to \$[0,1]^8\$ before being fed in.
+Two hidden layers (512 ReLU units at production scale; narrower under the previews, e.g. width 16 in `smoke` and 128 in `teaching`). Note that the full Python notebook builds a fixed 512-wide network for *every* run mode, so this preview's reduced-width `smoke`/`teaching` budgets under-deliver network width relative to that reference; only the executed `smoke` path matters for CI. The state is min-max normalized to \$[0,1]^8\$ before being fed in.
 """
 
 # ╔═╡ 117773e6-0af2-6ea9-8abb-164f8d287496
@@ -177,7 +177,7 @@ For each equation with an expectation we replace \$\mathbb{E}[\,\cdot\,]\$ by \$
 md"""
 ### 9–10. Stochastic sampler and training loop
 
-DEQN trains on **on-policy** samples: `sample_cdice_states(...; stochastic = true)` draws states with the shock \$z\$ evolving AR(1) along the rollout. When the realized shock is zero the rollout matches the deterministic notebook (useful for the sanity gate); when positive, the *initial* \$z\$ is drawn from the stationary distribution \$\mathcal{N}(0, \sigma_z/\sqrt{1-\rho_z^2})\$. Training then takes Adam steps (`train_step!`) on the residual loss. The production Python setup uses a 3-step LR schedule over 200 episodes × 100 inner steps × batch 512 (~22 minutes on one CPU core, with the 5-node quadrature the dominant overhead); this preview takes a handful of `smoke` steps.
+The full Deep Equilibrium Nets method (and the Python notebook's `gen_traj`) trains **on-policy**: it rolls the *current* network forward ~300 steps so the shock \$z\$ evolves AR(1) along each trajectory and the training batch concentrates on the ergodic set. This Julia preview instead uses an **off-policy box sampler**: `sample_cdice_states(...; stochastic = true)` draws each state coordinate i.i.d. from a fixed bounded range (\$\tau\$ uniform on \$[0, 0.8]\$) with the shock \$z\$ drawn once from the stationary distribution \$\mathcal{N}(0, \sigma_z/\sqrt{1-\rho_z^2})\$ — there is no policy rollout and no AR(1) evolution along a trajectory. Setting \$\sigma_z = 0\$ collapses \$z\$ to zero and recovers the deterministic sampler (useful for the sanity gate). Training then takes Adam steps (`train_step!`) on the residual loss. The Python *teaching* run that produced the reference notebook uses a 3-step LR schedule over 200 episodes × 100 inner steps × batch 512 (~22 minutes on one CPU core, with the 5-node quadrature the dominant overhead); Python's *production* scale is 10 000 episodes × 200 trajectories × 500 steps × batch 128. This preview takes a handful of `smoke` steps.
 """
 
 # ╔═╡ 44444444-1603-4444-8444-444444444444
@@ -212,7 +212,7 @@ expressed in USD/tCO\$_2\$.
 
 **Gate A — deterministic sanity check.** Setting \$z\equiv 0\$ along the path should recover the notebook-02 deterministic CDICE benchmark to within ~5%, confirming the 8-D machinery is consistent with the 7-D deterministic limit.
 
-**Gate B — Monte Carlo over \$z\$ paths.** `cdice_monte_carlo_paths` lets the shock evolve and simulates many independent paths, storing the full time series for every variable so we can form fan charts (5/25/50/75/95-percentile bands) of \$T_{AT}\$, \$\mu\$, and SCC over time.
+**Gate B — Monte Carlo over \$z\$ paths.** `cdice_monte_carlo_paths` lets the shock evolve and simulates many independent paths, storing the full time series for every variable so we can form fan charts (5/25/50/75/95-percentile bands) of \$T_{AT}\$, \$\mu\$, and SCC over time. One deliberate difference from the Python `simulate_one`, which starts every Monte-Carlo path from \$z_0 = 0\$ at 2015 (so the fan chart emanates from a single deterministic point and then widens): this Julia preview draws each path's *initial* \$z\$ from its stationary distribution \$\mathcal{N}(0, \sigma_z/\sqrt{1-\rho_z^2})\$, so the bands are already slightly dispersed at the 2015 origin. Because \$z\$ is near-stationary by 2100 in either convention, the 2100 diagnostics reported below are essentially unaffected.
 
 As in notebook 02, the `smoke` network is barely trained, so a deterministic `CDICETeachingPolicy` provides the reference-quality path; do not read smoke output as trained-policy parity.
 """

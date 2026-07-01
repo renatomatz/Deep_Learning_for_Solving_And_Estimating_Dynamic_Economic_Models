@@ -140,6 +140,8 @@ md"""
 
 5. **Connection to CDICE/DEQN:** in notebook `02_DICE_DEQN_Library_Port.ipynb` the social planner *optimally* chooses the mitigation rate \$\mu(t)\$ to balance abatement costs against avoided damages — solving the full intertemporal problem with neural networks.
 
+> **In this preview.** The full Python notebook also renders these takeaways as three matplotlib figures (with CairoMakie as the default Julia backend): the BAU atmospheric-CO\$_2\$ path, a two-panel temperature-and-quadratic-damages plot, and a two-panel BAU-vs-mitigation comparison. This smoke-first Julia preview keeps the physics identical but reports it numerically — the machine-checkable NamedTuple below carries the same carbon, temperature, and avoided-warming/avoided-damage quantities the figures would visualize.
+
 The cell below returns a machine-checkable summary of this notebook's run.
 """
 

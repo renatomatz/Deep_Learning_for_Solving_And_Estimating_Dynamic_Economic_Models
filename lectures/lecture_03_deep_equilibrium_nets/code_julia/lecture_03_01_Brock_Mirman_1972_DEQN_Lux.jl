@@ -62,6 +62,8 @@ The recursive form has Bellman equation
 
 \$\$0 = -\frac{1}{C_t} + \beta\frac{1}{C_{t+1}}\left(1 - \delta + r_{t+1}\right), \qquad r_{t+1} = \alpha K_{t+1}^{\alpha-1}.\$\$
 
+(The full Python notebook derives this in steps — differentiating the Bellman equation with respect to \$K_{t+1}\$ and applying the envelope theorem to get \$\frac{dV(K_t)}{dK_t} = \frac{1}{C_t}\left(1 - \delta + r_t\right)\$; here we state the resulting Euler equation directly.)
+
 To interpret residuals as **relative consumption errors** we rearrange into
 
 \$\$0 = \frac{C_{t+1}}{C_t\,\beta\left(1 - \delta + r_{t+1}\right)} - 1,\$\$
@@ -129,6 +131,8 @@ md"""
 
 The network approximates the **savings rate** \$s_t\$, so that \$K_{t+1} = Y_t\, s_t \approx Y_t\, \mathcal{N}(K_t)\$. The input is the 1-dimensional state \$K_t\$ and the output is the 1-dimensional savings rate. The Python notebook uses two hidden ReLU layers with a sigmoid output head; this Lux preview uses `make_mlp(1, (24, 24), 1; activation = tanh)` and applies the sigmoid separately through `savings_transform`, so the savings share still lands in \$(0,1)\$.
 
+The full Python notebook also motivates *encoding economic prior knowledge into the architecture*: Kahou et al. (2021) and Han et al. (2022) show how symmetry can be built into the network, and Azinovic and Žemlička (2023) introduce market-clearing neural-network architectures. The sigmoid hard constraint used here is the simplest instance of that design philosophy.
+
 **The batch dimension.** Networks are evaluated on many states at once. Lux uses **feature-by-batch** arrays: a batch of \$N\$ capital levels is a \$1 \times N\$ matrix, and the network returns a \$1 \times N\$ matrix of savings rates. (This is the transpose of the Python/Keras samples-on-rows convention.)
 """
 
@@ -160,7 +164,7 @@ This single Lux cell does the work spread across several Python cells:
 
 - **Cost function.** `deterministic_bm_residual` evaluates the relative-consumption residual \$\frac{C_{t+1}}{C_t\,\beta(1-\delta+r_{t+1})} - 1\$ on a batch of states and returns its mean-squared value as the loss. It stays *outside* the optimizer as a pure function threading `ps`/`st`.
 - **Gradients.** `train_step!` differentiates the loss with respect to the network parameters using `Zygote` (the reverse-mode analogue of TensorFlow's `GradientTape`), with gradient-norm clipping at 10.
-- **Optimizer.** `Optimisers.Adam(0.01)` updates the parameters — an improved SGD, matching the Python Adam optimizer.
+- **Optimizer.** `Optimisers.Adam(0.01)` updates the parameters — an improved SGD, the same optimizer family the Python notebook uses. Only the optimizer *type* matches exactly: the Python notebook sets the learning rate to `0.001`, while this preview raises it to `0.01` so the policy makes visible progress within the shorter smoke step budget.
 - **Sampling.** `sample_k` draws capital uniformly from the exogenous interval \$[0.1, 1.0]\$, fresh each step.
 - **Training.** We iterate: sample a batch, take an Adam step, and record the loss. `RUN_MODE` sets the number of steps and the batch size.
 """

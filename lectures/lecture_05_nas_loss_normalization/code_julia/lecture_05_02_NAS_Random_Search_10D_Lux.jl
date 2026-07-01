@@ -110,7 +110,7 @@ md"""
 
 \$\$y = \sum_{i=1}^{3}\sin(x_i) + 0.25\sum_{j=4}^{10} x_j^2.\$\$
 
-Rows are features and columns are observations here (the feature-by-batch layout Lux expects), so `target_10d` returns a \$1 \times n\$ row. The Python ground truth instead uses a richer target with pairwise interactions, an exponential term, and additive Gaussian noise, and standardizes inputs/targets with a `StandardScaler` (fit on train, applied to val/test). This compact preview drops the noise and the standardization and uses a single train/test split.
+Rows are features and columns are observations here (the feature-by-batch layout Lux expects), so `target_10d` returns a \$1 \times n\$ row. The Python ground truth instead draws inputs from a standard normal (`np.random.randn`, i.e. \$N(0,1)\$ with unbounded support), uses a richer target with pairwise interactions, an exponential term, and additive Gaussian noise, and standardizes inputs/targets with a `StandardScaler` (fit on train, applied to val/test). This compact preview instead samples inputs uniformly on \$[-1,1]^{10}\$ and drops the noise and the standardization, using a single train/test split.
 
 **Search space.** We treat depth, width, learning rate, and activation as tunable:
 
@@ -140,7 +140,7 @@ end
 md"""
 ### 2. Model builder and the random-search loop
 
-`train_candidate` maps a sampled configuration to a `Lux.Chain` MLP via `make_mlp(10, hidden, 1; activation)` — the Julia counterpart of the Python `build_model` (a Keras `Sequential` with a linear regression head). Each candidate is trained with `Optimisers.Adam(config.lr)` through `setup_training` / `train_step!` (gradient-clipped at norm 10), scoring the explicit `prediction, st = model(x, ps, st)` call with `mse_loss`.
+`train_candidate` maps a sampled configuration to a `Lux.Chain` MLP via `make_mlp(10, hidden, 1; activation)` — the Julia counterpart of the Python `build_model` (a Keras functional `Model` — `keras.Input` piped through `keras.Model(inputs, outputs)`, not `keras.Sequential` — with a linear regression head). Each candidate is trained with `Optimisers.Adam(config.lr)` through `setup_training` / `train_step!` (gradient-clipped at norm 10), scoring the explicit `prediction, st = model(x, ps, st)` call with `mse_loss`.
 
 The random search then:
 

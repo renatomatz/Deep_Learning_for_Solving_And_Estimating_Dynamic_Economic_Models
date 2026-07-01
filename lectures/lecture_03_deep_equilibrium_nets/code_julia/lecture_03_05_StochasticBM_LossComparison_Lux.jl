@@ -47,6 +47,8 @@ md"""
 ### Setup
 
 Where the Python notebook uses NumPy and TensorFlow/Keras, the Julia preview loads `Lux`, `Optimisers`, `NNlib`, `Statistics`, and `CairoMakie`, plus the shared `DLEFJulia` loss kernels (`mse_loss`, `mae_loss`, `huber_loss`, `pinball_loss`, `logcosh_loss`) and quadrature helpers.
+
+The full Python notebook presents its mid-notebook sections in the order 3 (Network), 4 (Euler residual), 5 (Loss kernels), 6 (Common random numbers), 7 (Training rig). This Julia preview hoists section 6 (Common random numbers) ahead of sections 4 and 5, and merges section 3 (Network) down into section 7 (Training rig), for code-dependency reasons — the pre-generated batches are needed before the residual/loss definitions, and the network is built alongside the training rig. Every Julia heading keeps its Python section number, so the mapping back to the Python flow stays explicit.
 """
 
 # ╔═╡ 22222222-0305-4222-8222-222222222222

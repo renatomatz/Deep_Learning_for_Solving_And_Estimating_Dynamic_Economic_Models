@@ -150,6 +150,8 @@ md"""
 #### Visualizing the regression results
 
 We compare the trained Lux MLP's predictions to the true target across the input range.
+
+The full Python notebook also plots the **regression training-loss curve** (loss vs epoch) to visualise convergence. In this preview that curve is not drawn; the per-step `history` of `loss` and `grad_norm` is recorded in the training cell above and surfaced numerically through `initial_loss`, `final_loss`, and the step count in the closing summary.
 """
 
 # ╔═╡ 77777777-0206-4777-8777-777777777777

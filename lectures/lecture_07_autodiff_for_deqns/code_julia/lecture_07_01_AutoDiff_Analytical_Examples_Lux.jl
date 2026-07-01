@@ -115,7 +115,7 @@ md"""
 The standard isoelastic (CRRA) utility:
 \$\$u(c) = \frac{c^{1-\gamma}}{1-\gamma}, \qquad u'(c) = c^{-\gamma}, \qquad u''(c) = -\gamma\, c^{-\gamma-1}.\$\$
 
-We compute *both* derivatives — \$u'\$ via `ForwardDiff.derivative` and \$u''\$ via the `second_derivative` helper (nested forward-mode) — plot them alongside \$u\$, and confirm they match the closed-form expressions.
+We compute *both* derivatives — \$u'\$ via `ForwardDiff.derivative` and \$u''\$ via the `second_derivative` helper (nested forward-mode) — and confirm they match the closed-form expressions. The full Python notebook also plots \$u\$, \$u'\$, and \$u''\$ together over a 200-point consumption grid; the Julia preview computes the same derivatives on a coarser 100-point grid and keeps only the numerical cross-check `crra_errors` in place of the plot.
 
 **Take-away.** Change `gamma` to `4.0` — the code does not move. The autodiff answer follows automatically. The same cell can produce the marginal utility for *any* utility function we plug into `utility`.
 """
@@ -151,6 +151,8 @@ Here one `ForwardDiff.gradient` call returns both partials \$(f_K, f_L)\$ at a p
 # ╔═╡ e3e9da40-6baa-e36b-d14a-d0274afc9cec
 md"""
 ### 6. Bonus: the Hessian via `ForwardDiff.hessian`
+
+> **Section order.** The Hessian is shown here — right after Cobb-Douglas (section 4) and before the capital adjustment cost (section 5) — because it reuses the very same Cobb-Douglas primitive: one code cell computes both the gradient and the Hessian. The intro list above keeps the slide order (5 before 6); only the presentation is folded together.
 
 The Hessian of Cobb-Douglas at a point \$(K, L)\$ has three independent entries:
 \$\$H = \begin{pmatrix} f_{KK} & f_{KL} \\ f_{KL} & f_{LL} \end{pmatrix}.\$\$
@@ -223,6 +225,8 @@ This figure plots the finite-difference error curve `fd_errors` computed above a
 - The finite-difference errors form the classic U-curve: error first falls as \$h^2\$ (truncation), then climbs as \$\epsilon/h\$ (catastrophic cancellation).
 - The minimum sits around \$h^\star \approx \sqrt{\epsilon} \approx 10^{-5.3}\$, with best-case error \$\sim 10^{-11}\$ — we have lost ~5 digits.
 - Autodiff hits machine precision at *zero* \$h\$ tuning.
+
+The full Python figure also overlays the two theoretical asymptote lines — truncation \$\sim h^2\$ and roundoff \$\sim \epsilon/h\$ — that bracket the U from below and above; this preview draws only the measured `fd_errors` curve and the `ForwardDiff` reference, with those two regimes described in the bullets above.
 
 For Hessians and higher derivatives, finite differences lose many more digits and are essentially unusable for moderate-precision work.
 """

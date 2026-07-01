@@ -77,7 +77,9 @@ These can differ by **orders of magnitude** (e.g. \$L_{\text{ARC}} \sim 5\$ whil
 3. Replace equal weights with `simplex_inverse_loss_weights`, `relobralo_weights`, or `softadapt_weights`.
 4. Compare whether the balanced objective lowers the largest component.
 
-The next cell already computes example weights on the toy component losses `[1.0, 100.0, 0.01]` so you can see each scheme rebalancing toward the large-scale component; the `balanced_irbc_loss` function itself is left as a TODO.
+The next cell already computes example weights on the toy component losses `[1.0, 100.0, 0.01]` so you can see each scheme rebalancing toward the small-scale component — inverse-loss weighting gives the smallest-loss component the most attention (largest weight) and the large-scale 100.0 component the least; the `balanced_irbc_loss` function itself is left as a TODO.
+
+Note: the displayed `inverse_weights` are scaled by the number of components, so they are count-normalized (mean 1) for a direct comparison against `equal_weights = ones(...)`, rather than summing to 1 as the simplex formula above does (there `weight_sums.inverse` equals the component count, not 1).
 """
 
 # ╔═╡ 55555555-0505-4555-8555-555555555555

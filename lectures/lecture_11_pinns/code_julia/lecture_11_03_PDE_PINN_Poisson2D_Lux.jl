@@ -125,7 +125,7 @@ with penalty weight \$\lambda = 10\$ (`bc_weight = 10.0`); the boundary conditio
 
 where the anchor \$A(x,y)\$ reproduces the Dirichlet data and the bubble mask \$B(x,y) = x(1-x)\,y(1-y)\$ vanishes on all four edges, so \$\hat{u} = A + B\cdot N\$ satisfies the boundary conditions by construction and the loss reduces to the interior residual alone. `poisson2d_hard_loss` builds this ansatz internally.
 
-The Julia preview defines both losses and trains the two models **side by side** in one Adam loop, rather than in the two separate passes of the Python notebook.
+The Julia preview defines both losses and trains the two models **side by side** in one Adam loop, rather than in the two separate passes of the Python notebook. In this preview the shared Lux training loop also applies gradient-norm clipping (`max_grad_norm = 50.0`); the Python notebook uses plain Adam steps with no clipping. The clip is a loose harness default that leaves the short smoke run unchanged.
 """
 
 # ╔═╡ 55555555-1103-4555-8555-555555555555

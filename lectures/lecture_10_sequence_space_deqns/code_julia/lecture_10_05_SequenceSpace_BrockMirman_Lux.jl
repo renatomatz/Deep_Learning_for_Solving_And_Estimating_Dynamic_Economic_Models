@@ -49,6 +49,7 @@ By the end of this notebook you will be able to:
 ### References
 - Azinovic-Yang, M., & Žemlička, J. (2025). *Deep learning in the sequence space.* arXiv:2509.13623.
 - Brock, W. A., & Mirman, L. J. (1972). *Optimal economic growth and uncertainty: the discounted case.* Journal of Economic Theory 4(3), 479–513.
+- Companion JAX repository (as linked by the Python notebook): [`azinoma/DeepLearningInTheSequenceSpace`](https://github.com/azinoma/DeepLearningInTheSequenceSpace).
 """
 
 # ╔═╡ 9b777215-e09f-ce5c-72d6-4ac152ed0421
@@ -159,6 +160,8 @@ The Python notebook fixes its schedule directly:
 | `cloud_steps` | \$256\times 8 = 2048\$ | total training episodes (fixed, not scaled) |
 
 This Lux preview instead scales the schedule from `RUN_MODE`: the checked-in `smoke` budget uses 5 episodes, batch 16, and a length-8 shock history for fast CI; `teaching` and `production` recover the longer length-25 / length-80 histories. Set `RUN_MODE` below to move between budgets. (In the Python notebook `cloud_steps = 256 × 8` is a fixed constant, not derived from a run-mode switch.)
+
+Two further preview simplifications are *not* `RUN_MODE`-scaled and differ from the tabulated Python values above: the conditional-expectation integral uses a 3-node Gauss–Hermite rule (`gauss_hermite_rule(3)`) rather than the tabulated `gh_order = 8`, and Adam runs at learning rate `0.002` rather than the tabulated `lr_adam = 1e-5`. Both are chosen to match the far shorter preview episode budget; at \$\sigma_z = 0.01\$ the 3-node quadrature integrates the (nearly linear) expectation to well below the loss floor, and the larger step size lets the 5-episode smoke run make visible progress.
 """
 
 # ╔═╡ 33333333-1005-4333-8333-333333333333
@@ -261,8 +264,8 @@ begin
     end
     initial_loss = train_result.initial_loss
     history_log = train_result.history_log
-    states = train_result.states
-    histories = train_result.histories
+    states_final = train_result.states
+    histories_final = train_result.histories
 end
 
 # ╔═╡ 33711e02-0d25-a89b-ac39-9593cdc25762
@@ -276,9 +279,9 @@ This preview instead recomputes `sequence_bm_residual` on the trained cloud and 
 
 # ╔═╡ 66666666-1005-4666-8666-666666666666
 begin
-    diagnostics, _ = sequence_bm_residual(state.model, state.ps, state.st, states, histories, rule; params)
-    flat_history = flatten_history(histories)
-    quadrature_flat = flatten_quadrature_histories(quadrature_histories(histories, rule.nodes))
+    diagnostics, _ = sequence_bm_residual(state.model, state.ps, state.st, states_final, histories_final, rule; params)
+    flat_history = flatten_history(histories_final)
+    quadrature_flat = flatten_quadrature_histories(quadrature_histories(histories_final, rule.nodes))
 end
 
 # ╔═╡ cf4ad3c1-e110-6ffd-1556-f20b5a185b6c
@@ -306,7 +309,7 @@ The cell below returns the machine-checkable diagnostics summary for this notebo
     initial_loss = initial_loss,
     final_loss = history_log[end].loss,
     residual_rmse = residual_summary(diagnostics.euler).rmse,
-    history_shape = size(histories),
+    history_shape = size(histories_final),
     lux_history_shape = size(flat_history),
     quadrature_history_shape = size(quadrature_flat),
     mean_savings_rate = sum(diagnostics.savings_rate) / length(diagnostics.savings_rate),

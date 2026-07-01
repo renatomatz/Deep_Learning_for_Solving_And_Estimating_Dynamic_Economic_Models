@@ -110,6 +110,8 @@ Following Tripathy & Bilionis (2018) we parametrise \$\hat y(\xi) = g\bigl(h(\xi
 - **training loss** data MSE plus an elastic-net penalty \$\lambda_1\lVert W\rVert_1 + \lambda_2\lVert W\rVert_2^2\$ on all weights.
 
 `make_deep_active_subspace(20, 1; …)` builds this encoder/link model in Lux at \$d = 1\$. Crucially, no gradient samples and no orthogonality constraint are needed.
+
+> **In this Lux preview** the training objective is *plain data MSE*: the Eq. 12 elastic-net penalty \$\lambda_1\lVert W\rVert_1 + \lambda_2\lVert W\rVert_2^2\$ listed above is what the full Python notebook adds to drive its sparse encoder / intrinsic-dimension selection, and it is dropped here. On the smoke radial-ridge target \$d = 1\$ is already known, so the preview does not need the penalty to recover it.
 """
 
 # ╔═╡ 44444444-1409-4444-8444-444444444444
@@ -131,6 +133,8 @@ md"""
 ### 4. Train and score the deep surrogate
 
 We train the \$d = 1\$ deep AS with Adam on the data MSE, record the loss history, then compute the coefficient of determination \$R^2 = 1 - \operatorname{MSE}/\operatorname{Var}(y)\$ on the training points. A *constant* predictor (the sample mean) would score \$R^2 = 0\$; the honest criterion for the intrinsic dimension is *where the validation curve flattens*.
+
+*This preview* uses a constant-learning-rate `Optimisers.Adam(0.01)`; the full Python notebook trains `Adam` at `lr = 5e-3` under a `CosineAnnealingLR` schedule (`T_max = epochs`). The schedule only matters at the heavier teaching/production budgets and is immaterial for the 3-step smoke run.
 
 *The full Python notebook* trains one model per \$d \in \{1, 2, 3, 4\}\$ and reads the intrinsic dimension off the elbow of that curve: at \$d = 1\$ the deep encoder already captures essentially all of the response variance (\$R^2 > 99.8\%\$ at the production budget), and \$d \ge 2\$ adds no new structure — because \$r^2\$ is a nonlinear aggregator of two linear features, the deep encoder learns it in a single dimension.
 """

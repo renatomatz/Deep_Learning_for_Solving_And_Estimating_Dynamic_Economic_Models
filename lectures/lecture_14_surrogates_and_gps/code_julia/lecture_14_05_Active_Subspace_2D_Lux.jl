@@ -45,6 +45,8 @@ When using Gaussian processes to approximate value or policy functions in dynami
 3. The eigenvalue spectrum and the projection direction \$\mathbf{W}\$.
 4. A low-dimensional surrogate on the active subspace versus the full-input regression.
 5. How the active-subspace surrogate wins at small sample sizes — the regime that matters for expensive economic models.
+
+> **In this preview.** Items 4–5 describe what the full Python notebook does: it fits the low-dimensional active-subspace surrogate *against* a full-input regression and sweeps small sample sizes to exhibit the active-subspace win. This Julia preview fits a single active-subspace surrogate at one budget and keeps only the single-fit accuracy check (§4); it does not fit a full-input baseline or run the small-sample sweep.
 """
 
 # ╔═╡ 22222222-1405-4222-8222-222222222222

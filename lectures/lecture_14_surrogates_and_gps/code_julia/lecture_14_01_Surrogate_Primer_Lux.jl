@@ -112,7 +112,7 @@ The surrogate is a Lux MLP (`make_mlp`) with four hidden layers and **Swish** (S
 
 \$\$\text{Swish}(x) = x \cdot \sigma(x),\$\$
 
-which is smooth and gives good gradients — important because we later differentiate through the surrogate. The next cell builds the model and the `surrogate_loss`; the following cell runs the Adam training loop via `train_step!`. Full-capacity (256-wide) layers drive the worst-case price error well below one cent on a \$[0, 100]\$ price range; the smoke preview uses narrower `hp.width` layers.
+which is smooth and gives good gradients — important because we later differentiate through the surrogate. The next cell builds the model and the `surrogate_loss`; the following cell runs the Adam training loop via `train_step!`. Full-capacity (128-wide) production layers drive the worst-case price error well below one cent on a \$[0, 100]\$ price range; the smoke preview uses narrower `hp.width` layers. (The full Python notebook trains 256-wide layers; this Julia preview caps production width at 128 in the budgets cell above.)
 """
 
 # ╔═╡ 44444444-1401-4444-8444-444444444444

@@ -102,14 +102,14 @@ end
 md"""
 ### Scaled Trial Solution with Hard Boundary Conditions
 
-For this one-dimensional HJB, a full DGM architecture is more machinery than we need. Here we use a smaller, scaled MLP inside a **hard-boundary trial solution**:
+For this one-dimensional HJB, a full DGM architecture is more machinery than we need. An earlier version of the Python notebook trained a large gated network with soft boundary penalties, where the boundary loss could dominate the objective; the hard-boundary trial solution below removes that competition by satisfying the endpoints exactly. Here we use a smaller, scaled MLP inside a **hard-boundary trial solution**:
 
 \$\$
 \hat V(a) = V^*(a_{\min}) + x(a)\{V^*(a_{\max})-V^*(a_{\min})\} + x(a)(1-x(a))S f_\theta(x(a)),
 \$\$
 where \$x(a)=(a-a_{\min})/(a_{\max}-a_{\min})\$ and \$S\$ is a value-function scale. The endpoints are exact by construction, so the optimizer can focus on the HJB residual. Note that the anchor uses the *closed-form* value \$V^*\$ at \$a_{\min}\$ and \$a_{\max}\$: this is a known-answer benchmark, and the point is to isolate the PINN residual mechanics. In a model without a closed-form solution the endpoint anchors must instead come from asymptotic conditions, state constraints, or a coarse numerical solve on a few boundary points.
 
-In Lux the free network \$f_\theta\$ is `make_mlp(1, (16, 16), 1; activation = tanh)`, and `DLEFJulia`'s `cake_eating_trial_value_derivative` evaluates the trial solution \$\hat V(a)\$ together with its derivative \$\hat V'(a)\$ — the input derivative comes from `ForwardDiff`. The closed-form references \$V^*\$ and \$c^*\$ are `cake_eating_value_exact` and `cake_eating_consumption_exact`. The Python notebook warm-starts with Adam and then applies a deterministic double-precision L-BFGS polish; this Julia smoke preview trains with Adam only (via `Optimisers.jl`) and defers the L-BFGS step.
+In Lux the free network \$f_\theta\$ is `make_mlp(1, (16, 16), 1; activation = tanh)`, and `DLEFJulia`'s `cake_eating_trial_value_derivative` evaluates the trial solution \$\hat V(a)\$ together with its derivative \$\hat V'(a)\$ — the input derivative comes from `ForwardDiff`. In this preview the free network is deliberately small (two hidden layers of width 16); the full Python notebook uses a wider, deeper free network inside the same scaled trial solution (`ScaledMLPValue`, width 64, depth 3, i.e. `1->64->64->64->1`). The closed-form references \$V^*\$ and \$c^*\$ are `cake_eating_value_exact` and `cake_eating_consumption_exact`. The Python notebook warm-starts with Adam and then applies a deterministic double-precision L-BFGS polish; this Julia smoke preview trains with Adam only (via `Optimisers.jl`) and defers the L-BFGS step.
 """
 
 # ╔═╡ 1c52370f-d7f0-ec78-12b5-50c2189cbd72
@@ -167,7 +167,7 @@ begin
     a_eval = collect(range(params.a_min, params.a_max; length = 60))
     V_hat = [cake_eating_trial_value_derivative(train_state.ps, a; params)[1] for a in a_eval]
     V_exact = [cake_eating_value_exact(a; params) for a in a_eval]
-    c_hat = [NNlib.softplus(cake_eating_trial_value_derivative(train_state.ps, a; params)[2])^(-1 / params.gamma) for a in a_eval]
+    c_hat = [(NNlib.softplus(cake_eating_trial_value_derivative(train_state.ps, a; params)[2]) + params.eps_safe)^(-1 / params.gamma) for a in a_eval]
     c_exact = [cake_eating_consumption_exact(a; params) for a in a_eval]
     final_pieces, _ = cake_eating_hjb_loss(train_state.model, train_state.ps, train_state.st, reshape(a_eval, 1, :); params)
 end

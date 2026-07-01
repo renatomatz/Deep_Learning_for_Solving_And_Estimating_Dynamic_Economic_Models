@@ -130,6 +130,8 @@ md"""
 Use the formula above to compute \$\beta_h\$ for \$h = 1, \dots, 5\$ (agent 6 dies and has \$\beta_6 = 0\$). Set \$A = 6\$ and \$\beta = 0.7\$, then create a **bar chart** of savings rates by age.
 
 The next code cell is the TODO scaffold; the cell after it is the worked solution (`savings_rates = exercise_savings_rates(A_task1, beta_task1)`), followed by the CairoMakie bar chart.
+
+> **Preview note.** The full Python notebook embeds the calibration annotation \$(A=6, \beta=0.7)\$ directly in the bar-chart title; this preview keeps the shorter title *"Analytical Savings Rates by Age"* since \$A\$ and \$\beta\$ are fixed and already stated above.
 """
 
 # ╔═╡ 77777777-0811-4777-8777-777777777777
@@ -250,6 +252,8 @@ md"""
 How does the discount factor \$\beta\$ affect lifecycle behavior? Compare lifecycle **consumption profiles** for \$\beta \in \{0.5, 0.7, 0.9\}\$, keeping \$A = 6\$, \$r = 0.15\$, \$w = 1.0\$ fixed. Plot all three profiles on the same axes — what happens as \$\beta\$ increases?
 
 The TODO scaffold is next; the worked solution loops over `beta_values = [0.5, 0.7, 0.9]`, recomputes `exercise_savings_rates` and `simulate_lifecycle` for each, and overlays the three consumption curves.
+
+> **Preview note.** The full Python notebook draws the three \$\beta\$ curves with the palette `['#e74c3c', 'steelblue', '#2ecc71']`; this preview uses the idiomatic CairoMakie palette `(:firebrick, :steelblue, :seagreen)`, so the red and green hues differ slightly while the curve ordering and labels are identical.
 """
 
 # ╔═╡ a2222222-0811-4a22-8a22-a22222222222

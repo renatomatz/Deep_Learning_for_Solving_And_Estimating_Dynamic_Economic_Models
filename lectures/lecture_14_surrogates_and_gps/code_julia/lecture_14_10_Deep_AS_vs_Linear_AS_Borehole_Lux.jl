@@ -115,6 +115,8 @@ md"""
 ### 2. Linear active-subspace surrogate
 
 We estimate the gradient outer-product matrix from **finite differences** on \$\xi \in [0,1]^8\$ (clipped at the box edges), eigendecompose it (`active_subspace`), and for each \$d \in \{1, \dots, 4\}\$ fit a degree-3 polynomial in the top \$d\$ active coordinates \$U_d^\top \xi\$ (`fit_active_subspace_surrogate`). Predictions are de-standardised before the held-out RMSE is computed.
+
+> **In this preview.** Python fits the cubic link with scikit-learn's `Ridge(alpha=1e-3)`, which leaves the polynomial constant/intercept unpenalised; the in-house ridge in `fit_active_subspace_surrogate` applies its \$\lambda = 10^{-3}\$ penalty across the full coefficient vector, so the constant term is lightly penalised too. On the standardised target the numerical difference is negligible and does not move the RMSE crossing.
 """
 
 # ╔═╡ 55555555-1410-4555-8555-555555555555
@@ -154,6 +156,8 @@ md"""
 ### 3. Deep active-subspace surrogate
 
 We reuse the Tripathy & Bilionis (2018) architecture from the previous notebook — exponentially-decaying encoder widths, Swish activation, and an elastic-net penalty on the weights, with no orthogonality constraint (`make_deep_active_subspace(8, d; …)`). One model is trained per latent dimension \$d \in \{1, \dots, 4\}\$ with Adam on the standardised MSE plus the elastic-net penalty, and evaluated on the same held-out test set.
+
+> **In this preview.** The full Python notebook cross-references the script equations for these architecture choices — exponentially-decaying encoder widths (Eq. 20), Swish activation (Eq. 10), and elastic-net regularisation (Eq. 12) — and trains each deep model with a `CosineAnnealingLR` schedule and no gradient clipping. This Lux preview keeps the same architecture and penalty but simplifies the training recipe to plain fixed-learning-rate Adam with gradient-norm clipping (`max_grad_norm = 25`); these are convergence-recipe details that do not change the model or its economics.
 """
 
 # ╔═╡ 66666666-1410-4666-8666-666666666666

@@ -158,8 +158,8 @@ begin
     fb_demo = fischer_burmeister(labor_cap .- labor_guess, fill(0.0, 1, hp.batch_size))
 
     # TODO: define fb_lab_a and fb_lab_b for the constrained labor FOC.
-    fb_lab_a_todo = "TODO: slack in the labor time constraint"
-    fb_lab_b_todo = "TODO: nonnegative multiplier or FOC wedge"
+    fb_lab_a_todo = "TODO: nonnegative multiplier or FOC wedge"
+    fb_lab_b_todo = "TODO: slack in the labor time constraint"
 
     exercise_3_prompt = (labor_cap = labor_cap, fb_demo_max_abs = maximum(abs.(fb_demo)), fb_lab_a_todo, fb_lab_b_todo)
 end

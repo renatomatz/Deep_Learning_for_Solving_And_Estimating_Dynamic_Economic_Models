@@ -28,7 +28,7 @@ md"""
 
 > **Shape-preserving CPU port.** This is a CPU-only Lux/Optimisers/Zygote companion to the JAX/Optax tutorial. It keeps the same mathematics and the same shape-preserving idea; only the framework wording changes (JAX `jit`/`grad`/`vmap` → Lux with explicit `model(x, ps, st)` state threading and Zygote/ForwardDiff; Optax → `Optimisers.jl`).
 
-> **Note on `K_ss`.** The deterministic representative-agent benchmark `K_ss` is a convenient reference point for plots and initial conditions. It is *not* the stochastic heterogeneous-agent equilibrium capital stock.
+> **Note on `K_ss`.** The deterministic representative-agent benchmark `K_ss` is a convenient reference point for plots and initial conditions. It is *not* the stochastic heterogeneous-agent equilibrium capital stock. *In this CPU preview* we do not actually compute `K_ss` or draw a benchmark line; the initial household distribution is simply centered at a fixed target capital (`K_target = 5.0`).
 """
 
 # ╔═╡ 7f99fc7c-ab8e-7a72-92d6-4ed915b9fb02
@@ -162,6 +162,8 @@ The Fischer-Burmeister function encodes both in one smooth formula:
 \$\$\text{FB}(g, s) = \sqrt{g^2 + s^2 + \epsilon} - g - s,\$\$
 where \$s = k'/c\$ is the relative savings slack. For log utility, \$u'(c) = 1/c\$, so \$u'^{-1}(q) = 1/q\$. Then \$\text{FB} = 0\$ if and only if the KKT conditions are satisfied: either \$g = 0, s \geq 0\$ (interior) or \$g \geq 0, s = 0\$ (constrained).
 
+> **In this preview.** The shared `sequence_ks_residual` helper evaluates the Euler residual in **absolute** units — the marginal-utility gap \$u'(c) - \beta\,\mathbb{E}_t[R'\,u'(c')]\$ and the absolute savings slack \$k' - k_{\min}\$ — rather than the consumption-relative \$g = (c_\text{Euler}-c)/c\$ and \$s = k'/c\$ written above (which follow the Python original); next-period consumption \$c'\$ is interpolated at each household's chosen savings \$k'\$ with Young lottery weights. It also reports a **mass-weighted** mean \$\text{FB}^2\$ (weighted by the household distribution \$\mu\$) plus a small capital-market-clearing penalty \$\big((K' - K)/(1 + |K|)\big)^2\$, whereas the full Python notebook averages \$\text{FB}^2\$ uniformly with no market-clearing term.
+
 ---
 ## Part 5: Training
 
@@ -247,7 +249,7 @@ In this notebook we:
 **A few intentional simplifications**
 - two-state aggregate and idiosyncratic Markov chains,
 - log utility,
-- a deterministic \$K_{ss}\$ used only as a benchmark line,
+- the initial household distribution centered at a fixed target capital (`K_target = 5.0`) rather than a computed deterministic \$K_{ss}\$ benchmark line (not rendered in this preview),
 - and, in this CPU preview, smoke-size budgets with a single `(history, distribution)` pair rather than the full replay-buffer training loop.
 
 The cell below returns the machine-checkable diagnostics summary for this run — the initial and final loss, the feasible / monotone / concave shape flags, the Euler RMSE, the propagated aggregates, and the flattened shock-history dimensions at the Lux boundary.

@@ -105,6 +105,8 @@ We want the network to approximate the savings rate \$s_t\$, so that \$K_{t+1} =
 
 Following [Azinovic et al. (2022)](https://onlinelibrary.wiley.com/doi/full/10.1111/iere.12575), we use a densely connected feed-forward network with two hidden layers (ReLU), and — because we approximate a savings *rate* — a **sigmoid** output so that \$s_t \in (0, 1)\$. This encodes economic prior knowledge directly into the architecture. The Python notebook builds this in Keras; the Julia preview builds it with `make_mlp` (Lux) plus a `NNlib.sigmoid` `savings_transform`, and creates the Adam optimiser through `setup_training` (the `Optimisers.jl` replacement for `tf.keras.optimizers.Adam`).
 
+> **The full Python notebook also** points to related work on baking economic structure into the network architecture: Kahou et al. (2021) and Han et al. (2022) show how *symmetry* can be encoded into the neural-network architecture, and Azinovic and Zemlicka (2023) introduce *market-clearing* neural-network architectures. This preview keeps only the Azinovic et al. (2022) pointer above.
+
 **The batch dimension.** Networks are highly parallelisable, so we evaluate on a whole vector of capital levels at once rather than a single \$K\$. At the Lux boundary these are **feature-by-batch** arrays (features on the first axis, samples on the second) — the transpose of the deep-learning convention of samples on the 0-axis. The explicit `y, st = model(x, ps, st)` call threads Lux parameters and state through every evaluation.
 """
 
@@ -140,6 +142,9 @@ end
 # ╔═╡ 87633e08-c10d-87fb-fc6c-dafc5b448afc
 md"""
 #### Why we no longer need pen-and-paper FOC + envelope
+
+> **Ordering note.** In the full Python notebook this FOC + envelope motivation appears right after the model recap, before the network is introduced; here it sits adjacent to its payoff-implementation code for readability.
+
 Define the **period payoff**
 \$\$\Pi(K_{\text{in}},\,K_{\text{out}}) \;=\; u\!\big(\,Y(K_{\text{in}}) + (1-\delta)K_{\text{in}} - K_{\text{out}}\,\big),\$\$
 where \$K_{\text{in}}\$ is the *state* (today's capital) and \$K_{\text{out}}\$ is the *choice* (tomorrow's capital). This is the *only primitive* the user writes — here `bm_payoff` / the `BMPayoff` functor.

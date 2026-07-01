@@ -85,7 +85,7 @@ A small MLP maps the encoded aggregate shock **history** to the coefficients tha
 \$\$\text{MPC}(k) = \alpha \cdot \left(1 - \sum_j \tilde{w}_j \, I_j(k)\right),\$\$
 where each \$I_j\$ increases monotonically from 0 to 1, so the MPC is decreasing (consumption concave) **by construction**.
 
-> **Julia parity note.** This preview lets the Lux actor emit MPC heads directly (one per idiosyncratic income state) and **checks monotonicity/concavity after the fact** through the diagnostics, rather than guaranteeing them by an I-spline construction.
+> **Julia parity note.** This preview lets the Lux actor emit MPC heads directly — a single scalar MPC per idiosyncratic income state, so consumption is **linear** in cash-on-hand (constant MPC). It therefore neither guarantees the decreasing-MPC concavity that the Python I-spline enforces by construction, nor checks it: the final diagnostics cell reports loss, RMSE, mass, capital, and prices, but **no monotonicity/concavity test**.
 """
 
 # ╔═╡ 44444444-1006-4444-8444-444444444444
@@ -129,7 +129,7 @@ and \$\text{FB} = 0\$ iff the KKT conditions are satisfied.
 
 Prices and aggregates enter as fixed numbers (the `stop_gradient` analogue): only the actor calls are traced, so **Zygote** flows gradients through the policy network alone. `sequence_ks_residual` returns the pieces of this residual, and `pieces.loss` is what training minimizes.
 
-> **Julia parity note.** The shared residual also computes a borrowing-constraint **complementarity diagnostic**, but that term is reported for inspection only and is **not** included in the `pieces.loss` that the optimizer sees.
+> **Julia parity note.** The displayed relative forms \$g = (c_{\text{Euler}} - c)/c\$ and \$s = k'/c\$ match the Python ground truth; the shared Julia residual instead evaluates FB on the **marginal-utility Euler gap** \$u'(c) - \beta\,\mathbb{E}[R'\,u'(c')]\$ and the **absolute savings slack** \$k' - k_{\min}\$, so the reported loss carries unnormalized units. That borrowing-constraint FB complementarity is squared and mass-weighted straight **into** `pieces.loss` — it is the dominant training term, not a passive diagnostic; only the raw `euler_gap` field is inspection-only. The full Python notebook also minimizes a **pure mean-FB\$^2\$** objective, whereas this preview adds a small normalized **capital-market-clearing penalty** \$\bigl((K' - K)/(1 + |K|)\bigr)^2\$ to `pieces.loss` to keep the aggregate consistent.
 """
 
 # ╔═╡ 91544713-42a2-375e-2455-c3f827f1b814
@@ -165,8 +165,8 @@ begin
     end
     initial_loss = train_result.initial_loss
     history_log = train_result.history_log
-    history = train_result.history
-    distribution = train_result.distribution
+    history_final = train_result.history
+    distribution_final = train_result.distribution
 end
 
 # ╔═╡ cb8d866b-538f-71ac-3094-e8a99b0636b6
@@ -189,8 +189,8 @@ Here the diagnostics feed `residual_summary` (Euler RMSE), the aggregate capital
 
 # ╔═╡ 66666666-1006-4666-8666-666666666666
 begin
-    diagnostics, _ = sequence_ks_residual(state.model, state.ps, state.st, history, distribution; params)
-    ks_policy, _ = sequence_ks_policy_grid(state.model, state.ps, state.st, history, distribution; params)
+    diagnostics, _ = sequence_ks_residual(state.model, state.ps, state.st, history_final, distribution_final; params)
+    ks_policy, _ = sequence_ks_policy_grid(state.model, state.ps, state.st, history_final, distribution_final; params)
 end
 
 # ╔═╡ a43027a9-dc3f-a4c1-4cd8-084ef0e0e9ba
@@ -228,9 +228,9 @@ Each could be relaxed without changing the algorithm's structure. The cell below
     capital_market = diagnostics.capital_market,
     interest_rate = ks_policy.prices.R,
     wage = ks_policy.prices.w,
-    history_shape = size(history),
-    history_feature_dim = size(history, 1),
-    flattened_history_dim = size(flatten_history(history), 1),
+    history_shape = size(history_final),
+    history_feature_dim = size(history_final, 1),
+    flattened_history_dim = size(flatten_history(history_final), 1),
     policy_shape = size(ks_policy.consumption),
 )
 

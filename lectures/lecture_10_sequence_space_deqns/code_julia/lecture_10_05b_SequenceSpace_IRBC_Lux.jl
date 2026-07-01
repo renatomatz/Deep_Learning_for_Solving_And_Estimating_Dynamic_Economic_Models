@@ -494,7 +494,7 @@ The point of running IRBC in sequence space is not computational efficiency — 
 On this classroom budget the sequence-space network reaches residual levels *comparable to* (and in places better than) nb 01's Approach C. Two forces partly offset each other:
 
 - **Against** sequence space: the network has to infer \$(k_j, z_j)\$ from a noisy 240-dim history rather than read them off as inputs. All else equal, residuals should be larger.
-- **For** sequence space: the SS-centred \$\tanh\$ parametrization injects a strong prior that the policy is near the steady state — nb 01's softplus head has no such anchor. Combined with exponential LR decay this dominates the budget here.
+- **For** sequence space: the SS-centred \$\tanh\$ parametrization injects a strong prior that the policy is near the steady state — nb 01's softplus head has no such anchor. This prior dominates the budget here. (The full Python notebook combines it with exponential LR decay from \$10^{-3}\$ to \$10^{-5}\$; this Lux preview instead uses a fixed-rate `Optimisers.Adam` step, as noted in Section 10.)
 
 Takeaway: sequence space is *not* automatically worse. At the scale where it matters (Krusell–Smith), the cost of inferring state from history is offset by the radically simpler input geometry.
 

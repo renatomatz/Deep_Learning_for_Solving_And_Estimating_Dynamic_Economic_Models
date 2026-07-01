@@ -492,6 +492,8 @@ md"""
 
 A training segment may contain many states, for example \$10\times 256=2560\$ states. The variables `batch_size`, `PASSES_PER_SEGMENT`, and the optimizer (`Optimisers.Adam`) determine how the optimizer uses these states.
 
+The full Python notebook also exposes an optimizer-selection menu (`OPTIMIZER_NAME` over `Adam`/`AdamW`/`RMSprop`/`SGD`, with configurable `ADAM_BETA_1/2`, `RMSPROP_RHO`, `SGD_MOMENTUM`, and `WEIGHT_DECAY` through a `make_optimizer()` factory). This Lux preview wires only `Optimisers.Adam(hp.learning_rate)`, which reproduces the Python default (Adam with betas 0.9/0.999).
+
 The continuation logic is intentionally explicit in the loop (`run_persistent_training!`):
 ```julia
 x_segment, x_end = get_training_segment(local_rng, x_start, train_state)

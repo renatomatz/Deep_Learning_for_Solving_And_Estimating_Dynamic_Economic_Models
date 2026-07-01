@@ -225,6 +225,8 @@ The irreversible model is numerically delicate because simulation must not gener
 The network chooses an investment fraction with a sigmoid transformation. The initial policy sets \$I_t^j\approx\delta k_t^j\$, hence \$k_{t+1}^j\approx k_t^j\$, but the training trajectories themselves start from dispersed feasible states.
 
 In Lux this is `irreversible_policy_from_raw`: the raw outputs pass through `sigmoid` (the investment fraction, biased by `investment_bias` so \$I\approx\delta k\$ at initialization), \$\exp\circ\tanh\$ (the marginal-utility level \$\lambda\$), and `softplus` (the KKT multiplier \$\mu\geq 0\$). The final Dense layer is initialized to zeros so the untrained policy is exactly this reference point.
+
+In this preview the policy network uses two 32-unit `tanh` hidden layers to keep the smoke run light. The full Python notebook uses two 128-unit hidden layers (`NUM_HIDDEN_1 = NUM_HIDDEN_2 = 128`), as does the smooth companion notebook `lecture_04_01`; that wider network has more approximation capacity when reproducing the slide/script accuracy figures.
 """
 
 # ╔═╡ 55555555-0402-4555-8555-555555555555
@@ -569,6 +571,8 @@ md"""
 
 The architecture has no calendar-time input, so a fixed parameter vector defines a time-homogeneous recursive policy. What still has to be checked numerically is whether the learned policy function has stopped moving across SGD updates. The notebook checks this by comparing policies on a fixed holdout cloud `X_anchor` after each monitoring interval.
 
+In this preview `X_anchor` is drawn entirely from the exogenous box. The full Python notebook instead builds this holdout cloud from roughly 75% exogenous-box and 25% initial-box states (`n_exog = ceil(0.75 * n_anchor)`) and then shuffles them, so the reported policy-drift numbers are not directly comparable to the Python run even though the diagnostic itself is unchanged.
+
 The zero-shock stochastic steady state is the fixed point of the learned stochastic policy when realized shocks are set to zero. In the irreversible model this is especially useful: at a sensible steady state, investment should equal depreciation, the irreversibility constraint should not bind, and the KKT multiplier should be close to zero.
 
 The policy-drift (time-invariance) monitor was accumulated inside the training loop above; this cell iterates the zero-shock map to its fixed point and checks that \$k_{t+1}=k_t\$, that \$z=0\$, that the investment fraction sits at \$\delta\$, and that the relative multiplier \$\mu/\lambda\$ is near zero. In this Julia preview the zero-shock check runs just before the general final-diagnostics report of §7.
@@ -637,6 +641,8 @@ The final report uses dimensionless errors:
 A mean Euler error of \$2\times10^{-3}\$ is approximately a 0.2 percent Euler wedge.
 
 Here the residuals are summarized with `residual_summary` on an exogenous evaluation cloud (`eval_states`).
+
+In this preview only the exogenous-cloud evaluation is kept. The full Python notebook §7 additionally reports residuals on a burn-in simulated on-distribution cloud (`residual_report` "Out-of-sample simulated states"), an accuracy check on where the policy actually spends its time that is omitted here.
 """
 
 # ╔═╡ cccccccc-0402-4ccc-8ccc-cccccccccccc
@@ -681,6 +687,8 @@ To experiment, edit the active `budgets` entry in the configuration cell:
 - **Optimizer / schedule:** set `learning_rate` (feeding `Optimisers.Adam`) and `batch_size`; each segment is used once before the trajectories continue.
 
 The policy-stability check is controlled by `time_invariance_anchor_states`; the zero-shock stochastic steady-state check by `zero_shock_n_starts`, `zero_shock_max_steps`, and `zero_shock_tol`.
+
+This preview provides only the persistent-simulation training sampler. The full Python notebook also exposes an exogenous training-data mode (`SAMPLING_MODE = "exogenous"`), together with a §10 instruction to switch to it; that alternative sampler and its how-to are omitted here.
 
 ### Conclusion
 

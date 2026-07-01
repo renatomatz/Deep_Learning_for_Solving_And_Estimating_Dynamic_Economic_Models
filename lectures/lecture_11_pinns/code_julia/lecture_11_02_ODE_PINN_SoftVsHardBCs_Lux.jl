@@ -84,7 +84,7 @@ In the **soft** (penalty) approach we train a raw neural network \$N(x;\theta)\$
 
 The boundary conditions are only satisfied **approximately**, to the extent that the optimiser can drive the penalty terms to zero alongside the PDE residual.
 
-The Julia preview defines the soft and hard loss functions together in the next cell and trains both models side by side, rather than in two separate passes as in the Python notebook. Second derivatives \$y''\$ come from `ForwardDiff` via the shared `tanh_mlp_value_second_derivative` helper.
+The Julia preview defines the soft and hard loss functions together in the next cell and trains both models side by side, rather than in two separate passes as in the Python notebook. Second derivatives \$y''\$ come from an analytic tanh-MLP derivative propagation (the shared `tanh_mlp_value_second_derivative` helper, built on `tanh_mlp_scalar_derivatives`, which walks the Dense layers propagating the input Jacobian and Hessian in closed form). `ForwardDiff` is used only for the exact-solution residual check, not to differentiate the network in the PINN residual.
 """
 
 # ╔═╡ 37486fce-5d0d-8a5c-8d72-790d179b4662

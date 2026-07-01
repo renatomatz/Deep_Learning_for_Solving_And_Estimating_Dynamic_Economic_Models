@@ -163,9 +163,13 @@ For validation we compare the PINN solution against the closed-form Black-Schole
 
 where \$d_1 = \frac{\ln(S/K) + (r + \sigma^2/2)(T-t)}{\sigma\sqrt{T-t}}\$ and \$d_2 = d_1 - \sigma\sqrt{T-t}\$, and \$\Phi\$ is the standard normal CDF. The Julia preview evaluates the price with `black_scholes_call_price` and its delta with `black_scholes_delta`.
 
+> **Reference CDF.** The Python notebook evaluates \$\Phi\$ with `scipy.stats.norm.cdf` (machine precision); the Julia helpers use an Abramowitz–Stegun rational approximation of \$\Phi\$ (roughly \$10^{-7}\$ error). That approximation error is negligible relative to the PINN's own accuracy, so the known-answer benchmark is unaffected.
+
 ### Comparison: PINN vs. Analytical Solution
 
 We evaluate both the trained PINN and the analytical formula at \$t = 0\$ (i.e. time to maturity \$= T\$) across the full range of spot prices \$S \in [0, S_{\max}]\$.
+
+> **In this preview.** The full Python notebook evaluates the price and Delta comparisons on `np.linspace(0, S_max, 200)` (200 spot points); this Julia smoke preview uses a coarser 60-point grid, so the max-abs and relative-\$L^2\$ errors below are computed over fewer evaluation points.
 
 ### Error Analysis
 

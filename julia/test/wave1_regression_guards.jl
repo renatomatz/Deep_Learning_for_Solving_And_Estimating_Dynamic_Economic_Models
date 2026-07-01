@@ -174,17 +174,13 @@ end
 
 # Notebooks that still carry the SAME "define in a setup cell, re-bind to a
 # `train_result.<field>` in a training cell" multiple-definition bug as
-# lecture_04_01's `x_start`, but were NOT part of the Wave-1 fix set. They are
-# skipped here so the guard passes; remove an entry once its notebook is fixed
-# (the guard then protects it too). Duplicated globals, for reference:
-#   lecture_08_08 : cloud            lecture_08_10 : cloud
-#   lecture_10_05 : states, histories  lecture_10_06 : history, distribution
-const WAVE1_KNOWN_MULTIDEF = Set([
-    "lectures/lecture_08_olg_models_deqns/code_julia/lecture_08_08_OLG_Analytic_DEQN_persistent_Lux.jl",
-    "lectures/lecture_08_olg_models_deqns/code_julia/lecture_08_10_OLG_Benchmark_DEQN_persistent_Lux.jl",
-    "lectures/lecture_10_sequence_space_deqns/code_julia/lecture_10_05_SequenceSpace_BrockMirman_Lux.jl",
-    "lectures/lecture_10_sequence_space_deqns/code_julia/lecture_10_06_SequenceSpace_KrusellSmith_Lux.jl",
-])
+# lecture_04_01's `x_start`. Entries here are @test_skip-ped instead of failing;
+# remove an entry once its notebook is fixed so the guard then protects it too.
+#
+# Wave-2 fixed the last remaining offenders (lecture_08_08, lecture_08_10,
+# lecture_10_05, lecture_10_06), so the baseline is now empty and every
+# notebook is actively guarded.
+const WAVE1_KNOWN_MULTIDEF = Set{String}()
 
 @testset "Wave 1 regression guards" begin
     @testset "Pluto no cross-cell multiple definitions" begin

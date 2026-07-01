@@ -34,7 +34,7 @@ md"""
 
 ### Overview
 
-We solve a **Bewley endowment economy** with a **continuum of agents**, aggregate and idiosyncratic shocks, **Epstein–Zin preferences**, and a **borrowing constraint**. The distribution of agents is tracked using **Young's (2010) non-stochastic histogram method**, which enters the neural network as a high-dimensional input.
+We solve a **Bewley endowment economy** with a **continuum of agents**, aggregate and idiosyncratic shocks, **Epstein–Zin preferences**, and a **borrowing constraint**. The distribution of agents is tracked using **Young's (2010) non-stochastic histogram method**, which this preview summarizes by its **mean** — a single aggregate moment fed to the network as one scalar feature. (In the full Python notebook the histogram instead enters the neural network as a high-dimensional input.)
 
 #### How this notebook fits the lecture
 The lecture first uses the **Krusell-Smith benchmark** to explain why distribution tracking matters. The Python ground truth is the **Appendix A.5 teaching implementation** from Azinovic, Gaegauf, and Scheidegger (2022). The common ingredient is Young's histogram update: the benchmark motivates **why** it matters, while the DEQN shows **how** it enters training.
@@ -215,6 +215,8 @@ This is the DEQN training loop, and the place where **distribution propagation**
 3. Carry the new histogram forward as the starting point for the next step, recording mass and mean via `append_metric!`.
 
 Young's update is deterministic and differentiable, so the histogram co-evolves with the network exactly as in the paper's episode-based training — here compressed to `hp.steps` gradient steps. Mass and mean are logged each step so histogram conservation is visible in the diagnostics.
+
+The full Python notebook also includes a standalone one-step "bridge" demo (§5b) that runs a single DEQN-style Young update on a mock policy to print current vs. next mass explicitly; here the per-step mass/mean logging above plays that mass-conservation-checking role inline.
 """
 
 # ╔═╡ 66666666-0911-4666-8666-666666666666
@@ -260,7 +262,7 @@ We solved a compact **Bewley endowment economy** with a **continuum of agents** 
 4. **No separate forecasting rule** is needed — the price head conditions directly on the histogram mean.
 
 #### Key architectural choices
-- Input dimension scales with the histogram encoding — resolution (`grid_size`) is a tunable knob.
+- The network input is a fixed **3-feature vector** (asset, income, histogram mean); `grid_size` sets the histogram resolution / number of cells, not the input width. (In the full Python notebook the input dimension instead scales with the histogram encoding, so resolution is a genuine input-width knob.)
 - Bounded sigmoid maps ensure positive prices and feasible, non-negative savings.
 - Step-by-step histogram carry-over keeps training distributions on the model's own ergodic set.
 

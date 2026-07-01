@@ -141,7 +141,9 @@ end
 md"""
 ### Evaluation and Visualization
 
-We compare the trained network's prediction with the analytical solution \$y(x) = x(1 - x)/2\$ on a fine grid and visualize both the solution and the absolute pointwise error.
+We compare the trained network's prediction with the analytical solution \$y(x) = x(1 - x)/2\$ on a fine grid. This Lux preview plots the solution against the analytic curve; the absolute pointwise error is reported numerically instead (its maximum appears in the diagnostics summary below).
+
+> The full Python notebook also renders two extra panels: the absolute pointwise error on a log scale, and the training-loss convergence curve (a `semilogy` of the loss history versus step). In this preview the per-step loss is recorded in `history` and surfaced through the diagnostics summary rather than plotted.
 """
 
 # ╔═╡ 55555555-1101-4555-8555-555555555555

@@ -130,6 +130,8 @@ md"""
 
 We plot the recorded train and validation MSE (log scale) against the training step, marking the best-validation step with a dashed line. The two curves should track each other; a wide, growing gap signals over-fitting.
 
+The full Python notebook also pairs this loss curve with a second diagnostic — an actual-vs-predicted scatter of the trained network's outputs against the ground-truth signal on a fresh 2000-point test grid, read against the `y = x` reference line to confirm fit quality. This preview keeps only the loss-curve panel.
+
 > **In the Python notebook** the same metrics are inspected through the TensorBoard dashboard — inline via the `%tensorboard` magic (the recommended path on Nuvolos), or from a terminal with `tensorboard --logdir=./logs --port 6006` — offering **Scalars** (epoch loss/MAE, train vs. validation), **Histograms** (per-layer weight/bias distributions, to spot dead or exploding neurons), and **Graphs** (the static computation graph). Here the `metrics_table` `DataFrame` holds the same scalar series, so we read them straight off a Makie plot.
 """
 
