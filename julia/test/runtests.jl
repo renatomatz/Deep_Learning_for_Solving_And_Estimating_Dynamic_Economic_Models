@@ -375,6 +375,23 @@ end
         ct_aiyagari_pinn_loss(models, ps_local, st, a_col; params = ct_params, kfe_form = :strong)[1].loss
     end[1]
     @test tree_sum_abs2(strong_grad) > 0
+    hjb_g_grad = Zygote.gradient(ps_g) do ps_g_local
+        local_ps = (w = ps_w, g = ps_g_local)
+        ct_aiyagari_pinn_loss(models, local_ps, st, a_col; params = ct_params, kfe_form = :fv)[1].hjb_loss
+    end[1]
+    @test isapprox(tree_sum_abs2(hjb_g_grad), 0.0; atol = 1e-20)
+    fv_kfe_w_grad = Zygote.gradient(ps_w) do ps_w_local
+        local_ps = (w = ps_w_local, g = ps_g)
+        pieces = ct_aiyagari_pinn_loss(models, local_ps, st, a_col; params = ct_params, kfe_form = :fv)[1]
+        pieces.kfe_loss + pieces.agg_loss
+    end[1]
+    @test isapprox(tree_sum_abs2(fv_kfe_w_grad), 0.0; atol = 1e-20)
+    strong_kfe_w_grad = Zygote.gradient(ps_w) do ps_w_local
+        local_ps = (w = ps_w_local, g = ps_g)
+        pieces = ct_aiyagari_pinn_loss(models, local_ps, st, a_col; params = ct_params, kfe_form = :strong)[1]
+        pieces.kfe_loss + pieces.flux_loss + pieces.agg_loss + pieces.boundary_loss
+    end[1]
+    @test isapprox(tree_sum_abs2(strong_kfe_w_grad), 0.0; atol = 1e-20)
     ct_train_state = setup_training(models, ps, st, Optimisers.Descent(1e-5))
     ct_loss(models, ps, st, batch) = begin
         loss_parts, st_new = ct_aiyagari_pinn_loss(models, ps, st, batch; params = ct_params, kfe_form = :fv)

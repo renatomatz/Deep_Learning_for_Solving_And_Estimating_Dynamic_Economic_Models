@@ -135,8 +135,12 @@ function sequence_ks_residual(model, ps, st, history, distribution;
     policy, st_new = sequence_ks_policy_grid(model, ps, st, history, distribution; params)
     current_mu = policy.consumption .^ (-params.gamma)
     current_probs = @view history[1:length(params.aggregate_z), 1, 1]
-    labor_next = policy.aggregate.labor
-    capital_next = sum(policy.savings .* distribution)
+    aggregate_next = Zygote.ignore() do
+        distribution_next = sequence_ks_distribution_step(distribution, policy; params)
+        sequence_ks_distribution_aggregates(distribution_next, params)
+    end
+    labor_next = aggregate_next.labor
+    capital_next = aggregate_next.capital
     expected_terms = map(eachindex(params.aggregate_z)) do z_next_index
         z_block = _sequence_ks_onehot(params, z_next_index, 1, eltype(history))
         next_history = prepend_history(history, z_block)

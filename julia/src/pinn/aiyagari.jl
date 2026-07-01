@@ -249,7 +249,8 @@ function ct_aiyagari_pinn_loss(models, ps, st, a_col; params::CTAiyagariParams =
     log_g_q, _ = _ct_aiyagari_both_log_density(ps.g, quad.nodes; params)
     normalized = ct_aiyagari_normalized_density(log_g_q, quad.weights)
     aggregates = ct_aiyagari_distribution_aggregates(normalized.density, quad.nodes, quad.weights; params)
-    prices = ct_aiyagari_prices(aggregates.K, aggregates.L; params)
+    live_prices = ct_aiyagari_prices(aggregates.K, aggregates.L; params)
+    prices = (r = Zygote.dropgrad(live_prices.r), w = Zygote.dropgrad(live_prices.w))
 
     W, dW = _ct_aiyagari_both_marginal_value(ps.w, a; params)
     policy = ct_aiyagari_marginal_value_policy(W, a, prices.r, prices.w; params)
@@ -261,20 +262,22 @@ function ct_aiyagari_pinn_loss(models, ps, st, a_col; params::CTAiyagariParams =
 
     W_q, dW_q = _ct_aiyagari_both_marginal_value(ps.w, quad.nodes; params)
     policy_q = ct_aiyagari_marginal_value_policy(W_q, quad.nodes, prices.r, prices.w; params)
-    agg_loss = sum(reshape(quad.weights, :, 1) .* policy_q.savings .* normalized.density)^2
+    s_q = Zygote.dropgrad(policy_q.savings)
+    agg_loss = sum(reshape(quad.weights, :, 1) .* s_q .* normalized.density)^2
 
     if form == :fv
-        mu = ct_aiyagari_kfe_drift(normalized.density .* quad.da, policy_q.savings, quad.da; params)
+        mu = ct_aiyagari_kfe_drift(normalized.density .* quad.da, s_q, quad.da; params)
         kfe = mu ./ quad.da
         kfe_loss = mean(abs2, kfe)
         flux_loss = zero(kfe_loss)
     else
         log_g, dlog_g = _ct_aiyagari_both_log_density(ps.g, a; params)
         g = exp.(log_g .- normalized.logZ)
-        dsa = prices.r .+ (1 / params.gamma) .* (policy.consumption ./ W) .* dW
-        kfe = -(policy.savings .* g .* dlog_g .+ g .* dsa) .+ reverse(lam; dims = 2) .* reverse(g; dims = 2) .- lam .* g
+        s_c = Zygote.dropgrad(policy.savings)
+        dsa = Zygote.dropgrad(prices.r .+ (1 / params.gamma) .* (policy.consumption ./ W) .* dW)
+        kfe = -(s_c .* g .* dlog_g .+ g .* dsa) .+ reverse(lam; dims = 2) .* reverse(g; dims = 2) .- lam .* g
         kfe_loss = mean(abs2, kfe)
-        flux_loss = mean(abs2, sum(policy.savings .* g; dims = 2))
+        flux_loss = mean(abs2, sum(s_c .* g; dims = 2))
     end
 
     mass_balance_loss = zero(hjb_loss)
@@ -287,7 +290,7 @@ function ct_aiyagari_pinn_loss(models, ps, st, a_col; params::CTAiyagariParams =
         policy_end = ct_aiyagari_marginal_value_policy(W_end, endpoints, prices.r, prices.w; params)
         log_g_end, _ = _ct_aiyagari_both_log_density(ps.g, endpoints; params)
         density_end = exp.(log_g_end .- normalized.logZ)
-        boundary_loss = sum(abs2, policy_end.savings .* density_end)
+        boundary_loss = sum(abs2, Zygote.dropgrad(policy_end.savings) .* density_end)
     end
 
     total = hjb_loss + kfe_loss + flux_loss + agg_weight * agg_loss + mass_balance_loss + boundary_loss + shape_loss
