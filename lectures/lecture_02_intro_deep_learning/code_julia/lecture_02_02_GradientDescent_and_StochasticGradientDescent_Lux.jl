@@ -86,7 +86,7 @@ begin
         return xs
     end
 
-    path = gradient_descent_1d(-0.4)
+    path = gradient_descent_1d(2.0)
     (start = path[1], finish = path[end], objective = f(path[end]))
 end
 
@@ -160,24 +160,34 @@ Batch gradient descent recomputes the gradient over the *entire* dataset at ever
 
 \$\$\theta_0 \leftarrow \theta_0 - \alpha\,(h_\theta(x_i)-y_i), \qquad \theta_1 \leftarrow \theta_1 - \alpha\,x_i\,(h_\theta(x_i)-y_i).\$\$
 
-Typically one shuffles the data and runs 1–10 passes (epochs) over it. Unlike batch descent, SGD tends to oscillate *near* the minimum rather than settling exactly on it; a decreasing step size can damp this, but a fixed \$\alpha\$ is more common. The Julia cell below reshuffles with `randperm(rng, ...)` each pass and applies the per-example update over the cricket data.
+Typically one shuffles the data and runs several passes (epochs) over it. Unlike batch descent, SGD tends to oscillate *near* the minimum rather than settling exactly on it; a decreasing step size can damp this, but a fixed \$\alpha\$ is more common. The Julia cell below first standardizes the chirp counts (so the intercept and slope directions share a scale, which is what lets a single learning rate converge), reshuffles with `randperm(rng, ...)` each pass, applies the per-example update, and finally maps the fitted coefficients back to the original chirp scale so they line up with the batch-GD and closed-form fits.
 
 > **The full Python notebook also covers** an SGD demo on 500,000 synthetic points drawn around \$y = 4x + 10 + \varepsilon\$, tracking the running cost every 10,000 steps to show it fall quickly and then level off. The Julia preview keeps SGD on the small cricket dataset so it can be read directly against the batch-GD and closed-form fits.
 """
 
 # ╔═╡ 77777777-0202-4777-8777-777777777777
 begin
-    function stochastic_gradient_descent(theta0, x, y; eta = 5e-5, passes = 8, rng)
+    function stochastic_gradient_descent(theta0, x, y; eta = 0.05, passes = 100, rng)
+        # Standardize the chirp counts before descending. The raw values sit
+        # near 15-20, so the slope direction has curvature ~x^2 while the
+        # intercept direction has curvature ~1; a single learning rate then
+        # leaves the intercept crawling. On z = (x - mu) / sigma both
+        # directions share a scale, so SGD reaches the least-squares fit.
+        mu = mean(x)
+        sigma = std(x)
+        z = (x .- mu) ./ sigma
+        to_original(beta) = [beta[1] - beta[2] * mu / sigma, beta[2] / sigma]
+
         theta = copy(theta0)
         history = NamedTuple[]
         for pass in 1:passes
             for i in randperm(rng, length(y))
-                err = theta[1] + theta[2] * x[i] - y[i]
-                theta .-= eta .* [err, err * x[i]]
+                err = theta[1] + theta[2] * z[i] - y[i]
+                theta .-= eta .* [err, err * z[i]]
             end
-            push!(history, (pass = pass, loss = linear_cost(theta, x, y)))
+            push!(history, (pass = pass, loss = linear_cost(to_original(theta), x, y)))
         end
-        return theta, history
+        return to_original(theta), history
     end
 
     theta_sgd, sgd_history = stochastic_gradient_descent([1.0, 1.0], x, y; rng)

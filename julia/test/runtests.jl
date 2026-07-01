@@ -716,3 +716,5 @@ end
     @test isfinite(metrics.grad_norm)
 end
 
+include("wave1_regression_guards.jl")
+

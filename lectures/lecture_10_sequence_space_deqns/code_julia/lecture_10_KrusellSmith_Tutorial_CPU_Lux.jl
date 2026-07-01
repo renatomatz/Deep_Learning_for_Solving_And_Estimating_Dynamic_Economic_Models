@@ -125,12 +125,17 @@ where \$\alpha \in (0,1)\$ is the MPC at the borrowing constraint (from a sigmoi
 Consumption is recovered by **cumulation** on a fixed grid:
 \$\$c(k_0) = \text{MPC}(k_0) \cdot m(k_0), \qquad c(k_n) = c(k_{n-1}) + \text{MPC}(k_n) \cdot R \cdot \Delta k_n\$\$
 
-**In this Julia preview** the log-spaced capital grid (Step 2a — more resolution near \$k = 0\$ where the policy is steepest), the cubic I-spline basis \$B_{j,n} = I_j(\log(\text{BASIS\_SHIFT} + k_n))\$ (Step 2b), and the neural-network actor that maps a short aggregate-shock history to the per-income-state MPC heads (Step 2c) are all provided by the shared `DLEFJulia` sequence-space helpers (`SequenceKSParams`, `sequence_ks_policy_grid`). The actor is a `make_mlp` MLP. The shape guarantees are then **verified after the fact** by the `shape_report` diagnostic (feasible / monotone / concave) rather than asserted silently.
+**In this Julia preview** we do **not** build the I-spline basis. The shared `DLEFJulia` sequence-space helpers (`SequenceKSParams`, `sequence_ks_policy_grid`) use a simpler shape-preserving surrogate: the actor emits one **constant per-income-state MPC head** \$\alpha(\varepsilon)\$, squashed into \$(0.05,\,0.95)\$ by a sigmoid (`mpc = 0.05 + 0.90 * sigmoid(raw)`), and consumption on the grid is recovered as \$c(\varepsilon, k) = \text{MPC}(\varepsilon)\cdot\text{cash}(\varepsilon, k)\$ with \$\text{cash} = R k + w\varepsilon\$. Because the MPC is constant in \$k\$ and cash is affine in \$k\$, consumption is increasing and (weakly) concave in \$k\$ and feasible by the same \$\alpha < 1\$ argument — just without the cubic I-spline curvature. The capital grid here is a **uniform** grid on \$[0, 20]\$; the full Python notebook instead builds the cubic I-spline basis \$B_{j,n} = I_j(\log(\text{BASIS\_SHIFT} + k_n))\$ on a **log-spaced** grid (more resolution near \$k = 0\$ where the policy is steepest). The actor is a `make_mlp` MLP, and the shape guarantees are **verified after the fact** by the `shape_report` diagnostic (feasible / monotone / concave) rather than asserted silently.
 """
 
 # ╔═╡ 44444444-10ff-4444-8444-444444444444
 begin
-    params = SequenceKSParams(capital_grid = collect(range(0.0, 20.0; length = hp.grid_size)))
+    params = SequenceKSParams(
+        beta = 0.93, delta = 0.025, gamma = 1.0,
+        idio_income = [0.5, 1.5], idio_transition = [0.9 0.1; 0.1 0.9],
+        aggregate_z = [0.93, 1.07], aggregate_transition = [0.7 0.3; 0.3 0.7],
+        capital_grid = collect(range(0.0, 20.0; length = hp.grid_size)),
+    )
     history = sequence_ks_history(params; history_length = hp.history_length, z_index = 2)
     distribution = sequence_ks_initial_distribution(params; K_target = 5.0)
     history_dim = size(history, 1) * hp.history_length
@@ -228,13 +233,13 @@ md"""
 
 In this notebook we:
 
-1. **Represented** the consumption policy with an I-spline MPC basis, so the grid policy is increasing, concave, and feasible by construction.
+1. **Represented** the consumption policy with a constant per-income-state MPC head (sigmoid-bounded) in this preview — the full Python notebook uses an I-spline MPC basis — so the grid policy is increasing, concave, and feasible by construction.
 2. **Evaluated** equilibrium conditions with a Fischer-Burmeister residual that handles both interior and constrained households.
 3. **Trained** on an aggregate shock history coupled with a household distribution.
 4. **Diagnosed** solution quality with the Euler residual and the shape-guarantee flags.
 
 **Takeaways**
-- The I-spline MPC representation is a concrete example of how economic shape restrictions can be built directly into a neural network.
+- The MPC representation (a constant per-income-state head here, an I-spline basis in the full notebook) is a concrete example of how economic shape restrictions can be built directly into a neural network.
 - The distribution, evolved by Young's method, is the bridge between individual policies and aggregate prices.
 - Consumption vs \$K\$ at fixed \$k\$ visualizes approximate aggregation — tight clouds mean the policy depends mainly on prices, not on the full distribution.
 - The Euler/FB error is best in the interior and worst near the constraint and at high \$k\$ with little household mass.

@@ -651,7 +651,7 @@ begin
     x_anchor = sample_time_invariance_anchor_states(hp.time_anchor_states)
     training_result = run_persistent_training!(state, rng, x_start, x_anchor)
     history = training_result.history
-    x_start = training_result.x_start
+    x_start_final = training_result.x_start
     x_segment_last = training_result.x_segment_last
     anchor_fingerprint_previous = training_result.anchor_fingerprint
 end

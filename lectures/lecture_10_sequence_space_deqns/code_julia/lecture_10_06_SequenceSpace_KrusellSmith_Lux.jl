@@ -90,7 +90,16 @@ where each \$I_j\$ increases monotonically from 0 to 1, so the MPC is decreasing
 
 # ╔═╡ 44444444-1006-4444-8444-444444444444
 begin
-    params = SequenceKSParams(capital_grid = collect(range(0.0, 25.0; length = hp.grid_size)))
+    params = SequenceKSParams(
+        beta = 0.93,
+        delta = 0.025,
+        gamma = 1.0,
+        idio_income = [0.5, 1.5],
+        idio_transition = [0.9 0.1; 0.1 0.9],
+        aggregate_z = [0.93, 1.07],
+        aggregate_transition = [0.7 0.3; 0.3 0.7],
+        capital_grid = collect(range(0.0, 25.0; length = hp.grid_size)),
+    )
     history = sequence_ks_history(params; history_length = hp.history_length, z_index = 1)
     distribution = sequence_ks_initial_distribution(params; K_target = 6.0)
     input_dim = size(history, 1) * hp.history_length

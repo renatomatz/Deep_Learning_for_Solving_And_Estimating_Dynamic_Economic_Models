@@ -146,7 +146,19 @@ function sequence_ks_residual(model, ps, st, history, distribution;
         mpc_next = 0.05 .+ 0.90 .* NNlib.sigmoid.(raw_next)
         cash_next = prices_next.R .* reshape(params.capital_grid, 1, :) .+ prices_next.w .* reshape(params.idio_income, :, 1)
         consumption_next = clamp.(mpc_next .* cash_next, params.eps_safe, cash_next .- params.eps_safe)
-        return probs_to_next .* prices_next.R .* (params.idio_transition * consumption_next .^ (-params.gamma))
+        expected_mu_z = map(CartesianIndices(policy.savings)) do idx
+            i_cur = idx[1]
+            k_next = policy.savings[idx]
+            w = young_weights(params.capital_grid, k_next; clip = true)
+            acc = zero(eltype(consumption_next))
+            for i_next in eachindex(params.idio_income)
+                c_next = w.lower_weight * consumption_next[i_next, w.lower] +
+                         w.upper_weight * consumption_next[i_next, w.upper]
+                acc += params.idio_transition[i_cur, i_next] * c_next ^ (-params.gamma)
+            end
+            acc
+        end
+        return probs_to_next .* prices_next.R .* expected_mu_z
     end
     expected_mu = reduce(+, expected_terms)
     euler_gap = current_mu .- params.beta .* expected_mu

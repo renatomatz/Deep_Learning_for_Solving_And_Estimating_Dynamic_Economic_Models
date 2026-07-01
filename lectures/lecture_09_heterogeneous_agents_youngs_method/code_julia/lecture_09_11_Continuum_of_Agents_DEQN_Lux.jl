@@ -172,7 +172,18 @@ begin
     function continuum_residual(model, ps, st, hist)
         policy, st_new = continuum_policy(model, ps, st, hist)
         marginal_utility = policy.consumption .^ (-gamma)
-        expected_marginal_utility = idio_transition * marginal_utility
+        expected_marginal_utility = map(CartesianIndices(policy.savings)) do idx
+            i_cur = idx[1]
+            bp = policy.savings[idx]
+            w = young_weights(asset_grid, bp; clip = true)
+            acc = zero(eltype(policy.consumption))
+            for i_next in eachindex(idio_income)
+                c_next = w.lower_weight * policy.consumption[i_next, w.lower] +
+                         w.upper_weight * policy.consumption[i_next, w.upper]
+                acc += idio_transition[i_cur, i_next] * c_next ^ (-gamma)
+            end
+            acc
+        end
         euler = marginal_utility ./ max.(beta / policy.price .* expected_marginal_utility, consumption_floor) .- 1
         bond_market = sum(hist .* policy.savings) - bond_supply
         weighted_euler = sum(hist .* euler .^ 2) / young_mass(hist)

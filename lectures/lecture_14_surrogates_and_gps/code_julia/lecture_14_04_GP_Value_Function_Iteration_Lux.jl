@@ -75,8 +75,9 @@ begin
     hp = run_mode_budget(RUN_MODE; budgets)
     bm = BrockMirmanParams(delta = 1.0, beta = 0.96)
     savings_rate = bm.alpha * bm.beta
-    value(k) = log((1 - savings_rate) * k^bm.alpha) / (1 - bm.beta) +
-        bm.beta * bm.alpha * log(savings_rate) / (1 - bm.beta)^2
+    value(k) = log(1 - savings_rate) / (1 - bm.beta) +
+        savings_rate * log(savings_rate) / ((1 - bm.beta) * (1 - savings_rate)) +
+        (bm.alpha / (1 - savings_rate)) * log(k)
 end
 
 # ╔═╡ 75fbc7c0-f30b-452c-caf0-d7343f976477
