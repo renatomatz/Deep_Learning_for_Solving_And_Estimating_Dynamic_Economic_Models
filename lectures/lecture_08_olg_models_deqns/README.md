@@ -33,6 +33,16 @@ After this lecture you can:
 
 ## Code
 
+### Julia/Lux/Pluto preview
+
+- [`code_julia/lecture_08_07_OLG_Analytic_DEQN_exogenous_Lux.jl`](code_julia/lecture_08_07_OLG_Analytic_DEQN_exogenous_Lux.jl) translates the analytic exogenous-cloud ablation with the shared OLG residual helper.
+- [`code_julia/lecture_08_08_OLG_Analytic_DEQN_persistent_Lux.jl`](code_julia/lecture_08_08_OLG_Analytic_DEQN_persistent_Lux.jl) translates the analytic persistent-simulation variant and validates against closed-form savings rates.
+- [`code_julia/lecture_08_09_OLG_Benchmark_DEQN_exogenous_Lux.jl`](code_julia/lecture_08_09_OLG_Benchmark_DEQN_exogenous_Lux.jl) translates the benchmark exogenous-cloud variant with smoke-mode cohort reduction.
+- [`code_julia/lecture_08_10_OLG_Benchmark_DEQN_persistent_Lux.jl`](code_julia/lecture_08_10_OLG_Benchmark_DEQN_persistent_Lux.jl) translates the benchmark persistent-simulation variant with borrowing and collateral transforms.
+- [`code_julia/lecture_08_11_OLG_Exercise_Lux.jl`](code_julia/lecture_08_11_OLG_Exercise_Lux.jl) translates the OLG exercise with closed-form savings and lifecycle diagnostics.
+
+### Python notebooks
+
 **Analytic 6-agent OLG** — closed-form validation target.
 - [`code/lecture_08_08_OLG_Analytic_DEQN_persistent.ipynb`](code/lecture_08_08_OLG_Analytic_DEQN_persistent.ipynb) — primary classroom variant: persistent-simulation training, validation against the Krueger–Kübler closed-form savings rates.
 - [`code/lecture_08_07_OLG_Analytic_DEQN_exogenous.ipynb`](code/lecture_08_07_OLG_Analytic_DEQN_exogenous.ipynb) — feedback-free ablation: training cloud drawn from broad exogenous boxes.

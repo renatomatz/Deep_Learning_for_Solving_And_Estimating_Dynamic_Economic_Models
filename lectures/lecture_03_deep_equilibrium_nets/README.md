@@ -34,6 +34,16 @@ After this lecture you can:
 
 ## Code
 
+### Julia/Lux/Pluto preview
+
+- [`code_julia/lecture_03_01_Brock_Mirman_1972_DEQN_Lux.jl`](code_julia/lecture_03_01_Brock_Mirman_1972_DEQN_Lux.jl)
+- [`code_julia/lecture_03_02_Brock_Mirman_Uncertainty_DEQN_Lux.jl`](code_julia/lecture_03_02_Brock_Mirman_Uncertainty_DEQN_Lux.jl)
+- [`code_julia/lecture_03_03_DEQN_Exercises_Blanks_Lux.jl`](code_julia/lecture_03_03_DEQN_Exercises_Blanks_Lux.jl)
+- [`code_julia/lecture_03_04_DEQN_Exercises_Solutions_Lux.jl`](code_julia/lecture_03_04_DEQN_Exercises_Solutions_Lux.jl)
+- [`code_julia/lecture_03_05_StochasticBM_LossComparison_Lux.jl`](code_julia/lecture_03_05_StochasticBM_LossComparison_Lux.jl)
+
+### Python notebooks
+
 - [`code/lecture_03_01_Brock_Mirman_1972_DEQN.ipynb`](code/lecture_03_01_Brock_Mirman_1972_DEQN.ipynb)
 - [`code/lecture_03_02_Brock_Mirman_Uncertainty_DEQN.ipynb`](code/lecture_03_02_Brock_Mirman_Uncertainty_DEQN.ipynb)
 - [`code/lecture_03_03_DEQN_Exercises_Blanks.ipynb`](code/lecture_03_03_DEQN_Exercises_Blanks.ipynb)

@@ -34,6 +34,22 @@ After this lecture you can:
 
 ## Code
 
+### Julia/Lux/Pluto preview
+
+- [`code_julia/lecture_02_00_Lux_Pluto_orientation.jl`](code_julia/lecture_02_00_Lux_Pluto_orientation.jl) introduces the shared Julia project, Pluto workflow, `RUN_MODE`, `SEED`, feature-by-batch arrays, Lux `model, ps, st`, and the first training-loop helper.
+- [`code_julia/lecture_02_01_BasicML_intro_Lux.jl`](code_julia/lecture_02_01_BasicML_intro_Lux.jl) translates the first supervised-learning examples with OLS and a small Lux MLP.
+- [`code_julia/lecture_02_02_GradientDescent_and_StochasticGradientDescent_Lux.jl`](code_julia/lecture_02_02_GradientDescent_and_StochasticGradientDescent_Lux.jl) translates the gradient-descent and cricket-data SGD examples.
+- [`code_julia/lecture_02_03_Double_Descent_Lux.jl`](code_julia/lecture_02_03_Double_Descent_Lux.jl) translates the random-feature double-descent experiment.
+- [`code_julia/lecture_02_04_Gentle_DNN_Lux.jl`](code_julia/lecture_02_04_Gentle_DNN_Lux.jl) translates the introductory deep-network regression and classification examples into Lux.
+- [`code_julia/lecture_02_05_Training_Instrumentation_Lux.jl`](code_julia/lecture_02_05_Training_Instrumentation_Lux.jl) translates training instrumentation with plain Julia metric logs and best-run metadata.
+- [`code_julia/lecture_02_06_Lux_Training_Fundamentals.jl`](code_julia/lecture_02_06_Lux_Training_Fundamentals.jl) replaces the PyTorch API introduction with explicit Lux parameter/state training fundamentals.
+- [`code_julia/lecture_02_07_Genz_Approximation_and_Loss_Functions_Lux.jl`](code_julia/lecture_02_07_Genz_Approximation_and_Loss_Functions_Lux.jl) translates the Genz approximation and loss-kernel comparison.
+- [`code_julia/lecture_02_08_MLP_LSTM_Transformer_Edgeworth_Cycles_Lux.jl`](code_julia/lecture_02_08_MLP_LSTM_Transformer_Edgeworth_Cycles_Lux.jl) translates the sequence-model memory ladder with Phase-0 Lux-compatible feature maps.
+- [`code_julia/lecture_02_09_Transformer_InContext_AR1_Lux.jl`](code_julia/lecture_02_09_Transformer_InContext_AR1_Lux.jl) translates the AR(1) in-context forecasting idea into a compact Lux forecaster.
+- See [`../../julia/README.md`](../../julia/README.md) for Julia environment instantiation, test, and Pluto launch commands.
+
+### Python notebooks
+
 - [`code/SGD_data.txt`](code/SGD_data.txt)
 - [`code/lecture_02_01_BasicML_intro.ipynb`](code/lecture_02_01_BasicML_intro.ipynb)
 - [`code/lecture_02_02_GradientDescent_and_StochasticGradientDescent.ipynb`](code/lecture_02_02_GradientDescent_and_StochasticGradientDescent.ipynb)

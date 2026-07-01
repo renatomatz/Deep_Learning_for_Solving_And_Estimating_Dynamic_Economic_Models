@@ -33,6 +33,15 @@ After this lecture you can:
 
 ## Code
 
+### Julia/Lux/Pluto preview
+
+- [`code_julia/lecture_07_01_AutoDiff_Analytical_Examples_Lux.jl`](code_julia/lecture_07_01_AutoDiff_Analytical_Examples_Lux.jl)
+- [`code_julia/lecture_07_02_Brock_Mirman_AutoDiff_DEQN_Lux.jl`](code_julia/lecture_07_02_Brock_Mirman_AutoDiff_DEQN_Lux.jl)
+- [`code_julia/lecture_07_03_Brock_Mirman_Uncertainty_AutoDiff_DEQN_Lux.jl`](code_julia/lecture_07_03_Brock_Mirman_Uncertainty_AutoDiff_DEQN_Lux.jl)
+- [`code_julia/lecture_07_04_IRBC_AutoDiff_DEQN_Lux.jl`](code_julia/lecture_07_04_IRBC_AutoDiff_DEQN_Lux.jl)
+
+### Python notebooks
+
 - [`code/lecture_07_01_AutoDiff_Analytical_Examples.ipynb`](code/lecture_07_01_AutoDiff_Analytical_Examples.ipynb)
 - [`code/lecture_07_02_Brock_Mirman_AutoDiff_DEQN.ipynb`](code/lecture_07_02_Brock_Mirman_AutoDiff_DEQN.ipynb)
 - [`code/lecture_07_03_Brock_Mirman_Uncertainty_AutoDiff_DEQN.ipynb`](code/lecture_07_03_Brock_Mirman_Uncertainty_AutoDiff_DEQN.ipynb)

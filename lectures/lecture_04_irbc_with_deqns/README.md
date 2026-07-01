@@ -32,6 +32,13 @@ After this lecture you can:
 
 ## Code
 
+### Julia/Lux/Pluto preview
+
+- [`code_julia/lecture_04_01_IRBC_DEQN_smooth_Lux.jl`](code_julia/lecture_04_01_IRBC_DEQN_smooth_Lux.jl) translates the smooth IRBC residual and zero-shock diagnostic with a smoke-size Lux policy.
+- [`code_julia/lecture_04_02_IRBC_DEQN_irreversible_Lux.jl`](code_julia/lecture_04_02_IRBC_DEQN_irreversible_Lux.jl) translates the irreversible-investment complementarity structure with Fischer-Burmeister residuals.
+
+### Python notebooks
+
 - [`code/lecture_04_01_IRBC_DEQN_smooth.ipynb`](code/lecture_04_01_IRBC_DEQN_smooth.ipynb) — smooth benchmark IRBC: persistent-simulation training, time-invariance and zero-shock steady-state diagnostics.
 - [`code/lecture_04_02_IRBC_DEQN_irreversible.ipynb`](code/lecture_04_02_IRBC_DEQN_irreversible.ipynb) — irreversible-investment extension with KKT multipliers and a Fischer–Burmeister complementarity loss.
 

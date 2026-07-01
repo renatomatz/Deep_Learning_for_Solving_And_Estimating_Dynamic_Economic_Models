@@ -36,6 +36,11 @@ After this lecture you can:
 - [`code/lecture_15_03_Structural_Estimation_BM.ipynb`](code/lecture_15_03_Structural_Estimation_BM.ipynb)
 - [`code/lecture_15_03b_Structural_Estimation_BM_Joint.ipynb`](code/lecture_15_03b_Structural_Estimation_BM_Joint.ipynb)
 
+### Julia/Lux/Pluto preview
+
+- [`code_julia/lecture_15_03_Structural_Estimation_BM_Lux.jl`](code_julia/lecture_15_03_Structural_Estimation_BM_Lux.jl) translates scalar persistence SMM with a Lux pseudo-state policy surrogate and common random numbers.
+- [`code_julia/lecture_15_03b_Structural_Estimation_BM_Joint_Lux.jl`](code_julia/lecture_15_03b_Structural_Estimation_BM_Joint_Lux.jl) translates joint `(beta, rho)` SMM with over-identified and weak-moment diagnostics.
+
 ## In the lecture script
 
 Chapter 10 (Structural estimation via SMM). The full chapter map is in [`script_to_lectures.md`](../../lecture_script/script_to_lectures.md).

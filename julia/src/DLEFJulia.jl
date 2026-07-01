@@ -1,0 +1,27 @@
+module DLEFJulia
+
+include("run_modes.jl")
+include("lux_helpers.jl")
+include("losses.jl")
+include("quadrature.jl")
+include("diagnostics.jl")
+include("training.jl")
+include("plotting.jl")
+include("deqn/brock_mirman.jl")
+include("deqn/irbc.jl")
+include("deqn/olg.jl")
+include("youngs/histogram.jl")
+include("sequence_space/histories.jl")
+include("sequence_space/irbc.jl")
+include("sequence_space/krusell_smith.jl")
+include("pinn/ode.jl")
+include("pinn/poisson.jl")
+include("pinn/cake_eating.jl")
+include("pinn/black_scholes.jl")
+include("pinn/aiyagari.jl")
+include("surrogates/gp.jl")
+include("smm/brock_mirman.jl")
+include("climate/dice.jl")
+include("climate/cdice.jl")
+
+end

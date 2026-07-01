@@ -33,6 +33,12 @@ After this lecture you can:
 
 ## Code
 
+### Julia/Lux/Pluto preview
+
+- [`code_julia/lecture_13_08_Aiyagari_Continuous_Time_FD_and_PINN_Lux.jl`](code_julia/lecture_13_08_Aiyagari_Continuous_Time_FD_and_PINN_Lux.jl)
+
+### Python notebook
+
 - [`code/lecture_13_08_Aiyagari_Continuous_Time_FD_and_PINN_PyTorch.ipynb`](code/lecture_13_08_Aiyagari_Continuous_Time_FD_and_PINN_PyTorch.ipynb) — the stationary Aiyagari equilibrium solved twice: an upwind finite-difference benchmark and a PINN re-solve of the coupled HJB-KFE system at the FD-computed prices.
 
 (The partial-equilibrium HJB warm-ups live in the PINN lecture, [Lecture 11](../lecture_11_pinns/README.md), which is where that material belongs.)
