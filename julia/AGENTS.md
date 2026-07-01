@@ -2,20 +2,20 @@
 
 ## Purpose
 
-`julia/` contains the shared Julia package and tests for the Lux/Pluto preview
+`julia/` contains the shared Julia package and tests for the Lux/Jupyter preview
 track. The student-facing translated notebooks live in lecture-local
-`code_julia/` directories and import this package.
+`code_julia/` directories as Jupyter `.ipynb` files and import this package.
 
 ## Source Of Truth
 
-Read `../JULIA_LUX_PLUTO_TRANSLATION_REPORT.md` before changing Julia source,
-dependencies, or translated notebooks. That report defines the Pluto notebook
+Read `../JULIA_LUX_JUPYTER_TRANSLATION_REPORT.md` before changing Julia source,
+dependencies, or translated notebooks. That report defines the Jupyter notebook
 choice, Lux-native API expectations, feature-by-batch convention, run modes, and
 dependency policy.
 
 ## Package Conventions
 
-- `Project.toml` is the shared Julia environment for all Pluto notebooks.
+- `Project.toml` is the shared Julia environment for all `code_julia/` notebooks.
 - `src/DLEFJulia.jl` should include every implemented shared module under
   `src/`.
 - Keep Lux code explicit: call models as `y, st_new = model(x, ps, st)` and
@@ -61,15 +61,17 @@ julia --project=. test/python_julia_equivalence.jl
 This integration suite checks the pair/gap inventory, semantic markers, and
 smoke-scale cross-lecture mechanics against the Python course as ground truth.
 
-Run smoke checks explicitly and selectively:
+Run the notebook execute-smoke explicitly and selectively. These scripts run
+under the `test/smoke` environment (which carries `NBInclude`), and execute each
+converted `.ipynb` in-process in an isolated module:
 
 ```bash
-julia --project=. test/smoke/wave1_notebooks.jl
-julia --project=. test/smoke/wave2_notebooks.jl
-julia --project=. test/smoke/wave3_notebooks.jl
-julia --project=. test/smoke/wave4_notebooks.jl
-julia --project=. test/smoke/wave5_notebooks.jl
-julia --project=. test/smoke/wave6_notebooks.jl
+julia --project=test/smoke test/smoke/wave1_notebooks.jl
+julia --project=test/smoke test/smoke/wave2_notebooks.jl
+julia --project=test/smoke test/smoke/wave3_notebooks.jl
+julia --project=test/smoke test/smoke/wave4_notebooks.jl
+julia --project=test/smoke test/smoke/wave5_notebooks.jl
+julia --project=test/smoke test/smoke/wave6_notebooks.jl
 ```
 
 Full smoke coverage can be expensive. Prefer the wave that covers the lecture

@@ -11,15 +11,15 @@ HJB-KFE system.
 - Start with `README.md`.
 - `code/lecture_13_08_Aiyagari_Continuous_Time_FD_and_PINN_PyTorch.ipynb` is the
   live code companion.
-- `code_julia/lecture_13_08_Aiyagari_Continuous_Time_FD_and_PINN_Lux.jl` is the
-  current Julia/Lux/Pluto preview.
+- `code_julia/lecture_13_08_Aiyagari_Continuous_Time_FD_and_PINN_Lux.ipynb` is the
+  current Julia/Lux preview.
 - `slides/lecture_13_continuous_time_ha_numerics.tex` is mostly TeX, TikZ, and
   PGFPlots; no external include-heavy figure tree was found.
 
 ## Running And Editing
 
 This lecture is not Python-only. Keep the PyTorch notebook and the
-Julia/Lux/Pluto preview aligned at the level of numerical objects and teaching
+Julia/Lux preview aligned at the level of numerical objects and teaching
 warnings: finite-difference benchmark, HJB residual, KFE residual, density
 normalization, and diagnostics.
 
@@ -48,8 +48,7 @@ Python notebook's production default. Its smoke configuration uses very small
 grids and steps, preserves FD-as-validation and HJB/KFE residual structure, and
 may still fail strict production-quality savings gates.
 
-Preserve Lux-native conventions in the Pluto file: explicit parameter/state
+Preserve Lux-native conventions in the Jupyter notebook: explicit parameter/state
 calls, feature-by-batch arrays at Lux boundaries, `Float64` for delicate
-HJB/KFE/PINN calculations, and seeded RNGs via shared helpers. Do not replace
-the Pluto preview with Jupyter/IJulia or train the PINN on finite-difference
+HJB/KFE/PINN calculations, and seeded RNGs via shared helpers. Do not train the PINN on finite-difference
 outputs; the finite-difference block remains validation and reference logic.

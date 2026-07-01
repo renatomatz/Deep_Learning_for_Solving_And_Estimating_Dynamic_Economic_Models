@@ -20,7 +20,7 @@ supporting code is maintained in the external research repository linked from
 `README.md`:
 `sischei/JPE_Macro_Using_ML_to_compute_constrained_optimal_carbon_tax_rules`.
 
-Do not invent local Python notebooks, Julia/Lux/Pluto notebooks, replacement
+Do not invent local Python notebooks, Julia/Lux notebooks, replacement
 code, or stubs here unless the user explicitly changes the scope. If code
 changes are requested, first clarify whether they belong in this teaching
 repository or in the external research repository. The Julia translation track

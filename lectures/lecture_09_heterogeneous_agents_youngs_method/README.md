@@ -39,11 +39,11 @@ After this lecture you can:
 
 ## Code
 
-### Julia/Lux/Pluto preview
+### Julia/Lux preview
 
-- [`code_julia/lecture_09_10_Youngs_Method_Examples_Lux.jl`](code_julia/lecture_09_10_Youngs_Method_Examples_Lux.jl) translates Young's deterministic histogram examples with mass and mean checks.
-- [`code_julia/lecture_09_11_Continuum_of_Agents_DEQN_Lux.jl`](code_julia/lecture_09_11_Continuum_of_Agents_DEQN_Lux.jl) gives a smoke-size continuum-agent DEQN with policy and price heads, Euler/market-clearing residuals, and Young propagation inside the training loop.
-- [`code_julia/lecture_09_12_KrusellSmith_DeepLearning_Lux.jl`](code_julia/lecture_09_12_KrusellSmith_DeepLearning_Lux.jl) translates the Krusell-Smith deep-learning notebook with smoke-scale Phase A sampling and Phase B running-panel simulation.
+- [`code_julia/lecture_09_10_Youngs_Method_Examples_Lux.ipynb`](code_julia/lecture_09_10_Youngs_Method_Examples_Lux.ipynb) translates Young's deterministic histogram examples with mass and mean checks.
+- [`code_julia/lecture_09_11_Continuum_of_Agents_DEQN_Lux.ipynb`](code_julia/lecture_09_11_Continuum_of_Agents_DEQN_Lux.ipynb) gives a smoke-size continuum-agent DEQN with policy and price heads, Euler/market-clearing residuals, and Young propagation inside the training loop.
+- [`code_julia/lecture_09_12_KrusellSmith_DeepLearning_Lux.ipynb`](code_julia/lecture_09_12_KrusellSmith_DeepLearning_Lux.ipynb) translates the Krusell-Smith deep-learning notebook with smoke-scale Phase A sampling and Phase B running-panel simulation.
 
 ### Python notebooks
 

@@ -34,12 +34,12 @@ After this lecture you can:
 
 ## Code
 
-### Julia/Lux/Pluto preview
+### Julia/Lux preview
 
-- [`code_julia/lecture_05_02_NAS_Random_Search_10D_Lux.jl`](code_julia/lecture_05_02_NAS_Random_Search_10D_Lux.jl) translates random search on a compact 10-D Lux approximation task.
-- [`code_julia/lecture_05_03_NAS_RandomSearch_Hyperband_Lux.jl`](code_julia/lecture_05_03_NAS_RandomSearch_Hyperband_Lux.jl) translates successive halving without using or rewriting the Python pickle cache.
-- [`code_julia/lecture_05_04_Loss_Normalization_Lux.jl`](code_julia/lecture_05_04_Loss_Normalization_Lux.jl) translates equal, inverse, ReLoBRaLo, and SoftAdapt-style loss weighting.
-- [`code_julia/lecture_05_05_IRBC_Exercise_Lux.jl`](code_julia/lecture_05_05_IRBC_Exercise_Lux.jl) preserves the student IRBC loss-balancing TODO exercise.
+- [`code_julia/lecture_05_02_NAS_Random_Search_10D_Lux.ipynb`](code_julia/lecture_05_02_NAS_Random_Search_10D_Lux.ipynb) translates random search on a compact 10-D Lux approximation task.
+- [`code_julia/lecture_05_03_NAS_RandomSearch_Hyperband_Lux.ipynb`](code_julia/lecture_05_03_NAS_RandomSearch_Hyperband_Lux.ipynb) translates successive halving without using or rewriting the Python pickle cache.
+- [`code_julia/lecture_05_04_Loss_Normalization_Lux.ipynb`](code_julia/lecture_05_04_Loss_Normalization_Lux.ipynb) translates equal, inverse, ReLoBRaLo, and SoftAdapt-style loss weighting.
+- [`code_julia/lecture_05_05_IRBC_Exercise_Lux.ipynb`](code_julia/lecture_05_05_IRBC_Exercise_Lux.ipynb) preserves the student IRBC loss-balancing TODO exercise.
 
 ### Python notebooks
 

@@ -32,10 +32,10 @@ After this lecture you can:
 
 ## Code
 
-### Julia/Lux/Pluto preview
+### Julia/Lux preview
 
-- [`code_julia/lecture_04_01_IRBC_DEQN_smooth_Lux.jl`](code_julia/lecture_04_01_IRBC_DEQN_smooth_Lux.jl) translates the smooth IRBC residual and zero-shock diagnostic with a smoke-size Lux policy.
-- [`code_julia/lecture_04_02_IRBC_DEQN_irreversible_Lux.jl`](code_julia/lecture_04_02_IRBC_DEQN_irreversible_Lux.jl) translates the irreversible-investment complementarity structure with Fischer-Burmeister residuals.
+- [`code_julia/lecture_04_01_IRBC_DEQN_smooth_Lux.ipynb`](code_julia/lecture_04_01_IRBC_DEQN_smooth_Lux.ipynb) translates the smooth IRBC residual and zero-shock diagnostic with a smoke-size Lux policy.
+- [`code_julia/lecture_04_02_IRBC_DEQN_irreversible_Lux.ipynb`](code_julia/lecture_04_02_IRBC_DEQN_irreversible_Lux.ipynb) translates the irreversible-investment complementarity structure with Fischer-Burmeister residuals.
 
 ### Python notebooks
 

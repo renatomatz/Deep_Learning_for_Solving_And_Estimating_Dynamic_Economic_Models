@@ -34,13 +34,13 @@ After this lecture you can:
 
 ## Code
 
-### Julia/Lux/Pluto preview
+### Julia/Lux preview
 
-- [`code_julia/lecture_11_01_ODE_PINN_ZeroBCs_Lux.jl`](code_julia/lecture_11_01_ODE_PINN_ZeroBCs_Lux.jl)
-- [`code_julia/lecture_11_02_ODE_PINN_SoftVsHardBCs_Lux.jl`](code_julia/lecture_11_02_ODE_PINN_SoftVsHardBCs_Lux.jl)
-- [`code_julia/lecture_11_03_PDE_PINN_Poisson2D_Lux.jl`](code_julia/lecture_11_03_PDE_PINN_Poisson2D_Lux.jl)
-- [`code_julia/lecture_11_04_Cake_Eating_HJB_PINN_Lux.jl`](code_julia/lecture_11_04_Cake_Eating_HJB_PINN_Lux.jl)
-- [`code_julia/lecture_11_05_Black_Scholes_PINN_Lux.jl`](code_julia/lecture_11_05_Black_Scholes_PINN_Lux.jl)
+- [`code_julia/lecture_11_01_ODE_PINN_ZeroBCs_Lux.ipynb`](code_julia/lecture_11_01_ODE_PINN_ZeroBCs_Lux.ipynb)
+- [`code_julia/lecture_11_02_ODE_PINN_SoftVsHardBCs_Lux.ipynb`](code_julia/lecture_11_02_ODE_PINN_SoftVsHardBCs_Lux.ipynb)
+- [`code_julia/lecture_11_03_PDE_PINN_Poisson2D_Lux.ipynb`](code_julia/lecture_11_03_PDE_PINN_Poisson2D_Lux.ipynb)
+- [`code_julia/lecture_11_04_Cake_Eating_HJB_PINN_Lux.ipynb`](code_julia/lecture_11_04_Cake_Eating_HJB_PINN_Lux.ipynb)
+- [`code_julia/lecture_11_05_Black_Scholes_PINN_Lux.ipynb`](code_julia/lecture_11_05_Black_Scholes_PINN_Lux.ipynb)
 
 ### Python notebooks
 

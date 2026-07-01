@@ -17,16 +17,16 @@ shocks.
   ideas into the course.
 - `code/lecture_16_03_Stochastic_DICE_DEQN.ipynb` adds stochastic CDICE-DEQN
   elements.
-- `code_julia/lecture_16_01_Climate_Exercise_Lux.jl` is the pure Julia DICE
+- `code_julia/lecture_16_01_Climate_Exercise_Lux.ipynb` is the pure Julia DICE
   warm-up.
-- `code_julia/lecture_16_02_DICE_DEQN_Library_Port_Lux.jl` is the deterministic
+- `code_julia/lecture_16_02_DICE_DEQN_Library_Port_Lux.ipynb` is the deterministic
   CDICE/Lux smoke preview.
-- `code_julia/lecture_16_03_Stochastic_DICE_DEQN_Lux.jl` is the stochastic
+- `code_julia/lecture_16_03_Stochastic_DICE_DEQN_Lux.ipynb` is the stochastic
   CDICE/Lux smoke preview.
 
 ## Running And Editing
 
-This lecture has both TensorFlow/Python notebooks and Julia/Lux/Pluto previews.
+This lecture has both TensorFlow/Python notebooks and Julia/Lux previews.
 Do not treat either stack as the sole source of guidance. Preserve the economic
 objects and warnings across both tracks: DICE simulation, deterministic CDICE,
 stochastic CDICE, SCC diagnostics, AR(1) productivity shocks, and
@@ -52,7 +52,7 @@ Each preview should activate that project, import `DLEFJulia`, preserve
 `RUN_MODE = "smoke"` and `SEED = 0` defaults, and keep Lux-native
 feature-by-batch and explicit parameter/state conventions. They are covered by
 `julia/test/smoke/wave6_notebooks.jl`. The smoke harness uses `include(path)`,
-so it checks runtime plumbing and finite returns rather than Pluto frontend
+so it checks runtime plumbing and finite returns rather than notebook frontend
 behavior, reference-code parity, or economic convergence.
 
 `lecture_16_02_DICE_DEQN_Library_Port_Lux.jl` trains only a tiny smoke pass and

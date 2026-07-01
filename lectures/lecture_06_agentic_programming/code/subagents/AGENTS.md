@@ -6,7 +6,7 @@ This directory contains example subagent templates for Lecture 06. They are
 teaching artifacts with YAML front matter and role-specific workflows, not active
 repository policy by themselves.
 
-This workshop folder is outside the Julia/Lux/Pluto translation track. Keep the
+This workshop folder is outside the Julia/Lux translation track. Keep the
 templates platform- and workflow-focused; do not add Lux or `code_julia/`
 translation guidance here unless the Lecture 06 scope changes.
 

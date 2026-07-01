@@ -6,7 +6,7 @@ This directory contains example skill specifications for Lecture 06. They are
 teaching artifacts, not active skills unless installed or copied into an agent
 environment.
 
-This workshop folder is not part of the Julia/Lux/Pluto translation track. Do
+This workshop folder is not part of the Julia/Lux translation track. Do
 not add `code_julia/` material or Lux-specific guidance inside these example
 skill docs unless the Lecture 06 scope changes.
 

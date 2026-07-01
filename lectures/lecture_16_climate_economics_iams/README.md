@@ -38,11 +38,11 @@ After this lecture you can:
 - [`code/lecture_16_03_Stochastic_DICE_DEQN.ipynb`](code/lecture_16_03_Stochastic_DICE_DEQN.ipynb)
 
 
-### Julia/Lux/Pluto preview
+### Julia/Lux preview
 
-- [`code_julia/lecture_16_01_Climate_Exercise_Lux.jl`](code_julia/lecture_16_01_Climate_Exercise_Lux.jl) translates the DICE carbon-cycle, temperature, and mitigation warm-up into pure Julia.
-- [`code_julia/lecture_16_02_DICE_DEQN_Library_Port_Lux.jl`](code_julia/lecture_16_02_DICE_DEQN_Library_Port_Lux.jl) preserves the deterministic CDICE calibration, policy transforms, residual equations, and teaching-policy SCC diagnostics with a Lux smoke pass.
-- [`code_julia/lecture_16_03_Stochastic_DICE_DEQN_Lux.jl`](code_julia/lecture_16_03_Stochastic_DICE_DEQN_Lux.jl) adds the AR(1) productivity state, Gauss-Hermite expectation, and small Monte Carlo fan-chart inputs.
+- [`code_julia/lecture_16_01_Climate_Exercise_Lux.ipynb`](code_julia/lecture_16_01_Climate_Exercise_Lux.ipynb) translates the DICE carbon-cycle, temperature, and mitigation warm-up into pure Julia.
+- [`code_julia/lecture_16_02_DICE_DEQN_Library_Port_Lux.ipynb`](code_julia/lecture_16_02_DICE_DEQN_Library_Port_Lux.ipynb) preserves the deterministic CDICE calibration, policy transforms, residual equations, and teaching-policy SCC diagnostics with a Lux smoke pass.
+- [`code_julia/lecture_16_03_Stochastic_DICE_DEQN_Lux.ipynb`](code_julia/lecture_16_03_Stochastic_DICE_DEQN_Lux.ipynb) adds the AR(1) productivity state, Gauss-Hermite expectation, and small Monte Carlo fan-chart inputs.
 
 ## In the lecture script
 

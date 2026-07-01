@@ -1,136 +1,31 @@
-# Regression guards for the Wave-1 Julia/Lux/Pluto preview fixes.
+# Regression guards for the Julia/Lux/Jupyter preview fixes.
 #
-# These are additive, self-contained guards (string parsing + arithmetic only);
+# Self-contained guards (JSON parsing of notebook cell source + arithmetic only);
 # they do not run any notebook or training. Included from runtests.jl.
 #
-#   1. Pluto multiple-definition guard  -> guards the lecture_04_01 `x_start` fix
-#   2. value(k) Brock-Mirman parity     -> guards the lecture_14_04 closed-form fix
-#   3. Lecture 10 KS log-utility guard  -> guards the lecture_10_06 / tutorial recalibration
-
-# --------------------------------------------------------------------------
-# Guard 1 helpers: a pragmatic Julia-global scope tracker over Pluto cells.
+#   1. value(k) Brock-Mirman parity     -> guards the lecture_14_04 closed-form fix
+#   2. Lecture 10 KS log-utility guard  -> guards the lecture_10_06 / tutorial recalibration
 #
-# A Pluto notebook cannot define the same global in two cells. When these
-# previews are `include`d as plain Julia the duplicate is silently reassigned
-# instead of erroring, so the class of bug fixed in lecture_04_01 (`x_start`
-# defined in two `begin` cells) can hide. We collect the names that are Julia
-# *globals* per cell -- assignments that start a statement while outside any
-# bracket, string, comment, and outside any local-scope block (`for`, `while`,
-# `let`, `function`, `macro`, `struct`, `do`, `try`); `begin`/`if`/`quote`/
-# `module` do not introduce scope, matching Julia -- and flag any name that is
-# a global in more than one cell.
-const PLUTO_CELL_MARKER = "# ╔═╡"
-const PLUTO_SCOPE_OPENERS = Set(["for", "while", "let", "function", "macro", "struct", "do", "try"])
-const PLUTO_NOSCOPE_OPENERS = Set(["begin", "if", "quote", "module"])
-const PLUTO_BLOCK_OPENERS = union(PLUTO_SCOPE_OPENERS, PLUTO_NOSCOPE_OPENERS)
-const PLUTO_CONTINUATIONS = Set(["else", "elseif", "catch", "finally"])
-const PLUTO_ASSIGN_RE = r"^\s*([\p{L}_][\p{L}\p{N}_]*)\s*=(?![=>])"
-const PLUTO_TOKEN_RE = r"[\p{L}_][\p{L}\p{N}_]*|[()\[\]{}]"
+# The former "Pluto no cross-cell multiple definitions" guard was dropped in the
+# Pluto -> Jupyter migration: its premise -- that a variable cannot be a global in
+# two cells -- is a Pluto reactive-notebook constraint that does not exist in
+# Jupyter, so re-binding a name across cells is no longer a defect to guard.
 
-# Replace comment / string content with spaces (newlines preserved) so the
-# structural scan below never trips over `=`, brackets, or keywords in prose.
-function pluto_strip_code(text::AbstractString)
-    cs = collect(text)
-    n = length(cs)
-    out = IOBuffer()
-    i = 1
-    while i <= n
-        c = cs[i]
-        if c == '#'                                   # line comment
-            while i <= n && cs[i] != '\n'
-                print(out, ' '); i += 1
-            end
-        elseif c == '"' && i + 2 <= n && cs[i + 1] == '"' && cs[i + 2] == '"'  # triple string
-            print(out, "   "); i += 3
-            while i <= n && !(i + 2 <= n && cs[i] == '"' && cs[i + 1] == '"' && cs[i + 2] == '"')
-                print(out, cs[i] == '\n' ? '\n' : ' '); i += 1
-            end
-            if i <= n
-                print(out, "   "); i += 3
-            end
-        elseif c == '"'                               # single-line string
-            print(out, ' '); i += 1
-            while i <= n && cs[i] != '"'
-                if cs[i] == '\\' && i < n
-                    print(out, ' '); i += 1
-                end
-                print(out, cs[i] == '\n' ? '\n' : ' '); i += 1
-            end
-            if i <= n
-                print(out, ' '); i += 1
-            end
-        else
-            print(out, c); i += 1
-        end
-    end
-    return String(take!(out))
-end
+using JSON
 
-# Cell bodies between "# ╔═╡" markers (the preamble before the first marker and
-# the trailing "Cell order:" block contain no top-level assignments).
-function pluto_cells(text::AbstractString)
-    cells = String[]
-    current = nothing
-    for line in split(text, '\n')
-        if startswith(line, PLUTO_CELL_MARKER)
-            current === nothing || push!(cells, current)
-            current = ""
-        elseif current !== nothing
-            current *= line * "\n"
-        end
-    end
-    current === nothing || push!(cells, current)
-    return cells
-end
+const WAVE1_REPO_ROOT = normpath(joinpath(@__DIR__, "..", ".."))
 
-function pluto_cell_globals(cell::AbstractString)
-    code = pluto_strip_code(cell)
-    names = Set{String}()
-    bracket = 0
-    scope_depth = 0
-    stack = Bool[]                       # per open block: does it introduce local scope?
-    for line in split(code, '\n')
-        if bracket == 0 && scope_depth == 0
-            m = match(PLUTO_ASSIGN_RE, line)
-            if m !== nothing
-                name = m.captures[1]
-                if !(name in PLUTO_BLOCK_OPENERS) && !(name in PLUTO_CONTINUATIONS) && name != "end"
-                    push!(names, name)
-                end
-            end
-        end
-        for tok in eachmatch(PLUTO_TOKEN_RE, line)
-            t = tok.match
-            if t == "(" || t == "[" || t == "{"
-                bracket += 1
-            elseif t == ")" || t == "]" || t == "}"
-                bracket = max(bracket - 1, 0)
-            elseif bracket == 0
-                if t == "end"
-                    isempty(stack) || (pop!(stack) && (scope_depth -= 1))
-                elseif t in PLUTO_BLOCK_OPENERS
-                    introduces = t in PLUTO_SCOPE_OPENERS
-                    push!(stack, introduces)
-                    introduces && (scope_depth += 1)
-                end
-            end
-        end
-    end
-    return names
-end
-
-function pluto_cross_cell_duplicates(text::AbstractString)
-    name_to_cells = Dict{String, Set{Int}}()
-    for (ci, cell) in enumerate(pluto_cells(text))
-        for nm in pluto_cell_globals(cell)
-            push!(get!(name_to_cells, nm, Set{Int}()), ci)
-        end
-    end
-    return sort!([nm for (nm, cs) in name_to_cells if length(cs) > 1])
+# Concatenated text of every cell's `source` in a Jupyter `.ipynb`. Cell source
+# is a JSON array of strings (quotes escaped, split across lines), so calibration
+# strings like `SequenceKSParams(...)` must be read from the parsed-and-joined
+# text, not the raw JSON bytes.
+function wave1_notebook_text(rel::AbstractString)
+    nb = JSON.parsefile(joinpath(WAVE1_REPO_ROOT, rel))
+    return join((join(cell["source"]) for cell in nb["cells"]), "\n")
 end
 
 # --------------------------------------------------------------------------
-# Guard 3 helpers: read the calibration literally out of a `SequenceKSParams(`
+# Guard 2 helpers: read the calibration literally out of a `SequenceKSParams(`
 # call so a revert to the shared CRRA defaults (gamma=2.0, delta=0.08) is caught.
 function ks_call_body(text::AbstractString, start::Integer)
     r = findnext("SequenceKSParams(", text, start)
@@ -159,44 +54,7 @@ end
 
 # --------------------------------------------------------------------------
 
-const WAVE1_REPO_ROOT = normpath(joinpath(@__DIR__, "..", ".."))
-
-function wave1_lux_notebooks()
-    files = String[]
-    for (dir, _, fs) in walkdir(joinpath(WAVE1_REPO_ROOT, "lectures"))
-        basename(dir) == "code_julia" || continue
-        for f in fs
-            endswith(f, "_Lux.jl") && push!(files, joinpath(dir, f))
-        end
-    end
-    return sort!(files)
-end
-
-# Notebooks that still carry the SAME "define in a setup cell, re-bind to a
-# `train_result.<field>` in a training cell" multiple-definition bug as
-# lecture_04_01's `x_start`. Entries here are @test_skip-ped instead of failing;
-# remove an entry once its notebook is fixed so the guard then protects it too.
-#
-# Wave-2 fixed the last remaining offenders (lecture_08_08, lecture_08_10,
-# lecture_10_05, lecture_10_06), so the baseline is now empty and every
-# notebook is actively guarded.
-const WAVE1_KNOWN_MULTIDEF = Set{String}()
-
 @testset "Wave 1 regression guards" begin
-    @testset "Pluto no cross-cell multiple definitions" begin
-        files = wave1_lux_notebooks()
-        @test length(files) >= 50            # the walk actually found the notebooks
-        for file in files
-            rel = relpath(file, WAVE1_REPO_ROOT)
-            dups = pluto_cross_cell_duplicates(read(file, String))
-            if rel in WAVE1_KNOWN_MULTIDEF
-                @test_skip isempty(dups)     # documented pre-existing bug (see above)
-            else
-                @test isempty(dups)
-            end
-        end
-    end
-
     @testset "value(k) Brock-Mirman closed-form satisfies the Bellman equation" begin
         # Same calibration as lecture_14_04's `bm`. The full-depreciation closed
         # form must satisfy V(k) = log(c*) + beta*V(k') with c* = (1-alpha*beta)k^alpha
@@ -218,11 +76,11 @@ const WAVE1_KNOWN_MULTIDEF = Set{String}()
 
     @testset "Lecture 10 Krusell-Smith log-utility calibration" begin
         ks_notebooks = [
-            "lectures/lecture_10_sequence_space_deqns/code_julia/lecture_10_06_SequenceSpace_KrusellSmith_Lux.jl",
-            "lectures/lecture_10_sequence_space_deqns/code_julia/lecture_10_KrusellSmith_Tutorial_CPU_Lux.jl",
+            "lectures/lecture_10_sequence_space_deqns/code_julia/lecture_10_06_SequenceSpace_KrusellSmith_Lux.ipynb",
+            "lectures/lecture_10_sequence_space_deqns/code_julia/lecture_10_KrusellSmith_Tutorial_CPU_Lux.ipynb",
         ]
         for rel in ks_notebooks
-            text = read(joinpath(WAVE1_REPO_ROOT, rel), String)
+            text = wave1_notebook_text(rel)
             pos = 1
             n_calls = 0
             while true

@@ -17,8 +17,8 @@ assets. Use this root file for repository-wide orientation. Use lower-level
   top-level map.
 - `COURSE_MAP.md` records the lecture order, prerequisites, compute tiers,
   learning paths, and method-choice guide.
-- `JULIA_LUX_PLUTO_TRANSLATION_REPORT.md` is the source of truth for the
-  Julia/Lux/Pluto translation track and its dependency policy.
+- `JULIA_LUX_JUPYTER_TRANSLATION_REPORT.md` is the source of truth for the
+  Julia/Lux/Jupyter translation track and its dependency policy.
 - `julia/AGENTS.md` gives package-local guidance for shared Julia source, unit
   tests, and smoke notebook checks.
 - `lectures/lecture_XX_*/README.md` is the authoritative entry point for a
@@ -63,9 +63,11 @@ cd julia
 julia --project=. test/runtests.jl
 ```
 
-Run notebook smoke includes separately when checking Julia translations, for
-example `julia --project=. test/smoke/wave1_notebooks.jl`. These smoke files are
-not included by the default `test/runtests.jl` entry point.
+Run the notebook execute-smoke separately when checking Julia translations, for
+example `julia --project=test/smoke test/smoke/wave1_notebooks.jl` (from the
+`julia/` directory). These smoke files run under the `test/smoke` environment
+(which carries `NBInclude`) and are not included by the default
+`test/runtests.jl` entry point.
 
 ## Notebook Conventions
 
@@ -89,12 +91,12 @@ renumber, or regenerate outputs just to inspect a notebook. For content
 inspection, prefer notebook-aware tooling or JSON source-cell extraction because
 raw grep over `.ipynb` files can match embedded images and output blobs.
 
-Julia translations live in lecture-local `code_julia/` directories as Pluto
-`.jl` notebooks. They should start with `### A Pluto.jl notebook ###`, activate
-the root `julia` project, and use `DLEFJulia` shared helpers. Preserve
-Lux-native explicit parameter/state calls such as
+Julia translations live in lecture-local `code_julia/` directories as Jupyter
+`.ipynb` notebooks (nbformat 4, `julia` kernel), committed output-free. Each
+activates the root `julia` project in its first code cell and uses `DLEFJulia`
+shared helpers. Preserve Lux-native explicit parameter/state calls such as
 `y, st_new = model(x, ps, st)` and feature-by-batch arrays at Lux boundaries.
-Do not create Jupyter/IJulia replacements for the Julia track.
+Use the same VSCode + Jupyter tooling as the Python `code/` track.
 
 The Julia notebooks are previews of the Python course material, not replacements
 for the checked-in Python notebooks. Some previews are intentionally compact or
@@ -132,7 +134,7 @@ intentional.
 Keep the Julia stack narrow. Do not add Julia dependencies unless a concrete
 notebook or shared helper requires them, `julia/Project.toml` is updated, and a
 targeted unit or smoke check covers the new dependency. Follow the phase policy
-in `JULIA_LUX_PLUTO_TRANSLATION_REPORT.md`.
+in `JULIA_LUX_JUPYTER_TRANSLATION_REPORT.md`.
 
 When reporting or fixing bugs, identify the relevant `Lecture XX`, notebook, or
 slide deck. Include Python/library versions and a minimal reproducer when

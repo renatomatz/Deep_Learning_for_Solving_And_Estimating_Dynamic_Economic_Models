@@ -33,12 +33,12 @@ After this lecture you can:
 
 ## Code
 
-### Julia/Lux/Pluto preview
+### Julia/Lux preview
 
-- [`code_julia/lecture_10_05_SequenceSpace_BrockMirman_Lux.jl`](code_julia/lecture_10_05_SequenceSpace_BrockMirman_Lux.jl) translates the Brock-Mirman sequence-space warm-up with canonical shock-history layout helpers.
-- [`code_julia/lecture_10_05b_SequenceSpace_IRBC_Lux.jl`](code_julia/lecture_10_05b_SequenceSpace_IRBC_Lux.jl) ports the multi-country IRBC sequence-space residual with irreversible-investment complementarity.
-- [`code_julia/lecture_10_06_SequenceSpace_KrusellSmith_Lux.jl`](code_julia/lecture_10_06_SequenceSpace_KrusellSmith_Lux.jl) gives a classroom-scale Krusell-Smith sequence-space actor with Young distribution propagation.
-- [`code_julia/lecture_10_KrusellSmith_Tutorial_CPU_Lux.jl`](code_julia/lecture_10_KrusellSmith_Tutorial_CPU_Lux.jl) is a CPU-only Lux companion to the shape-preserving Krusell-Smith tutorial.
+- [`code_julia/lecture_10_05_SequenceSpace_BrockMirman_Lux.ipynb`](code_julia/lecture_10_05_SequenceSpace_BrockMirman_Lux.ipynb) translates the Brock-Mirman sequence-space warm-up with canonical shock-history layout helpers.
+- [`code_julia/lecture_10_05b_SequenceSpace_IRBC_Lux.ipynb`](code_julia/lecture_10_05b_SequenceSpace_IRBC_Lux.ipynb) ports the multi-country IRBC sequence-space residual with irreversible-investment complementarity.
+- [`code_julia/lecture_10_06_SequenceSpace_KrusellSmith_Lux.ipynb`](code_julia/lecture_10_06_SequenceSpace_KrusellSmith_Lux.ipynb) gives a classroom-scale Krusell-Smith sequence-space actor with Young distribution propagation.
+- [`code_julia/lecture_10_KrusellSmith_Tutorial_CPU_Lux.ipynb`](code_julia/lecture_10_KrusellSmith_Tutorial_CPU_Lux.ipynb) is a CPU-only Lux companion to the shape-preserving Krusell-Smith tutorial.
 
 ### Python notebooks
 

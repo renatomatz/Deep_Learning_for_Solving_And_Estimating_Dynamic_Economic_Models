@@ -13,13 +13,13 @@ equations, equilibrium, and the master equation.
   notation and exposition.
 - `slides/images/kolmogorov.jpg` is a slide asset.
 - There is intentionally no `code/` directory for this lecture.
-- There is intentionally no `code_julia/` directory or Julia/Pluto notebook for
+- There is intentionally no `code_julia/` directory or Julia/Jupyter notebook for
   this lecture.
 
 ## Editing
 
 Do not invent companion code inside this folder unless the user explicitly asks.
-That boundary includes Python notebooks, Julia source, and Pluto notebooks. If
+That boundary includes Python notebooks, Julia source, and Jupyter notebooks. If
 adding numerical examples, check whether they belong in Lecture 13 instead.
 
 Compile slides from `slides/` so relative image paths resolve.

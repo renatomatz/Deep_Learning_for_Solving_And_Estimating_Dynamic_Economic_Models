@@ -19,12 +19,12 @@ Start with `README.md`. Notebook roles:
 - `code/lecture_08_09_OLG_Benchmark_DEQN_exogenous.ipynb` is the benchmark
   exogenous-cloud ablation.
 - `code/lecture_08_11_OLG_Exercise.ipynb` is the exercise.
-- Current Julia/Lux/Pluto previews:
-  - `code_julia/lecture_08_07_OLG_Analytic_DEQN_exogenous_Lux.jl`
-  - `code_julia/lecture_08_08_OLG_Analytic_DEQN_persistent_Lux.jl`
-  - `code_julia/lecture_08_09_OLG_Benchmark_DEQN_exogenous_Lux.jl`
-  - `code_julia/lecture_08_10_OLG_Benchmark_DEQN_persistent_Lux.jl`
-  - `code_julia/lecture_08_11_OLG_Exercise_Lux.jl`
+- Current Julia/Lux previews:
+  - `code_julia/lecture_08_07_OLG_Analytic_DEQN_exogenous_Lux.ipynb`
+  - `code_julia/lecture_08_08_OLG_Analytic_DEQN_persistent_Lux.ipynb`
+  - `code_julia/lecture_08_09_OLG_Benchmark_DEQN_exogenous_Lux.ipynb`
+  - `code_julia/lecture_08_10_OLG_Benchmark_DEQN_persistent_Lux.ipynb`
+  - `code_julia/lecture_08_11_OLG_Exercise_Lux.ipynb`
 
 ## Running And Editing
 
@@ -45,7 +45,7 @@ repository root this is:
 
 ```bash
 cd julia
-julia --project=. test/smoke/wave3_notebooks.jl
+julia --project=test/smoke test/smoke/wave3_notebooks.jl
 ```
 
 In smoke mode the benchmark notebooks reduce the 56-cohort problem to a small

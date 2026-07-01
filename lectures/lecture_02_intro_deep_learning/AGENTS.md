@@ -13,15 +13,15 @@ Genz approximation, sequence models, and a transformer AR(1) demo.
 - `slides/figures/*.png` are slide inputs.
 - `code/lecture_02_01_*.ipynb` through `code/lecture_02_09_*.ipynb` are the
   notebooks.
-- `code_julia/lecture_02_00_Lux_Pluto_orientation.jl` through
-  `code_julia/lecture_02_09_Transformer_InContext_AR1_Lux.jl` are the current
-  Julia/Lux/Pluto previews.
+- `code_julia/lecture_02_00_Lux_orientation.ipynb` through
+  `code_julia/lecture_02_09_Transformer_InContext_AR1_Lux.ipynb` are the current
+  Julia/Lux previews.
 - `code/SGD_data.txt` is read by the SGD notebook.
 
-## Julia/Lux/Pluto Preview Map
+## Julia/Lux Preview Map
 
-- `lecture_02_00_Lux_Pluto_orientation.jl` is the Julia entry point: shared
-  `../../../julia` activation, Pluto workflow, `DLEFJulia`, `RUN_MODE`, `SEED`,
+- `lecture_02_00_Lux_orientation.jl` is the Julia entry point: shared
+  `../../../julia` activation, notebook workflow, `DLEFJulia`, `RUN_MODE`, `SEED`,
   feature-by-batch arrays, Lux `model, ps, st`, and the first shared training
   helper.
 - `lecture_02_01_BasicML_intro_Lux.jl` keeps OLS and a small supervised Lux MLP.
@@ -55,7 +55,7 @@ pandas, Matplotlib, scikit-learn, Jupyter, and TensorBoard from the root setup.
 the runtime working directory. `lecture_02_04_Gentle_DNN.ipynb` may download or
 cache Fashion-MNIST on first run.
 
-For Julia previews, run Pluto notebooks from `code_julia/` and use the shared
+For Julia previews, run Jupyter notebooks from `code_julia/` and use the shared
 `../../../julia` project. All current Julia notebooks are Lux-native and import
 `DLEFJulia`; keep feature-by-batch arrays at Lux boundaries and preserve
 `RUN_MODE`/`SEED`. Keep explicit calls such as `prediction, st_new =
@@ -74,6 +74,6 @@ Representative smoke coverage is split across
 
 Keep `slides/figures/` paths stable when editing slides. Do not hand-edit large
 notebook JSON unless the change is minimal and source-cell scoped. Do not clear,
-renumber, or regenerate Python notebook outputs, Pluto cell order, TensorBoard
+renumber, or regenerate Python notebook outputs, notebook cell order, TensorBoard
 logs, checkpoints, cached Fashion-MNIST data, or generated figures just to
 inspect this lecture.

@@ -18,7 +18,7 @@ extra/generated teaching artifacts.
 
 ## Running And Editing
 
-This lecture has parallel Python notebooks and Julia/Lux/Pluto previews. Do not
+This lecture has parallel Python notebooks and Julia/Lux previews. Do not
 make Python-stack assumptions when changing guidance or examples; preserve both
 the original notebook warnings and the Julia preview caveats.
 
@@ -35,7 +35,7 @@ such as `/mnt/data/fig_gp_vfi`; treat `fig_gp_vfi/` as generated output, not the
 slide asset directory (`slides/fig/`).
 
 Run Julia previews from `code_julia/` with the shared `../../../julia` project.
-All nine Python notebooks have matching Pluto files. Each preview should
+All nine Python notebooks have matching Jupyter notebooks. Each preview should
 activate the shared project, import `DLEFJulia`, keep `RUN_MODE = "smoke"` and
 `SEED = 0` defaults unless deliberately changed, and use Lux-native
 feature-by-batch and explicit parameter/state conventions. They are covered by

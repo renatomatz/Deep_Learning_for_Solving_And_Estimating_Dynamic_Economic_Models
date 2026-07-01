@@ -29,13 +29,13 @@ churn.
 
 Do not line-by-line port the 12 Python primer notebooks. Lecture 01 is a Python
 and Jupyter prerequisite, not a second Julia basics course. The Julia translation
-track uses Lecture 02's `code_julia/lecture_02_00_Lux_Pluto_orientation.jl` as
+track uses Lecture 02's `code_julia/lecture_02_00_Lux_orientation.ipynb` as
 the shared Julia workflow entry point.
 
 If the owner explicitly asks for Lecture 01 Julia material, keep it to a short
 orientation boundary rather than a notebook-by-notebook port: shared
 `../../../julia` activation, `DLEFJulia`, `RUN_MODE = "smoke"`, `SEED = 0`,
-feature-by-batch arrays, Lux `model(x, ps, st)`, and Pluto workflow conventions.
+feature-by-batch arrays, Lux `model(x, ps, st)`, and notebook workflow conventions.
 Do not create Jupyter/IJulia replacements for the Julia track.
 
 Preserve `code/temp_price.csv`, `code/example.wav`, and

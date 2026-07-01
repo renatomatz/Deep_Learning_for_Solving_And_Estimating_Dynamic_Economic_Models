@@ -14,10 +14,10 @@ Notebook order:
 1. `code/lecture_15_03_Structural_Estimation_BM.ipynb`
 2. `code/lecture_15_03b_Structural_Estimation_BM_Joint.ipynb`
 
-Matching Julia/Lux/Pluto previews live under `code_julia/`:
+Matching Julia/Lux previews live under `code_julia/`:
 
-- `code_julia/lecture_15_03_Structural_Estimation_BM_Lux.jl`
-- `code_julia/lecture_15_03b_Structural_Estimation_BM_Joint_Lux.jl`
+- `code_julia/lecture_15_03_Structural_Estimation_BM_Lux.ipynb`
+- `code_julia/lecture_15_03b_Structural_Estimation_BM_Joint_Lux.ipynb`
 
 The slide deck uses the `rho_*` and `joint_*` SMM figures under `slides/fig/`.
 Files named `rho_gp_*` and `joint_gp_*` are optional or legacy assets not used by
@@ -40,7 +40,7 @@ and identification diagnostics.
 
 The Julia budgets are intentionally tiny smoke previews, so do not treat them as
 reproductions of the Python classroom-budget estimates. They are covered by
-`julia/test/smoke/wave5_notebooks.jl`, which checks that the Pluto files include
+`julia/test/smoke/wave5_notebooks.jl`, which checks that the Jupyter notebooks include
 and return finite small-run diagnostics; it is not an SMM accuracy or
 identification-parity test.
 

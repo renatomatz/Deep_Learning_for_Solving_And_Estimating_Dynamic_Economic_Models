@@ -14,11 +14,11 @@ Start with `README.md`. Notebook order:
 2. `code/lecture_09_11_Continuum_of_Agents_DEQN.ipynb`
 3. `code/lecture_09_12_KrusellSmith_DeepLearning.ipynb`
 
-Current Julia/Lux/Pluto previews:
+Current Julia/Lux previews:
 
-- `code_julia/lecture_09_10_Youngs_Method_Examples_Lux.jl`
-- `code_julia/lecture_09_11_Continuum_of_Agents_DEQN_Lux.jl`
-- `code_julia/lecture_09_12_KrusellSmith_DeepLearning_Lux.jl`
+- `code_julia/lecture_09_10_Youngs_Method_Examples_Lux.ipynb`
+- `code_julia/lecture_09_11_Continuum_of_Agents_DEQN_Lux.ipynb`
+- `code_julia/lecture_09_12_KrusellSmith_DeepLearning_Lux.ipynb`
 
 The slide deck is encyclopedic and self-study oriented; use it as a map rather
 than assuming every slide has a matching notebook implementation.
@@ -36,8 +36,7 @@ policy training.
 
 Run Julia previews from `code_julia/` with the shared `../../../julia` project:
 the notebooks activate it with `Pkg.activate(joinpath(@__DIR__, "..", "..",
-"..", "julia"))` and import `DLEFJulia`. Keep them as Pluto `.jl` notebooks,
-not Jupyter/IJulia replacements. Preserve `RUN_MODE = "smoke"` / `SEED = 0`,
+"..", "julia"))` and import `DLEFJulia`. Keep them as Jupyter `.ipynb` notebooks. Preserve `RUN_MODE = "smoke"` / `SEED = 0`,
 `run_mode_budget`, `rng_from_seed`, Lux's explicit `model(x, ps, st)` state
 threading, and feature-by-batch arrays at Lux boundaries.
 
@@ -48,7 +47,7 @@ Bewley-style simplification with two idiosyncratic income states, while the
 Krusell-Smith deep-learning preview preserves the Python Phase B running-panel
 semantics at a compact smoke budget.
 
-Do not let Pluto or Jupyter produce output churn as a side effect of inspection.
+Do not let the Jupyter notebooks produce output churn as a side effect of inspection.
 Only save notebook rewrites when the task intentionally changes that notebook.
 
 The notebooks are self-contained in this folder; no local data files were found.

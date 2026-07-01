@@ -22,7 +22,7 @@ Do not add runnable examples here unless the user explicitly asks; route code
 examples to the lecture where the method is taught.
 
 The Julia translation track has no local Lecture 18 notebook by design. Do not
-invent Julia/Lux/Pluto wrap-up notebooks or placeholder `code_julia/` material
+invent Julia/Lux wrap-up notebooks or placeholder `code_julia/` material
 when updating synthesis guidance; refer back to the lecture-specific previews in
 Lectures 13-16 when Julia context is needed.
 

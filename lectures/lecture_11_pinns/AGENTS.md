@@ -16,13 +16,13 @@ Start with `README.md`. Notebook order:
 4. `code/lecture_11_04_Cake_Eating_HJB_PINN.ipynb`
 5. `code/lecture_11_05_Black_Scholes_PINN.ipynb`
 
-Current Julia/Lux/Pluto previews:
+Current Julia/Lux previews:
 
-- `code_julia/lecture_11_01_ODE_PINN_ZeroBCs_Lux.jl`
-- `code_julia/lecture_11_02_ODE_PINN_SoftVsHardBCs_Lux.jl`
-- `code_julia/lecture_11_03_PDE_PINN_Poisson2D_Lux.jl`
-- `code_julia/lecture_11_04_Cake_Eating_HJB_PINN_Lux.jl`
-- `code_julia/lecture_11_05_Black_Scholes_PINN_Lux.jl`
+- `code_julia/lecture_11_01_ODE_PINN_ZeroBCs_Lux.ipynb`
+- `code_julia/lecture_11_02_ODE_PINN_SoftVsHardBCs_Lux.ipynb`
+- `code_julia/lecture_11_03_PDE_PINN_Poisson2D_Lux.ipynb`
+- `code_julia/lecture_11_04_Cake_Eating_HJB_PINN_Lux.ipynb`
+- `code_julia/lecture_11_05_Black_Scholes_PINN_Lux.ipynb`
 
 Slide source is `slides/lecture_11_pinns.tex`. Pre-rendered slide figures live
 under `slides/fig/ext/`; some are not directly included in the current deck but
@@ -42,8 +42,7 @@ unless intentionally changing convergence behavior.
 
 Run Julia previews from `code_julia/` with the shared `../../../julia` project.
 They activate it with `Pkg.activate(joinpath(@__DIR__, "..", "..", "..",
-"julia"))` and import `DLEFJulia`. Keep them as Pluto `.jl` notebooks, not
-Jupyter/IJulia replacements. Preserve `RUN_MODE = "smoke"` / `SEED = 0`,
+"julia"))` and import `DLEFJulia`. Keep them as Jupyter `.ipynb` notebooks. Preserve `RUN_MODE = "smoke"` / `SEED = 0`,
 `run_mode_budget`, `rng_from_seed`, Lux's explicit `model(x, ps, st)` state
 threading, feature-by-batch arrays at Lux boundaries, and Float64 where
 derivative accuracy matters. Notebook 01 is covered by
@@ -57,7 +56,7 @@ check, not an accuracy guarantee. The standalone soft-vs-hard boundary-condition
 notebook now has a Julia counterpart, while Notebook 03 still demonstrates both
 forms in the Poisson preview.
 
-Do not let Pluto or Jupyter produce output churn as a side effect of inspection.
+Do not let the Jupyter notebooks produce output churn as a side effect of inspection.
 Only save notebook rewrites when the task intentionally changes that notebook.
 
 Compile slides from `slides/` so relative image paths resolve.

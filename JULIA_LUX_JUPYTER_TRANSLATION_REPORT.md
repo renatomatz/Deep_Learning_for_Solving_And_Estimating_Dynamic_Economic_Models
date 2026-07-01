@@ -1,9 +1,21 @@
-# Julia/Lux/Pluto Translation Report
+# Julia/Lux/Jupyter Translation Report
 
-Status: planning source of truth  
-Date: 2026-06-29  
+Status: standing source of truth  
+Date: 2026-06-29 (Jupyter migration: 2026-07-01)  
 Audience: coordinator and implementation subagents translating the Python
-notebooks into Julia/Lux/Pluto material
+notebooks into Julia/Lux/Jupyter material
+
+> **Migration note (2026-07-01).** The Julia track was originally authored as
+> Pluto `.jl` notebooks and has since been migrated to Jupyter `.ipynb`
+> notebooks so the Julia side uses the same VSCode + Jupyter tooling as the
+> Python `code/` track and renders math with native markdown. The migration was
+> a pure format change: no economics/math in `julia/src` or in the notebook
+> content changed. `Pluto`/`PlutoUI` were dropped from the shared project; the
+> test harness now parses `.ipynb` JSON (adding `JSON` to the project) and the
+> notebook execute-smoke runs each `.ipynb` in-process with `NBInclude` under a
+> dedicated `julia/test/smoke` environment (see Dependency Policy). This report
+> has been reversed to describe the Jupyter reality; references to Pluto below
+> reflect the current format unless explicitly historical.
 
 ## Purpose
 
@@ -12,14 +24,14 @@ All implementation agents should read this file before editing code, then read
 the root `AGENTS.md`, `lectures/AGENTS.md`, the target lecture's local
 `AGENTS.md`, and that lecture's `README.md`.
 
-The goal is to create a Lux-native Julia/Pluto version of the course's runnable
+The goal is to create a Lux-native Julia/Jupyter version of the course's runnable
 notebook material, preserving the economic and numerical teaching intent while
 using Julia idioms and Lux's explicit parameter/state model.
 
 ## Scope
 
 Translate the local Python Jupyter notebooks under lecture `code/` directories
-into Julia Pluto notebooks and shared Julia source.
+into Julia Jupyter notebooks and shared Julia source.
 
 Local notebook inventory:
 
@@ -50,8 +62,10 @@ ported as a Python primer.
 
 ## Scope Decisions
 
-Use Pluto notebooks, not Jupyter/IJulia notebooks. Pluto notebooks are `.jl`
-files and should live beside lecture materials under `code_julia/`.
+Use Jupyter notebooks (`.ipynb`, nbformat 4, `julia` kernel), matching the
+Python `code/` track's tooling. They live beside lecture materials under
+`code_julia/` and are committed output-free. (The track was originally authored
+in Pluto and migrated to Jupyter on 2026-07-01 — see the migration note above.)
 
 Make the translated material Lux-native. Do not mimic Keras, PyTorch, or JAX
 surface APIs when a clear Lux idiom exists. Teach Lux's explicit call pattern:
@@ -60,10 +74,10 @@ surface APIs when a clear Lux idiom exists. Teach Lux's explicit call pattern:
 y, st_new = model(x, ps, st)
 ```
 
-Skip a full Lecture 01 Julia primer. Instead, create a short Lux/Pluto
+Skip a full Lecture 01 Julia primer. Instead, create a short Lux/Jupyter
 orientation notebook covering:
 
-- Pluto workflow and the shared project environment
+- the notebook workflow and the shared project environment
 - `RUN_MODE` and `SEED`
 - feature-by-batch arrays
 - Lux `model, ps, st`
@@ -81,7 +95,7 @@ notebooks for Lecture 17 unless the owner explicitly changes the scope.
 
 ## Repository Layout
 
-Use a shared Julia package plus per-lecture Pluto notebooks:
+Use a shared Julia package plus per-lecture Jupyter notebooks:
 
 ```text
 julia/
@@ -110,15 +124,16 @@ julia/
 lectures/
   lecture_XX_topic/
     code_julia/
-      lecture_XX_nn_original_name_Lux.jl
+      lecture_XX_nn_original_name_Lux.ipynb
 ```
 
 `julia/src` holds reusable, tested mechanics. `code_julia/` notebooks hold the
 student-facing narrative, small glue code, figures, and lecture-specific
 experiments.
 
-Run Pluto notebooks from their lecture `code_julia/` folder when local relative
-paths matter. Shared source should be loaded from the root `julia` environment.
+Open and run Jupyter notebooks from their lecture `code_julia/` folder when local
+relative paths matter. Shared source should be loaded from the root `julia`
+environment (each notebook's first code cell activates it).
 
 ## Dependency Policy
 
@@ -141,16 +156,37 @@ not have the needed packages installed yet.
 
 Use these as the first shared project dependencies:
 
-- Notebook: `Pluto`, `PlutoUI`
 - Deep learning: `Lux`, `Optimisers`, `MLUtils`, `ComponentArrays`, `NNlib`
 - AD: `Zygote`, `ForwardDiff`
 - Reproducibility/base numerics: `StableRNGs`, plus stdlibs `Random`,
   `LinearAlgebra`, `Statistics`, `SparseArrays`
 - Data: `CSV`, `DataFrames`
 - Plotting: `CairoMakie`
+- Notebook tooling: `JSON` (the equivalence and regression-guard harness parse
+  `.ipynb` cell source)
 
 `CairoMakie` is the default plotting backend for translated notebooks. Do not
 also add `Plots`/`StatsPlots` unless a specific notebook has a strong reason.
+
+### Notebook Format And Execution (Jupyter migration)
+
+The notebook format is Jupyter `.ipynb`; no runtime package is needed for the
+format itself. `Pluto` and `PlutoUI` were removed from the shared project in the
+2026-07-01 migration (`PlutoUI` had been unused; `Pluto` was only used to launch
+the editor).
+
+- `JSON` is a project dependency because `test/python_julia_equivalence.jl` and
+  `test/wave1_regression_guards.jl` parse each `.ipynb`'s cell `source` (a JSON
+  array of strings) to run marker/inventory/calibration checks.
+- `NBInclude` is the notebook execute-smoke helper. It is declared in the
+  dedicated `julia/test/smoke/Project.toml` environment — **not** in the shared
+  project's deps or test target — because the smoke scripts are run directly
+  (`julia --project=julia/test/smoke test/smoke/waveN_notebooks.jl`) and an
+  `[extras]`/test-target entry is not loadable outside `Pkg.test`'s sandbox, and
+  because neither `runtests.jl` nor the equivalence suite executes notebooks, so
+  the shared project has no consumer for it. `NBInclude` pulls only `JSON` +
+  `SoftGlobalScope`; it does **not** pull `IJulia` (no ZMQ / Jupyter-kernel /
+  Conda install), keeping the smoke headless-safe.
 
 ### AD Policy
 
@@ -208,7 +244,7 @@ Add these only when the relevant lecture family begins:
 - `TensorBoardLogger`: only for the TensorBoard instrumentation translation
 - `CUDA`: optional GPU backend, never required for smoke tests
 
-## Lux/Pluto Coding Conventions
+## Lux/Jupyter Coding Conventions
 
 Use feature-by-batch arrays at the Lux boundary. Python notebooks are mostly
 batch-major `(batch, features)`, but Lux `Dense` layers expect features first.
@@ -235,9 +271,10 @@ Use named tuples or small structs for:
 Keep random number generation explicit. Pass RNGs or derive local RNGs from
 `SEED` using `StableRNGs`.
 
-Avoid hidden global mutable state in shared source. Pluto cells can be reactive;
-shared helpers should be plain functions or simple immutable configs when
-possible.
+Avoid hidden global mutable state in shared source; shared helpers should be
+plain functions or simple immutable configs when possible. (This kept the
+helpers robust under Pluto's reactive execution originally, and remains good
+practice under Jupyter's linear cell execution.)
 
 Use `Float64` where convergence, PINN derivatives, or economics diagnostics
 need it. Do not silently switch delicate HJB/PDE notebooks to `Float32`.
@@ -346,11 +383,11 @@ Wave 0: scaffold
 - Create `julia/Project.toml`
 - Add shared source skeleton
 - Add first tests for run modes, transforms, quadrature, losses
-- Add Lux/Pluto orientation notebook
+- Add Lux/Jupyter orientation notebook
 
 Wave 1: low-risk Lux foundations
 
-- Lux/Pluto orientation notebook
+- Lux/Jupyter orientation notebook
 - selected Lecture 02 Lux-native foundations notebooks
 - Lecture 03 deterministic Brock-Mirman
 - Lecture 03 stochastic Brock-Mirman
@@ -395,7 +432,7 @@ Wave 6: climate
 ### Lecture 01
 
 Do not line-by-line port the Python primer. If needed, mine it for a short
-Julia/Pluto orientation notebook. Preserve `temp_price.csv`, `example.wav`, and
+Julia/Jupyter orientation notebook. Preserve `temp_price.csv`, `example.wav`, and
 `jupyter_intro.slides.html`.
 
 ### Lecture 02
@@ -523,7 +560,8 @@ Use focused checks:
 - Julia AD behavior will not exactly match TensorFlow/PyTorch/JAX.
 - Lux feature-by-batch conventions can cause subtle shape bugs if wrappers are
   inconsistent.
-- Pluto reactivity rewards pure helpers; hidden global state will be painful.
+- Pure helpers keep shared source robust under any notebook execution model;
+  hidden global state would be painful.
 - GP/BAL/BoTorch workflows do not have perfect one-for-one Julia equivalents.
 - Lecture 08 benchmark OLG, Lecture 13 Aiyagari, and Lecture 16 CDICE are the
   highest-risk conversions.
@@ -538,8 +576,8 @@ Use focused checks:
   https://lux.csail.mit.edu/stable/manual/interface
 - Lux beginner training tutorial:
   https://lux.csail.mit.edu/stable/tutorials/beginner/1_Basics
-- Pluto package management:
-  https://plutojl.org/en/docs/packages/
+- NBInclude.jl (notebook execute-smoke):
+  https://github.com/stevengj/NBInclude.jl
 - Optimisers.jl documentation:
   https://fluxml.ai/Optimisers.jl/stable/
 - DifferentiationInterface documentation:

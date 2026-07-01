@@ -18,11 +18,11 @@ comparison.
 - `code/lecture_03_05_StochasticBM_LossComparison.ipynb` compares stochastic
   loss kernels.
 - `code_julia/lecture_03_01_*_Lux.jl` through
-  `code_julia/lecture_03_05_*_Lux.jl` are the current Julia/Lux/Pluto previews.
+  `code_julia/lecture_03_05_*_Lux.jl` are the current Julia/Lux previews.
 - Slide assets live under `slides/figures/`; there is no top-level `figures/`
   directory here.
 
-## Julia/Lux/Pluto Preview Map
+## Julia/Lux Preview Map
 
 - `lecture_03_01_Brock_Mirman_1972_DEQN_Lux.jl` is the deterministic
   Brock-Mirman DEQN preview. It predicts a savings policy, keeps the residual
@@ -50,7 +50,7 @@ later import cells, not only at the top.
 `SAVE_FIGS = (RUN_MODE == "production")`. Do not regenerate or delete checked-in
 slide figures casually.
 
-For Julia previews, run Pluto notebooks from `code_julia/` with the shared
+For Julia previews, run Jupyter notebooks from `code_julia/` with the shared
 `../../../julia` project. They use `DLEFJulia`, Lux explicit
 `model(x, ps, st)` calls, Gauss-Hermite quadrature helpers, and smoke budgets.
 Smoke coverage is split between `julia/test/smoke/wave1_notebooks.jl` and
@@ -70,5 +70,5 @@ you have checked the notebook contents.
 
 Do not rewrite residual definitions, feasibility transforms, or
 Fischer-Burmeister terms unless the task is explicitly mathematical. Do not
-clear, renumber, or regenerate Python notebook outputs, Pluto cell order, or
+clear, renumber, or regenerate Python notebook outputs, notebook cell order, or
 checked-in slide figures just to inspect the lecture.

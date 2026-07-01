@@ -46,17 +46,17 @@ After this lecture you can:
 - [`code/lecture_14_09_Deep_Active_Subspace_Ridge.ipynb`](code/lecture_14_09_Deep_Active_Subspace_Ridge.ipynb)
 - [`code/lecture_14_10_Deep_AS_vs_Linear_AS_Borehole.ipynb`](code/lecture_14_10_Deep_AS_vs_Linear_AS_Borehole.ipynb)
 
-### Julia/Lux/Pluto preview
+### Julia/Lux preview
 
-- [`code_julia/lecture_14_01_Surrogate_Primer_Lux.jl`](code_julia/lecture_14_01_Surrogate_Primer_Lux.jl) trains a smoke-mode Lux Black-Scholes surrogate and validates normalized pricing errors.
-- [`code_julia/lecture_14_02_GP_and_BAL_Lux.jl`](code_julia/lecture_14_02_GP_and_BAL_Lux.jl) fits the in-house Cholesky GP and selects a BAL point by posterior variance.
-- [`code_julia/lecture_14_04_GP_Value_Function_Iteration_Lux.jl`](code_julia/lecture_14_04_GP_Value_Function_Iteration_Lux.jl) previews GP-VFI against the closed-form Brock-Mirman benchmark.
-- [`code_julia/lecture_14_05_Active_Subspace_2D_Lux.jl`](code_julia/lecture_14_05_Active_Subspace_2D_Lux.jl) builds a 2D active subspace and polynomial ridge surrogate.
-- [`code_julia/lecture_14_06_Active_Subspace_10D_Lux.jl`](code_julia/lecture_14_06_Active_Subspace_10D_Lux.jl) repeats the active-subspace workflow on a 10D ridge.
-- [`code_julia/lecture_14_07_Active_Subspace_Nonlinear_Lux.jl`](code_julia/lecture_14_07_Active_Subspace_Nonlinear_Lux.jl) uses finite-difference gradients for a nonlinear interaction example.
-- [`code_julia/lecture_14_08_Deep_Kernel_Learning_Lux.jl`](code_julia/lecture_14_08_Deep_Kernel_Learning_Lux.jl) compares raw-input and feature-space GP surrogates.
-- [`code_julia/lecture_14_09_Deep_Active_Subspace_Ridge_Lux.jl`](code_julia/lecture_14_09_Deep_Active_Subspace_Ridge_Lux.jl) builds the Lux deep active-subspace encoder/link model.
-- [`code_julia/lecture_14_10_Deep_AS_vs_Linear_AS_Borehole_Lux.jl`](code_julia/lecture_14_10_Deep_AS_vs_Linear_AS_Borehole_Lux.jl) evaluates a linear active-subspace surrogate on the borehole benchmark.
+- [`code_julia/lecture_14_01_Surrogate_Primer_Lux.ipynb`](code_julia/lecture_14_01_Surrogate_Primer_Lux.ipynb) trains a smoke-mode Lux Black-Scholes surrogate and validates normalized pricing errors.
+- [`code_julia/lecture_14_02_GP_and_BAL_Lux.ipynb`](code_julia/lecture_14_02_GP_and_BAL_Lux.ipynb) fits the in-house Cholesky GP and selects a BAL point by posterior variance.
+- [`code_julia/lecture_14_04_GP_Value_Function_Iteration_Lux.ipynb`](code_julia/lecture_14_04_GP_Value_Function_Iteration_Lux.ipynb) previews GP-VFI against the closed-form Brock-Mirman benchmark.
+- [`code_julia/lecture_14_05_Active_Subspace_2D_Lux.ipynb`](code_julia/lecture_14_05_Active_Subspace_2D_Lux.ipynb) builds a 2D active subspace and polynomial ridge surrogate.
+- [`code_julia/lecture_14_06_Active_Subspace_10D_Lux.ipynb`](code_julia/lecture_14_06_Active_Subspace_10D_Lux.ipynb) repeats the active-subspace workflow on a 10D ridge.
+- [`code_julia/lecture_14_07_Active_Subspace_Nonlinear_Lux.ipynb`](code_julia/lecture_14_07_Active_Subspace_Nonlinear_Lux.ipynb) uses finite-difference gradients for a nonlinear interaction example.
+- [`code_julia/lecture_14_08_Deep_Kernel_Learning_Lux.ipynb`](code_julia/lecture_14_08_Deep_Kernel_Learning_Lux.ipynb) compares raw-input and feature-space GP surrogates.
+- [`code_julia/lecture_14_09_Deep_Active_Subspace_Ridge_Lux.ipynb`](code_julia/lecture_14_09_Deep_Active_Subspace_Ridge_Lux.ipynb) builds the Lux deep active-subspace encoder/link model.
+- [`code_julia/lecture_14_10_Deep_AS_vs_Linear_AS_Borehole_Lux.ipynb`](code_julia/lecture_14_10_Deep_AS_vs_Linear_AS_Borehole_Lux.ipynb) evaluates a linear active-subspace surrogate on the borehole benchmark.
 
 ## In the lecture script
 

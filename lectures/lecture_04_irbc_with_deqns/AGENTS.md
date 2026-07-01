@@ -12,13 +12,13 @@ irreversible-investment variants.
 - `code/lecture_04_01_IRBC_DEQN_smooth.ipynb` is the smooth benchmark.
 - `code/lecture_04_02_IRBC_DEQN_irreversible.ipynb` adds KKT multipliers and a
   Fischer-Burmeister complementarity loss.
-- `code_julia/lecture_04_01_IRBC_DEQN_smooth_Lux.jl` and
-  `code_julia/lecture_04_02_IRBC_DEQN_irreversible_Lux.jl` are the current
-  Julia/Lux/Pluto previews.
+- `code_julia/lecture_04_01_IRBC_DEQN_smooth_Lux.ipynb` and
+  `code_julia/lecture_04_02_IRBC_DEQN_irreversible_Lux.ipynb` are the current
+  Julia/Lux previews.
 - `slides/lecture_04_irbc.tex` is the slide source.
 - `figures/` holds checked-in teaching figures used by the lecture.
 
-## Julia/Lux/Pluto Preview Map
+## Julia/Lux Preview Map
 
 - `lecture_04_01_IRBC_DEQN_smooth_Lux.jl` translates the smooth IRBC mechanics
   with a two-country state, Stroud-3 normal shock checks, a Lux policy over
@@ -55,5 +55,5 @@ Lecture 04 slides also point to
 `../lecture_05_nas_loss_normalization/code/lecture_05_05_IRBC_Exercise.ipynb` as
 the related hands-on exercise.
 
-Do not clear, renumber, or regenerate Python notebook outputs, Pluto cell order,
+Do not clear, renumber, or regenerate Python notebook outputs, notebook cell order,
 lecture figures, or slide assets just to inspect this lecture.

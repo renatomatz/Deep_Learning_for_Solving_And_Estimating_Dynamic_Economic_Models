@@ -33,9 +33,9 @@ After this lecture you can:
 
 ## Code
 
-### Julia/Lux/Pluto preview
+### Julia/Lux preview
 
-- [`code_julia/lecture_13_08_Aiyagari_Continuous_Time_FD_and_PINN_Lux.jl`](code_julia/lecture_13_08_Aiyagari_Continuous_Time_FD_and_PINN_Lux.jl)
+- [`code_julia/lecture_13_08_Aiyagari_Continuous_Time_FD_and_PINN_Lux.ipynb`](code_julia/lecture_13_08_Aiyagari_Continuous_Time_FD_and_PINN_Lux.ipynb)
 
 ### Python notebook
 

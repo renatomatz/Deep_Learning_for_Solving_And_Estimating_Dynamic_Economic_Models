@@ -7,7 +7,7 @@ workflows: prompting, project memory, custom skills, subagents, hooks,
 autonomous loops, verification, and privacy.
 
 The files here are teaching examples. They are not active instructions for every
-future agent unless a user explicitly asks to adopt them. Do not add a Julia/Pluto
+future agent unless a user explicitly asks to adopt them. Do not add a Julia/Jupyter
 `code_julia/` translation here without an explicit scope change; Lecture 06 has
 no notebook translation target in the Julia/Lux track.
 

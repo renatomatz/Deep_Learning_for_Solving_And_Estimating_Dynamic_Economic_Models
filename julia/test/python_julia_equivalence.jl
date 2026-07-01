@@ -2,6 +2,7 @@ using Test
 
 using DLEFJulia
 using ForwardDiff
+using JSON
 using LinearAlgebra: I, norm
 using Lux
 using NNlib
@@ -44,282 +45,282 @@ end
 const notebook_pairs = NotebookPair[
     pair("Lecture 02",
         "lectures/lecture_02_intro_deep_learning/code/lecture_02_01_BasicML_intro.ipynb",
-        "lectures/lecture_02_intro_deep_learning/code_julia/lecture_02_01_BasicML_intro_Lux.jl",
+        "lectures/lecture_02_intro_deep_learning/code_julia/lecture_02_01_BasicML_intro_Lux.ipynb",
         concept("basic supervised learning", ["BasicML", "Basic ML", "supervised"], ["BasicML", "supervised", "mse_loss"]),
         concept("Lux boundary", ["Keras", "neural network", "TensorFlow"], ["Lux", "make_mlp", "feature-by-batch"])),
     pair("Lecture 02",
         "lectures/lecture_02_intro_deep_learning/code/lecture_02_02_GradientDescent_and_StochasticGradientDescent.ipynb",
-        "lectures/lecture_02_intro_deep_learning/code_julia/lecture_02_02_GradientDescent_and_StochasticGradientDescent_Lux.jl",
+        "lectures/lecture_02_intro_deep_learning/code_julia/lecture_02_02_GradientDescent_and_StochasticGradientDescent_Lux.ipynb",
         concept("gradient descent", ["Gradient Descent", "gradient descent"], ["gradient_descent_1d", "batch_gradient_descent"]),
         concept("stochastic updates", ["Stochastic", "SGD", "stochastic"], ["stochastic_gradient_descent", "rng"])),
     pair("Lecture 02",
         "lectures/lecture_02_intro_deep_learning/code/lecture_02_03_Double_Descent.ipynb",
-        "lectures/lecture_02_intro_deep_learning/code_julia/lecture_02_03_Double_Descent_Lux.jl",
+        "lectures/lecture_02_intro_deep_learning/code_julia/lecture_02_03_Double_Descent_Lux.ipynb",
         concept("double descent", "Double Descent"),
         concept("random features", ["random feature", "RFF", "features"], ["rff_matrix", "pinv"])),
     pair("Lecture 02",
         "lectures/lecture_02_intro_deep_learning/code/lecture_02_04_Gentle_DNN.ipynb",
-        "lectures/lecture_02_intro_deep_learning/code_julia/lecture_02_04_Gentle_DNN_Lux.jl",
+        "lectures/lecture_02_intro_deep_learning/code_julia/lecture_02_04_Gentle_DNN_Lux.ipynb",
         concept("dense neural network", ["DNN", "Sequential", "Keras"], ["Gentle DNN", "Lux", "make_mlp"]),
         concept("classification and regression", ["classification", "regression"], ["classification", "regression", "cross_entropy_loss"])),
     pair("Lecture 02",
         "lectures/lecture_02_intro_deep_learning/code/lecture_02_05_Tensorboard.ipynb",
-        "lectures/lecture_02_intro_deep_learning/code_julia/lecture_02_05_Training_Instrumentation_Lux.jl",
+        "lectures/lecture_02_intro_deep_learning/code_julia/lecture_02_05_Training_Instrumentation_Lux.ipynb",
         concept("training instrumentation", ["TensorBoard", "callback", "checkpoint"], ["TensorBoard", "checkpoint", "metrics_table"]),
         concept("validation monitoring", ["validation", "loss"], ["validation_loss", "best_checkpoint"])),
     pair("Lecture 02",
         "lectures/lecture_02_intro_deep_learning/code/lecture_02_06_PyTorch_intro.ipynb",
-        "lectures/lecture_02_intro_deep_learning/code_julia/lecture_02_06_Lux_Training_Fundamentals.jl",
+        "lectures/lecture_02_intro_deep_learning/code_julia/lecture_02_06_Lux_Training_Fundamentals.ipynb",
         concept("framework introduction", ["PyTorch", "Module", "tensor"], ["PyTorch", "Lux", "model, ps, st"]),
         concept("training fundamentals", ["optimizer", "gradient"], ["Optimisers", "train_step!"])),
     pair("Lecture 02",
         "lectures/lecture_02_intro_deep_learning/code/lecture_02_07_Genz_Approximation_and_Loss_Functions.ipynb",
-        "lectures/lecture_02_intro_deep_learning/code_julia/lecture_02_07_Genz_Approximation_and_Loss_Functions_Lux.jl",
+        "lectures/lecture_02_intro_deep_learning/code_julia/lecture_02_07_Genz_Approximation_and_Loss_Functions_Lux.ipynb",
         concept("Genz approximation", "Genz"),
         concept("loss kernels", ["MSE", "MAE", "Huber", "loss"], ["mse_loss", "mae_loss", "huber_loss", "loss"])),
     pair("Lecture 02",
         "lectures/lecture_02_intro_deep_learning/code/lecture_02_08_MLP_LSTM_Transformer_Edgeworth_Cycles.ipynb",
-        "lectures/lecture_02_intro_deep_learning/code_julia/lecture_02_08_MLP_LSTM_Transformer_Edgeworth_Cycles_Lux.jl",
+        "lectures/lecture_02_intro_deep_learning/code_julia/lecture_02_08_MLP_LSTM_Transformer_Edgeworth_Cycles_Lux.ipynb",
         concept("sequence models", ["MLP", "LSTM", "Transformer"], ["MLP", "LSTM", "Transformer"]),
         concept("Edgeworth cycles", "Edgeworth")),
     pair("Lecture 02",
         "lectures/lecture_02_intro_deep_learning/code/lecture_02_09_Transformer_InContext_AR1.ipynb",
-        "lectures/lecture_02_intro_deep_learning/code_julia/lecture_02_09_Transformer_InContext_AR1_Lux.jl",
+        "lectures/lecture_02_intro_deep_learning/code_julia/lecture_02_09_Transformer_InContext_AR1_Lux.ipynb",
         concept("transformer context", "Transformer"),
         concept("AR1 process", ["AR1", "AR(1)", "autoregressive"], ["AR1", "AR(1)", "autoregressive"])),
     pair("Lecture 03",
         "lectures/lecture_03_deep_equilibrium_nets/code/lecture_03_01_Brock_Mirman_1972_DEQN.ipynb",
-        "lectures/lecture_03_deep_equilibrium_nets/code_julia/lecture_03_01_Brock_Mirman_1972_DEQN_Lux.jl",
+        "lectures/lecture_03_deep_equilibrium_nets/code_julia/lecture_03_01_Brock_Mirman_1972_DEQN_Lux.ipynb",
         concept("Brock-Mirman", ["Brock", "Mirman"], ["BrockMirmanParams", "deterministic_bm_residual"]),
         concept("Euler residual", ["Euler", "residual"], ["residual", "Euler"])),
     pair("Lecture 03",
         "lectures/lecture_03_deep_equilibrium_nets/code/lecture_03_02_Brock_Mirman_Uncertainty_DEQN.ipynb",
-        "lectures/lecture_03_deep_equilibrium_nets/code_julia/lecture_03_02_Brock_Mirman_Uncertainty_DEQN_Lux.jl",
+        "lectures/lecture_03_deep_equilibrium_nets/code_julia/lecture_03_02_Brock_Mirman_Uncertainty_DEQN_Lux.ipynb",
         concept("stochastic Brock-Mirman", ["Brock", "Uncertainty", "stochastic"], ["stochastic_bm_residual", "BrockMirmanParams"]),
         concept("Gauss-Hermite expectation", ["Hermite", "Gauss"], ["gauss_hermite_rule", "Hermite"])),
     pair("Lecture 03",
         "lectures/lecture_03_deep_equilibrium_nets/code/lecture_03_03_DEQN_Exercises_Blanks.ipynb",
-        "lectures/lecture_03_deep_equilibrium_nets/code_julia/lecture_03_03_DEQN_Exercises_Blanks_Lux.jl",
+        "lectures/lecture_03_deep_equilibrium_nets/code_julia/lecture_03_03_DEQN_Exercises_Blanks_Lux.ipynb",
         concept("exercise blanks", ["Exercise", "TODO", "blank"], ["Exercise", "TODO", "fill in"]),
         concept("Brock-Mirman scaffold", ["Brock", "Mirman"], ["BrockMirmanParams", "gauss_hermite_rule"])),
     pair("Lecture 03",
         "lectures/lecture_03_deep_equilibrium_nets/code/lecture_03_04_DEQN_Exercises_Solutions.ipynb",
-        "lectures/lecture_03_deep_equilibrium_nets/code_julia/lecture_03_04_DEQN_Exercises_Solutions_Lux.jl",
+        "lectures/lecture_03_deep_equilibrium_nets/code_julia/lecture_03_04_DEQN_Exercises_Solutions_Lux.ipynb",
         concept("exercise solutions", ["Exercise", "solution"], ["solution", "labor_deqn_residual"]),
         concept("labor and complementarity", ["labor", "Fischer"], ["labor", "fischer_burmeister"])),
     pair("Lecture 03",
         "lectures/lecture_03_deep_equilibrium_nets/code/lecture_03_05_StochasticBM_LossComparison.ipynb",
-        "lectures/lecture_03_deep_equilibrium_nets/code_julia/lecture_03_05_StochasticBM_LossComparison_Lux.jl",
+        "lectures/lecture_03_deep_equilibrium_nets/code_julia/lecture_03_05_StochasticBM_LossComparison_Lux.ipynb",
         concept("stochastic BM loss comparison", ["Stochastic", "Loss", "Brock"], ["stochastic_bm_residual", "LOSS_KERNELS"]),
         concept("common random numbers", ["common random", "seed"], ["common random", "SEED"])),
     pair("Lecture 04",
         "lectures/lecture_04_irbc_with_deqns/code/lecture_04_01_IRBC_DEQN_smooth.ipynb",
-        "lectures/lecture_04_irbc_with_deqns/code_julia/lecture_04_01_IRBC_DEQN_smooth_Lux.jl",
+        "lectures/lecture_04_irbc_with_deqns/code_julia/lecture_04_01_IRBC_DEQN_smooth_Lux.ipynb",
         concept("smooth IRBC", ["IRBC", "smooth"], ["IRBCParams", "irbc_smooth_residual"]),
         concept("Stroud expectations", ["Stroud", "monomial"], ["Stroud", "irbc_stroud_rule"])),
     pair("Lecture 04",
         "lectures/lecture_04_irbc_with_deqns/code/lecture_04_02_IRBC_DEQN_irreversible.ipynb",
-        "lectures/lecture_04_irbc_with_deqns/code_julia/lecture_04_02_IRBC_DEQN_irreversible_Lux.jl",
+        "lectures/lecture_04_irbc_with_deqns/code_julia/lecture_04_02_IRBC_DEQN_irreversible_Lux.ipynb",
         concept("irreversible IRBC", ["IRBC", "irreversible"], ["irreversible_residual", "build_irreversible_policy_network", "raw_investment"]),
         concept("KKT complementarity", ["KKT", "Fischer", "complementarity"], ["fischer_burmeister", "complementarity"])),
     pair("Lecture 05",
         "lectures/lecture_05_nas_loss_normalization/code/lecture_05_02_NAS_Random_Search_10D.ipynb",
-        "lectures/lecture_05_nas_loss_normalization/code_julia/lecture_05_02_NAS_Random_Search_10D_Lux.jl",
+        "lectures/lecture_05_nas_loss_normalization/code_julia/lecture_05_02_NAS_Random_Search_10D_Lux.ipynb",
         concept("NAS random search", ["NAS", "Random Search"], ["NAS", "Random Search"]),
         concept("10D search", ["10D", "10-D", "ten"], ["10-D", "target_10d", "train_candidate"])),
     pair("Lecture 05",
         "lectures/lecture_05_nas_loss_normalization/code/lecture_05_03_NAS_RandomSearch_Hyperband.ipynb",
-        "lectures/lecture_05_nas_loss_normalization/code_julia/lecture_05_03_NAS_RandomSearch_Hyperband_Lux.jl",
+        "lectures/lecture_05_nas_loss_normalization/code_julia/lecture_05_03_NAS_RandomSearch_Hyperband_Lux.ipynb",
         concept("Hyperband", "Hyperband", ["SHA", "Successive Halving", "sha_records"]),
         concept("rungs and survivors", ["rung", "survivor"], ["rung", "survivors"])),
     pair("Lecture 05",
         "lectures/lecture_05_nas_loss_normalization/code/lecture_05_04_Loss_Normalization.ipynb",
-        "lectures/lecture_05_nas_loss_normalization/code_julia/lecture_05_04_Loss_Normalization_Lux.jl",
+        "lectures/lecture_05_nas_loss_normalization/code_julia/lecture_05_04_Loss_Normalization_Lux.ipynb",
         concept("loss normalization", ["Multi-Component Loss", "Loss Balancing", "ReLoBRaLo"], ["Loss Normalization", "inverse_loss_weights"]),
         concept("adaptive weights", ["SoftAdapt", "ReLoBRaLo", "weights"], ["softadapt_weights", "relobralo_weights", "weights"])),
     pair("Lecture 05",
         "lectures/lecture_05_nas_loss_normalization/code/lecture_05_05_IRBC_Exercise.ipynb",
-        "lectures/lecture_05_nas_loss_normalization/code_julia/lecture_05_05_IRBC_Exercise_Lux.jl",
+        "lectures/lecture_05_nas_loss_normalization/code_julia/lecture_05_05_IRBC_Exercise_Lux.ipynb",
         concept("IRBC exercise", ["IRBC", "Exercise"], ["IRBCParams", "Exercise"]),
         concept("loss balancing", ["loss", "balancing", "weights"], ["loss", "weights", "equal_loss_weights"])),
     pair("Lecture 07",
         "lectures/lecture_07_autodiff_for_deqns/code/lecture_07_01_AutoDiff_Analytical_Examples.ipynb",
-        "lectures/lecture_07_autodiff_for_deqns/code_julia/lecture_07_01_AutoDiff_Analytical_Examples_Lux.jl",
+        "lectures/lecture_07_autodiff_for_deqns/code_julia/lecture_07_01_AutoDiff_Analytical_Examples_Lux.ipynb",
         concept("analytical autodiff", ["AutoDiff", "Analytical"], ["AutoDiff", "ForwardDiff"]),
         concept("slot gradients", ["gradient", "derivative"], ["gradient", "derivative"])),
     pair("Lecture 07",
         "lectures/lecture_07_autodiff_for_deqns/code/lecture_07_02_Brock_Mirman_AutoDiff_DEQN.ipynb",
-        "lectures/lecture_07_autodiff_for_deqns/code_julia/lecture_07_02_Brock_Mirman_AutoDiff_DEQN_Lux.jl",
+        "lectures/lecture_07_autodiff_for_deqns/code_julia/lecture_07_02_Brock_Mirman_AutoDiff_DEQN_Lux.ipynb",
         concept("Brock-Mirman autodiff", ["Brock", "Mirman", "AutoDiff"], ["bm_payoff", "autodiff_bm_residual", "ForwardDiff"]),
         concept("autodiff training", ["GradientTape", "Adam", "training"], ["Optimisers.Adam", "train_step!", "policy_relative_l2"])),
     pair("Lecture 07",
         "lectures/lecture_07_autodiff_for_deqns/code/lecture_07_03_Brock_Mirman_Uncertainty_AutoDiff_DEQN.ipynb",
-        "lectures/lecture_07_autodiff_for_deqns/code_julia/lecture_07_03_Brock_Mirman_Uncertainty_AutoDiff_DEQN_Lux.jl",
+        "lectures/lecture_07_autodiff_for_deqns/code_julia/lecture_07_03_Brock_Mirman_Uncertainty_AutoDiff_DEQN_Lux.ipynb",
         concept("stochastic Brock-Mirman autodiff", ["Brock", "Uncertainty", "AutoDiff"], ["autodiff_stochastic_residual", "Pi", "slot_gradient_errors"]),
         concept("common-shock expectation", ["Gauss", "Hermite", "shock"], ["gauss_hermite_rule", "quadrature_checks", "simulate_periods"])),
     pair("Lecture 07",
         "lectures/lecture_07_autodiff_for_deqns/code/lecture_07_04_IRBC_AutoDiff_DEQN.ipynb",
-        "lectures/lecture_07_autodiff_for_deqns/code_julia/lecture_07_04_IRBC_AutoDiff_DEQN_Lux.jl",
+        "lectures/lecture_07_autodiff_for_deqns/code_julia/lecture_07_04_IRBC_AutoDiff_DEQN_Lux.ipynb",
         concept("IRBC autodiff", ["IRBC", "AutoDiff"], ["pi_contribution", "autodiff_irbc_residual", "slot_gradient_error"]),
         concept("approach A and B training", ["Approach A", "Approach B", "Adam"], ["grad_autodiff", "train_approach_A", "train_approach_B", "training_diagnostics"])),
     pair("Lecture 08",
         "lectures/lecture_08_olg_models_deqns/code/lecture_08_07_OLG_Analytic_DEQN_exogenous.ipynb",
-        "lectures/lecture_08_olg_models_deqns/code_julia/lecture_08_07_OLG_Analytic_DEQN_exogenous_Lux.jl",
+        "lectures/lecture_08_olg_models_deqns/code_julia/lecture_08_07_OLG_Analytic_DEQN_exogenous_Lux.ipynb",
         concept("analytic OLG exogenous", ["OLG", "Analytic", "exogenous"], ["AnalyticOLGParams", "exogenous"]),
         concept("closed form validation", ["closed form", "closed-form"], ["analytic_olg_exact_policy", "policy_error"])),
     pair("Lecture 08",
         "lectures/lecture_08_olg_models_deqns/code/lecture_08_08_OLG_Analytic_DEQN_persistent.ipynb",
-        "lectures/lecture_08_olg_models_deqns/code_julia/lecture_08_08_OLG_Analytic_DEQN_persistent_Lux.jl",
+        "lectures/lecture_08_olg_models_deqns/code_julia/lecture_08_08_OLG_Analytic_DEQN_persistent_Lux.ipynb",
         concept("analytic OLG persistent", ["OLG", "Analytic", "persistent"], ["AnalyticOLGParams", "Persistent"]),
         concept("persistent simulation", ["persistent", "simulation"], ["persistent", "analytic_olg_next_states"])),
     pair("Lecture 08",
         "lectures/lecture_08_olg_models_deqns/code/lecture_08_09_OLG_Benchmark_DEQN_exogenous.ipynb",
-        "lectures/lecture_08_olg_models_deqns/code_julia/lecture_08_09_OLG_Benchmark_DEQN_exogenous_Lux.jl",
+        "lectures/lecture_08_olg_models_deqns/code_julia/lecture_08_09_OLG_Benchmark_DEQN_exogenous_Lux.ipynb",
         concept("benchmark OLG exogenous", ["OLG", "Benchmark", "exogenous"], ["BenchmarkOLGParams", "exogenous"]),
         concept("borrowing and collateral", ["borrowing", "collateral"], ["collateral", "benchmark_olg_residual"])),
     pair("Lecture 08",
         "lectures/lecture_08_olg_models_deqns/code/lecture_08_10_OLG_Benchmark_DEQN_persistent.ipynb",
-        "lectures/lecture_08_olg_models_deqns/code_julia/lecture_08_10_OLG_Benchmark_DEQN_persistent_Lux.jl",
+        "lectures/lecture_08_olg_models_deqns/code_julia/lecture_08_10_OLG_Benchmark_DEQN_persistent_Lux.ipynb",
         concept("benchmark OLG persistent", ["OLG", "Benchmark", "persistent"], ["BenchmarkOLGParams", "Persistent"]),
         concept("rolled state cloud", ["persistent", "simulation", "cloud"], ["cloud", "benchmark_olg_next_states"])),
     pair("Lecture 08",
         "lectures/lecture_08_olg_models_deqns/code/lecture_08_11_OLG_Exercise.ipynb",
-        "lectures/lecture_08_olg_models_deqns/code_julia/lecture_08_11_OLG_Exercise_Lux.jl",
+        "lectures/lecture_08_olg_models_deqns/code_julia/lecture_08_11_OLG_Exercise_Lux.ipynb",
         concept("OLG exercise", ["Exercise", "savings", "lifecycle"], ["exercise_savings_rates", "simulate_lifecycle", "savings_rates"]),
         concept("closed-form validation", ["closed form", "closed-form"], ["exact_policy_error_max", "validation_loss", "ConstantSavingsRaw"])),
     pair("Lecture 09",
         "lectures/lecture_09_heterogeneous_agents_youngs_method/code/lecture_09_10_Youngs_Method_Examples.ipynb",
-        "lectures/lecture_09_heterogeneous_agents_youngs_method/code_julia/lecture_09_10_Youngs_Method_Examples_Lux.jl",
+        "lectures/lecture_09_heterogeneous_agents_youngs_method/code_julia/lecture_09_10_Youngs_Method_Examples_Lux.ipynb",
         concept("Young method", ["Young", "histogram"], ["young_step", "histogram"]),
         concept("mass conservation", ["mass", "mean"], ["young_mass", "young_mean"])),
     pair("Lecture 09",
         "lectures/lecture_09_heterogeneous_agents_youngs_method/code/lecture_09_11_Continuum_of_Agents_DEQN.ipynb",
-        "lectures/lecture_09_heterogeneous_agents_youngs_method/code_julia/lecture_09_11_Continuum_of_Agents_DEQN_Lux.jl",
+        "lectures/lecture_09_heterogeneous_agents_youngs_method/code_julia/lecture_09_11_Continuum_of_Agents_DEQN_Lux.ipynb",
         concept("continuum agents", ["Continuum", "agents"], ["Continuum", "young_step"]),
         concept("Euler and market clearing", ["Euler", "market"], ["euler", "bond_market"])),
     pair("Lecture 09",
         "lectures/lecture_09_heterogeneous_agents_youngs_method/code/lecture_09_12_KrusellSmith_DeepLearning.ipynb",
-        "lectures/lecture_09_heterogeneous_agents_youngs_method/code_julia/lecture_09_12_KrusellSmith_DeepLearning_Lux.jl",
+        "lectures/lecture_09_heterogeneous_agents_youngs_method/code_julia/lecture_09_12_KrusellSmith_DeepLearning_Lux.ipynb",
         concept("Krusell-Smith deep learning", ["Krusell", "Smith", "Deep"], ["Krusell-Smith", "ks_residual", "policy_features"]),
         concept("running panel phase B", ["Phase B", "panel", "K_next"], ["initial_panel", "advance_panel", "panel_log", "phase_b_tail"])),
     pair("Lecture 10",
         "lectures/lecture_10_sequence_space_deqns/code/lecture_10_05_SequenceSpace_BrockMirman.ipynb",
-        "lectures/lecture_10_sequence_space_deqns/code_julia/lecture_10_05_SequenceSpace_BrockMirman_Lux.jl",
+        "lectures/lecture_10_sequence_space_deqns/code_julia/lecture_10_05_SequenceSpace_BrockMirman_Lux.ipynb",
         concept("sequence-space Brock-Mirman", ["Sequence", "Brock"], ["SequenceBrockMirmanParams", "sequence_bm_residual"]),
         concept("history tensors", ["history", "histories"], ["history", "flatten_history"])),
     pair("Lecture 10",
         "lectures/lecture_10_sequence_space_deqns/code/lecture_10_05b_SequenceSpace_IRBC.ipynb",
-        "lectures/lecture_10_sequence_space_deqns/code_julia/lecture_10_05b_SequenceSpace_IRBC_Lux.jl",
+        "lectures/lecture_10_sequence_space_deqns/code_julia/lecture_10_05b_SequenceSpace_IRBC_Lux.ipynb",
         concept("sequence-space IRBC", ["Sequence", "IRBC"], ["py_sequence_irbc_residual", "n_shocks", "quadrature_shape"]),
         concept("shock histories", ["history", "shock"], ["history_shape", "lux_history_shape", "advance_history"])),
     pair("Lecture 10",
         "lectures/lecture_10_sequence_space_deqns/code/lecture_10_06_SequenceSpace_KrusellSmith.ipynb",
-        "lectures/lecture_10_sequence_space_deqns/code_julia/lecture_10_06_SequenceSpace_KrusellSmith_Lux.jl",
+        "lectures/lecture_10_sequence_space_deqns/code_julia/lecture_10_06_SequenceSpace_KrusellSmith_Lux.ipynb",
         concept("sequence-space Krusell-Smith", ["Krusell", "Smith"], ["SequenceKSParams", "Krusell"]),
         concept("Young propagation", ["Young", "distribution"], ["young_step", "distribution"])),
     pair("Lecture 10",
         "lectures/lecture_10_sequence_space_deqns/code/lecture_10_KrusellSmith_Tutorial_CPU.ipynb",
-        "lectures/lecture_10_sequence_space_deqns/code_julia/lecture_10_KrusellSmith_Tutorial_CPU_Lux.jl",
+        "lectures/lecture_10_sequence_space_deqns/code_julia/lecture_10_KrusellSmith_Tutorial_CPU_Lux.ipynb",
         concept("Krusell-Smith CPU tutorial", ["Krusell", "Tutorial", "CPU"], ["Krusell", "Tutorial", "CPU"]),
         concept("distribution aggregates", ["distribution", "aggregate"], ["sequence_ks_distribution_aggregates", "distribution"])),
     pair("Lecture 11",
         "lectures/lecture_11_pinns/code/lecture_11_01_ODE_PINN_ZeroBCs.ipynb",
-        "lectures/lecture_11_pinns/code_julia/lecture_11_01_ODE_PINN_ZeroBCs_Lux.jl",
+        "lectures/lecture_11_pinns/code_julia/lecture_11_01_ODE_PINN_ZeroBCs_Lux.ipynb",
         concept("ODE PINN", ["ODE", "PINN"], ["ODE", "zero_bc_tanh_mlp_loss"]),
         concept("zero boundary conditions", ["zero", "boundary"], ["boundary", "analytic_zero_bc_solution"])),
     pair("Lecture 11",
         "lectures/lecture_11_pinns/code/lecture_11_02_ODE_PINN_SoftVsHardBCs.ipynb",
-        "lectures/lecture_11_pinns/code_julia/lecture_11_02_ODE_PINN_SoftVsHardBCs_Lux.jl",
+        "lectures/lecture_11_pinns/code_julia/lecture_11_02_ODE_PINN_SoftVsHardBCs_Lux.ipynb",
         concept("soft and hard ODE PINNs", ["Soft", "Hard", "boundary"], ["soft_bc_ode_loss", "hard_bc_ode_loss", "hard_trial_values"]),
         concept("manufactured ODE solution", ["exact", "solution"], ["ode_exact_solution", "ode_boundary_lift", "ode_bubble"])),
     pair("Lecture 11",
         "lectures/lecture_11_pinns/code/lecture_11_03_PDE_PINN_Poisson2D.ipynb",
-        "lectures/lecture_11_pinns/code_julia/lecture_11_03_PDE_PINN_Poisson2D_Lux.jl",
+        "lectures/lecture_11_pinns/code_julia/lecture_11_03_PDE_PINN_Poisson2D_Lux.ipynb",
         concept("Poisson PINN", ["Poisson", "PDE"], ["poisson2d_exact", "poisson2d_hard_loss"]),
         concept("soft and hard boundaries", ["soft", "hard", "boundary"], ["soft", "hard", "boundary"])),
     pair("Lecture 11",
         "lectures/lecture_11_pinns/code/lecture_11_04_Cake_Eating_HJB_PINN.ipynb",
-        "lectures/lecture_11_pinns/code_julia/lecture_11_04_Cake_Eating_HJB_PINN_Lux.jl",
+        "lectures/lecture_11_pinns/code_julia/lecture_11_04_Cake_Eating_HJB_PINN_Lux.ipynb",
         concept("cake-eating HJB", ["Cake", "HJB"], ["CakeEatingParams", "cake_eating_hjb_loss"]),
         concept("analytic value", ["exact", "analytic"], ["cake_eating_value_exact", "cake_eating_consumption_exact"])),
     pair("Lecture 11",
         "lectures/lecture_11_pinns/code/lecture_11_05_Black_Scholes_PINN.ipynb",
-        "lectures/lecture_11_pinns/code_julia/lecture_11_05_Black_Scholes_PINN_Lux.jl",
+        "lectures/lecture_11_pinns/code_julia/lecture_11_05_Black_Scholes_PINN_Lux.ipynb",
         concept("Black-Scholes PINN", ["Black", "Scholes", "PINN"], ["BlackScholesParams", "black_scholes_loss"]),
         concept("terminal and boundary conditions", ["terminal", "boundary"], ["terminal", "boundary"])),
     pair("Lecture 13",
         "lectures/lecture_13_continuous_time_ha_numerics/code/lecture_13_08_Aiyagari_Continuous_Time_FD_and_PINN_PyTorch.ipynb",
-        "lectures/lecture_13_continuous_time_ha_numerics/code_julia/lecture_13_08_Aiyagari_Continuous_Time_FD_and_PINN_Lux.jl",
+        "lectures/lecture_13_continuous_time_ha_numerics/code_julia/lecture_13_08_Aiyagari_Continuous_Time_FD_and_PINN_Lux.ipynb",
         concept("continuous-time Aiyagari", ["Aiyagari", "Continuous"], ["CTAiyagariParams", "Aiyagari"]),
         concept("FD and PINN validation", ["FD", "PINN", "KFE"], ["ct_aiyagari_fd_solve", "ct_aiyagari_pinn_loss", "KFE"])),
     pair("Lecture 14",
         "lectures/lecture_14_surrogates_and_gps/code/lecture_14_01_Surrogate_Primer.ipynb",
-        "lectures/lecture_14_surrogates_and_gps/code_julia/lecture_14_01_Surrogate_Primer_Lux.jl",
+        "lectures/lecture_14_surrogates_and_gps/code_julia/lecture_14_01_Surrogate_Primer_Lux.ipynb",
         concept("surrogate primer", "Surrogate"),
         concept("Black-Scholes surface", ["Black", "Scholes"], ["black_scholes_call_price_5d", "Black-Scholes"])),
     pair("Lecture 14",
         "lectures/lecture_14_surrogates_and_gps/code/lecture_14_02_GP_and_BAL.ipynb",
-        "lectures/lecture_14_surrogates_and_gps/code_julia/lecture_14_02_GP_and_BAL_Lux.jl",
+        "lectures/lecture_14_surrogates_and_gps/code_julia/lecture_14_02_GP_and_BAL_Lux.ipynb",
         concept("GP and BAL", ["GP", "BAL", "Gaussian"], ["fit_cholesky_gp", "bal_next_index", "Gaussian"]),
         concept("posterior variance", ["variance", "posterior"], ["variance", "gp_predict"])),
     pair("Lecture 14",
         "lectures/lecture_14_surrogates_and_gps/code/lecture_14_04_GP_Value_Function_Iteration.ipynb",
-        "lectures/lecture_14_surrogates_and_gps/code_julia/lecture_14_04_GP_Value_Function_Iteration_Lux.jl",
+        "lectures/lecture_14_surrogates_and_gps/code_julia/lecture_14_04_GP_Value_Function_Iteration_Lux.ipynb",
         concept("GP value function iteration", ["GP", "Value", "Iteration"], ["GP", "BrockMirmanParams", "value"]),
         concept("policy check", ["policy", "consumption"], ["policy", "consumption_error"])),
     pair("Lecture 14",
         "lectures/lecture_14_surrogates_and_gps/code/lecture_14_05_Active_Subspace_2D.ipynb",
-        "lectures/lecture_14_surrogates_and_gps/code_julia/lecture_14_05_Active_Subspace_2D_Lux.jl",
+        "lectures/lecture_14_surrogates_and_gps/code_julia/lecture_14_05_Active_Subspace_2D_Lux.ipynb",
         concept("active subspace 2D", ["Active", "Subspace", "2D"], ["active_subspace", "2D"]),
         concept("polynomial ridge", ["ASGP", "active subspace", "exponential"], ["fit_active_subspace_surrogate", "ridge"])),
     pair("Lecture 14",
         "lectures/lecture_14_surrogates_and_gps/code/lecture_14_06_Active_Subspace_10D.ipynb",
-        "lectures/lecture_14_surrogates_and_gps/code_julia/lecture_14_06_Active_Subspace_10D_Lux.jl",
+        "lectures/lecture_14_surrogates_and_gps/code_julia/lecture_14_06_Active_Subspace_10D_Lux.ipynb",
         concept("active subspace 10D", ["Active", "Subspace", "10D"], ["active_subspace", "10D"]),
         concept("ridge target", ["ridge", "exponential"], ["exponential ridge", "fit_active_subspace_surrogate", "fvec"])),
     pair("Lecture 14",
         "lectures/lecture_14_surrogates_and_gps/code/lecture_14_07_Active_Subspace_Nonlinear.ipynb",
-        "lectures/lecture_14_surrogates_and_gps/code_julia/lecture_14_07_Active_Subspace_Nonlinear_Lux.jl",
+        "lectures/lecture_14_surrogates_and_gps/code_julia/lecture_14_07_Active_Subspace_Nonlinear_Lux.ipynb",
         concept("nonlinear active subspace", ["Active", "Subspace", "Nonlinear"], ["active_subspace", "Nonlinear"]),
         concept("dimension comparison", ["dimension", "error"], ["dims", "rel_errors"])),
     pair("Lecture 14",
         "lectures/lecture_14_surrogates_and_gps/code/lecture_14_08_Deep_Kernel_Learning.ipynb",
-        "lectures/lecture_14_surrogates_and_gps/code_julia/lecture_14_08_Deep_Kernel_Learning_Lux.jl",
+        "lectures/lecture_14_surrogates_and_gps/code_julia/lecture_14_08_Deep_Kernel_Learning_Lux.ipynb",
         concept("deep kernel learning", ["Deep", "Kernel"], ["Deep", "Kernel"]),
         concept("feature map and GP", ["feature", "GP"], ["feature", "fit_cholesky_gp"])),
     pair("Lecture 14",
         "lectures/lecture_14_surrogates_and_gps/code/lecture_14_09_Deep_Active_Subspace_Ridge.ipynb",
-        "lectures/lecture_14_surrogates_and_gps/code_julia/lecture_14_09_Deep_Active_Subspace_Ridge_Lux.jl",
+        "lectures/lecture_14_surrogates_and_gps/code_julia/lecture_14_09_Deep_Active_Subspace_Ridge_Lux.ipynb",
         concept("deep active subspace", ["Deep", "Active", "Subspace"], ["make_deep_active_subspace", "active_subspace"]),
         concept("ridge diagnostics", ["ridge", "spectrum"], ["ridge", "spectrum"])),
     pair("Lecture 14",
         "lectures/lecture_14_surrogates_and_gps/code/lecture_14_10_Deep_AS_vs_Linear_AS_Borehole.ipynb",
-        "lectures/lecture_14_surrogates_and_gps/code_julia/lecture_14_10_Deep_AS_vs_Linear_AS_Borehole_Lux.jl",
+        "lectures/lecture_14_surrogates_and_gps/code_julia/lecture_14_10_Deep_AS_vs_Linear_AS_Borehole_Lux.ipynb",
         concept("borehole benchmark", ["Borehole", "borehole"], ["borehole_function", "borehole"]),
         concept("linear versus deep AS", ["Linear", "Deep", "AS"], ["active_subspace", "surrogate"])),
     pair("Lecture 15",
         "lectures/lecture_15_structural_estimation_smm/code/lecture_15_03_Structural_Estimation_BM.ipynb",
-        "lectures/lecture_15_structural_estimation_smm/code_julia/lecture_15_03_Structural_Estimation_BM_Lux.jl",
+        "lectures/lecture_15_structural_estimation_smm/code_julia/lecture_15_03_Structural_Estimation_BM_Lux.ipynb",
         concept("structural SMM", ["Structural", "SMM"], ["SMMBrockMirmanParams", "smm_criterion"]),
         concept("common random numbers", ["common random", "CRN"], ["common_random_shocks", "common random"])),
     pair("Lecture 15",
         "lectures/lecture_15_structural_estimation_smm/code/lecture_15_03b_Structural_Estimation_BM_Joint.ipynb",
-        "lectures/lecture_15_structural_estimation_smm/code_julia/lecture_15_03b_Structural_Estimation_BM_Joint_Lux.jl",
+        "lectures/lecture_15_structural_estimation_smm/code_julia/lecture_15_03b_Structural_Estimation_BM_Joint_Lux.ipynb",
         concept("joint SMM", ["Joint", "SMM"], ["joint", "smm_joint"]),
         concept("identification diagnostics", ["identification", "sensitivity"], ["identification", "sensitivity"])),
     pair("Lecture 16",
         "lectures/lecture_16_climate_economics_iams/code/lecture_16_01_Climate_Exercise.ipynb",
-        "lectures/lecture_16_climate_economics_iams/code_julia/lecture_16_01_Climate_Exercise_Lux.jl",
+        "lectures/lecture_16_climate_economics_iams/code_julia/lecture_16_01_Climate_Exercise_Lux.ipynb",
         concept("climate exercise", ["Climate", "DICE"], ["DICEClimateParams", "simulate_dice_climate_exercise"]),
         concept("mitigation comparison", ["mitigation", "damage"], ["mitigation", "avoided_damages"])),
     pair("Lecture 16",
         "lectures/lecture_16_climate_economics_iams/code/lecture_16_02_DICE_DEQN_Library_Port.ipynb",
-        "lectures/lecture_16_climate_economics_iams/code_julia/lecture_16_02_DICE_DEQN_Library_Port_Lux.jl",
+        "lectures/lecture_16_climate_economics_iams/code_julia/lecture_16_02_DICE_DEQN_Library_Port_Lux.ipynb",
         concept("deterministic CDICE", ["DICE", "CDICE", "deterministic"], ["CDICEParams", "deterministic_cdice_residual"]),
         concept("carbon and temperature transitions", ["carbon", "temperature"], ["simulate_cdice_path", "deterministic_cdice_residual"])),
     pair("Lecture 16",
         "lectures/lecture_16_climate_economics_iams/code/lecture_16_03_Stochastic_DICE_DEQN.ipynb",
-        "lectures/lecture_16_climate_economics_iams/code_julia/lecture_16_03_Stochastic_DICE_DEQN_Lux.jl",
+        "lectures/lecture_16_climate_economics_iams/code_julia/lecture_16_03_Stochastic_DICE_DEQN_Lux.ipynb",
         concept("stochastic CDICE", ["DICE", "Stochastic", "CDICE"], ["stochastic_cdice_residual", "CDICETeachingPolicy"]),
         concept("Gauss-Hermite productivity shock", ["Gauss", "Hermite", "shock"], ["gauss_hermite_rule", "shock"])),
 ]
@@ -327,7 +328,7 @@ const notebook_pairs = NotebookPair[
 const missing_translations = MissingTranslation[]
 
 const intentional_extra_julia = Set([
-    "lectures/lecture_02_intro_deep_learning/code_julia/lecture_02_00_Lux_Pluto_orientation.jl",
+    "lectures/lecture_02_intro_deep_learning/code_julia/lecture_02_00_Lux_orientation.ipynb",
 ])
 
 const excluded_python_notebook_prefixes = Dict(
@@ -355,36 +356,15 @@ function has_any(source::AbstractString, markers)
     return any(marker -> occursin(marker, source), markers)
 end
 
-# Fast structural probe of a Pluto notebook's display order. Returns the cell
-# kinds (:md or :code) in the order Pluto renders them, read from the trailing
-# `# ╔═╡ Cell order:` block. Used to assert prose was interleaved with code and
-# that the final rendered/evaluated cell is code (so `include` returns the
-# diagnostic value, not a `Markdown.MD`).
-function pluto_order_kinds(julia_source::AbstractString)
-    kinds = Symbol[]
-    in_order = false
-    for line in split(julia_source, '\n')
-        if occursin("Cell order:", line)
-            in_order = true
-            continue
-        end
-        in_order || continue
-        if occursin("╟", line)
-            push!(kinds, :md)
-        elseif occursin("╠", line)
-            push!(kinds, :code)
-        end
-    end
-    return kinds
-end
-
-parses_as_pluto(julia_source::AbstractString) = Meta.parseall(julia_source) isa Expr
-
-# True when at least one markdown cell is displayed after a code cell, i.e. the
-# prose is woven through the notebook rather than dumped in a top-of-file block.
-function interleaved_prose(kinds::AbstractVector{Symbol})
-    return any(i -> kinds[i] === :md && any(==(:code), @view kinds[1:(i - 1)]),
-        eachindex(kinds))
+# Read a Jupyter `.ipynb` and return (parsed notebook, concatenated text of every
+# cell's `source`). `.ipynb` cell source is a JSON array of strings with escaped
+# quotes, so string/marker checks must run on the parsed-and-joined text, not the
+# raw file bytes (R5). Output-free notebooks keep the file small but do not change
+# this requirement.
+function read_notebook(rel_path)
+    nb = JSON.parsefile(joinpath(repo_root, rel_path))
+    text = join((join(cell["source"]) for cell in nb["cells"]), "\n")
+    return nb, text
 end
 
 function lecture_number(lecture::AbstractString)
@@ -395,7 +375,7 @@ end
 
 function expected_missing_julia_path(python_path::AbstractString)
     stem = replace(basename(python_path), ".ipynb" => "")
-    return replace(dirname(python_path), "/code" => "/code_julia") * "/" * stem * "_Lux.jl"
+    return replace(dirname(python_path), "/code" => "/code_julia") * "/" * stem * "_Lux.ipynb"
 end
 
 all_finite_numbers(x::Number) = isfinite(x)
@@ -436,14 +416,17 @@ end
 
     python_expected = Set(vcat([pair.python for pair in notebook_pairs],
         [gap.python for gap in missing_translations]))
-    python_observed = Set(filter(path -> !any(startswith(path, prefix) for prefix in keys(excluded_python_notebook_prefixes)),
+    # The Julia track is now `.ipynb` too, so exclude `/code_julia/` from the
+    # Python-notebook inventory (both live under lectures/ with the same suffix).
+    python_observed = Set(filter(path -> !occursin("/code_julia/", path) &&
+            !any(startswith(path, prefix) for prefix in keys(excluded_python_notebook_prefixes)),
         rel_files_under("lectures"; suffix = ".ipynb")))
     @test all(!isempty, values(excluded_python_notebook_prefixes))
     @test isempty(setdiff(python_observed, python_expected))
     @test isempty(setdiff(python_expected, python_observed))
 
     julia_expected = union(Set(pair.julia for pair in notebook_pairs), intentional_extra_julia)
-    julia_observed = Set(rel_files_under("lectures"; suffix = ".jl"))
+    julia_observed = Set(rel_files_under("lectures"; suffix = ".ipynb"))
     julia_observed = Set(filter(path -> occursin("/code_julia/", path), julia_observed))
     @test isempty(setdiff(julia_observed, julia_expected))
     @test isempty(setdiff(julia_expected, julia_observed))
@@ -469,16 +452,25 @@ end
     for item in notebook_pairs
         @testset "$(basename(item.python))" begin
             python_source = read_rel(item.python)
-            julia_source = read_rel(item.julia)
+            julia_nb, julia_source = read_notebook(item.julia)
+            julia_cells = julia_nb["cells"]
 
             @test occursin("\"cells\"", python_source)
             @test occursin("\"source\"", python_source)
-            @test startswith(julia_source, "### A Pluto.jl notebook ###")
+
+            # Valid Jupyter notebook, julia kernel; prose is woven through the
+            # code (>= 2 markdown cells) and the last cell is code so the
+            # execute-smoke returns the diagnostics value, not a Markdown blob.
+            @test julia_nb["nbformat"] == 4
+            @test lowercase(julia_nb["metadata"]["language_info"]["name"]) == "julia"
+            @test count(cell -> cell["cell_type"] == "markdown", julia_cells) >= 2
+            @test last(julia_cells)["cell_type"] == "code"
+
             @test occursin("Pkg.activate", julia_source)
             @test occursin("DLEFJulia", julia_source)
 
-            # The ground-truth prose is now interleaved with the Julia code, so
-            # the generated top-of-file "Prose Port" dump must be gone.
+            # The ground-truth prose is interleaved with the Julia code, so the
+            # generated top-of-file "Prose Port" dump must be gone.
             @test !occursin("# --- BEGIN PYTHON PROSE PORT ---", julia_source)
             @test !occursin("# --- END PYTHON PROSE PORT ---", julia_source)
             @test !occursin("# --- BEGIN PYTHON PROSE PORT ORDER ---", julia_source)
@@ -487,15 +479,6 @@ end
 
             # Provenance: the Julia notebook links back to its ground-truth pair.
             @test occursin(item.python, julia_source)
-
-            # Pluto structure: the file parses, prose is woven through the code,
-            # and the final rendered cell is code so `include` returns its value.
-            @test parses_as_pluto(julia_source)
-            order_kinds = pluto_order_kinds(julia_source)
-            @test !isempty(order_kinds)
-            @test count(==(:md), order_kinds) >= 2
-            @test interleaved_prose(order_kinds)
-            @test last(order_kinds) === :code
 
             has_smoke_run_mode = occursin("RUN_MODE = \"smoke\"", julia_source)
             has_fixed_budget_exception = item.lecture == "Lecture 15" && occursin("N_TRAIN =", julia_source)
@@ -514,126 +497,12 @@ end
     end
 end
 
-@testset "Verified translated notebook diagnostics" begin
-    @testset "Lecture 07 deterministic Brock-Mirman autodiff" begin
-        result = include(joinpath(repo_root, "lectures/lecture_07_autodiff_for_deqns/code_julia/lecture_07_02_Brock_Mirman_AutoDiff_DEQN_Lux.jl"))
-        @test result.raw_autodiff_vs_hand < 1e-10
-        @test result.relative_autodiff_vs_shared < 1e-10
-        @test result.trained_raw_autodiff_vs_hand < 1e-10
-        @test result.trained_relative_autodiff_vs_shared < 1e-10
-        @test isfinite(result.initial_loss) && isfinite(result.final_loss)
-        @test result.final_loss < result.initial_loss
-        @test result.policy_relative_l2 < 0.2
-    end
-
-    @testset "Lecture 07 stochastic Brock-Mirman autodiff" begin
-        result = include(joinpath(repo_root, "lectures/lecture_07_autodiff_for_deqns/code_julia/lecture_07_03_Brock_Mirman_Uncertainty_AutoDiff_DEQN_Lux.jl"))
-        @test result.run_mode == "smoke"
-        @test result.seed == 0
-        @test result.quadrature.nodes == 5
-        @test abs(result.quadrature.weight_sum - 1) < 1e-12
-        @test maximum(abs.(collect(values(result.slot_gradient_errors)))) < 1e-12
-        @test result.residual_checks.max_abs_autodiff_minus_hand < 1e-12
-        @test result.residual_checks.max_abs_relative_link < 1e-12
-        @test result.full_depreciation_exact_policy.max_abs_autodiff_residual < 1e-12
-    end
-
-    @testset "Lecture 07 IRBC autodiff training" begin
-        result = include(joinpath(repo_root, "lectures/lecture_07_autodiff_for_deqns/code_julia/lecture_07_04_IRBC_AutoDiff_DEQN_Lux.jl"))
-        @test result.run_mode == "smoke"
-        @test result.seed == 0
-        @test result.quadrature.nodes == 27
-        @test abs(result.quadrature.weight_sum - 1) < 1e-12
-        @test result.pi_slot_gradient_error < 1e-10
-        @test result.exogenous_residual_check.max_abs_euler_difference < 1e-10
-        @test result.simulation_residual_check.max_abs_euler_difference < 1e-10
-        @test result.training.checks.histories_finite
-        @test result.training.checks.initial_residual_parity_ok
-        @test result.training.checks.approach_A_residual_parity_ok
-        @test result.training.checks.approach_B_residual_parity_ok
-        @test result.training.approach_A.n_updates == result.training.budget.episodes
-        @test result.training.approach_B.n_updates == result.training.budget.episodes
-        @test result.training.approach_B.last_cloud_shape[1] == 4
-        @test result.training.approach_B.end_state_shape[1] == 4
-    end
-
-    @testset "Lecture 08 OLG exercise" begin
-        result = include(joinpath(repo_root, "lectures/lecture_08_olg_models_deqns/code_julia/lecture_08_11_OLG_Exercise_Lux.jl"))
-        @test result.run_mode == "smoke"
-        @test result.seed == 0
-        @test result.youngest_saves_most
-        @test result.oldest_saving_rate == 0
-        @test result.feature_batch_shape == (40, 1)
-        @test result.lux_style_state_preserved
-        @test result.exact_policy_error_max < 1e-12
-        @test result.validation_loss < 1e-24
-    end
-
-    @testset "Lecture 09 Krusell-Smith panel training" begin
-        result = include(joinpath(repo_root, "lectures/lecture_09_heterogeneous_agents_youngs_method/code_julia/lecture_09_12_KrusellSmith_DeepLearning_Lux.jl"))
-        @test result.run_mode == "smoke"
-        @test result.seed == 0
-        @test result.phase_b_steps > 0
-        @test count(==(1), result.history.phase) == result.phase_b_steps
-        @test length(result.panel_log) == result.phase_b_steps
-        @test abs(result.current_capital_gap) < 1e-8
-        @test abs(result.next_capital_gap) < 1e-8
-        @test !hasproperty(result, :distribution_mass)
-        @test !hasproperty(result, :final_distribution_mean)
-        @test all(isfinite, result.history.loss)
-    end
-
-    @testset "Lecture 10 Krusell-Smith sequence histories" begin
-        result = include(joinpath(repo_root, "lectures/lecture_10_sequence_space_deqns/code_julia/lecture_10_06_SequenceSpace_KrusellSmith_Lux.jl"))
-        @test isfinite(result.initial_loss) && isfinite(result.final_loss)
-        @test result.history_feature_dim == 3
-        @test result.history_shape[1] == result.history_feature_dim
-        @test result.flattened_history_dim == result.history_feature_dim * result.history_shape[2]
-        @test result.distribution_mass ≈ 1.0 atol = 1e-8
-    end
-
-    @testset "Lecture 10 Krusell-Smith CPU tutorial histories" begin
-        result = include(joinpath(repo_root, "lectures/lecture_10_sequence_space_deqns/code_julia/lecture_10_KrusellSmith_Tutorial_CPU_Lux.jl"))
-        @test isfinite(result.initial_loss) && isfinite(result.final_loss)
-        @test result.history_feature_dim == 3
-        @test result.history_shape[1] == result.history_feature_dim
-        @test result.flattened_history_dim == result.history_feature_dim * result.history_shape[2]
-        @test result.next_mass ≈ 1.0 atol = 1e-8
-    end
-
-    @testset "Lecture 11 soft and hard ODE PINNs" begin
-        result = include(joinpath(repo_root, "lectures/lecture_11_pinns/code_julia/lecture_11_02_ODE_PINN_SoftVsHardBCs_Lux.jl"))
-        @test result.losses_finite
-        @test result.exact_max_abs_residual < 1e-10
-        @test result.hard_boundary_error < 1e-12
-        @test result.final_soft_training_loss < result.initial_soft_loss
-        @test result.final_hard_training_loss < result.initial_hard_loss
-    end
-
-    @testset "Lecture 16 deterministic CDICE trained diagnostics" begin
-        result = include(joinpath(repo_root, "lectures/lecture_16_climate_economics_iams/code_julia/lecture_16_02_DICE_DEQN_Library_Port_Lux.jl"))
-        @test isfinite(result.initial_loss) && isfinite(result.final_loss)
-        @test isfinite(result.best_training_loss)
-        @test result.trained_path_finite
-        @test result.trained_TAT_2100 > 0
-        @test isfinite(result.trained_scc_2015)
-        @test result.teaching_scc_2015 > 0
-    end
-
-    @testset "Lecture 16 stochastic CDICE trained diagnostics" begin
-        result = include(joinpath(repo_root, "lectures/lecture_16_climate_economics_iams/code_julia/lecture_16_03_Stochastic_DICE_DEQN_Lux.jl"))
-        @test isfinite(result.initial_loss) && isfinite(result.final_loss)
-        @test isfinite(result.best_training_loss)
-        @test abs(result.gh_weight_sum - 1) < 1e-12
-        @test result.deterministic_path_finite
-        @test result.mc_scc_finite
-        @test result.mc_TAT_finite
-        @test result.deterministic_TAT_2100 > 0
-        @test isfinite(result.mc_scc_mean_2100)
-        @test result.mc_TAT_mean_2100 > 0
-        @test result.teaching_deterministic_scc_2015 > 0
-    end
-end
+# NOTE: the 10 include-based "Verified translated notebook diagnostics" testsets
+# were removed in the Pluto->Jupyter migration. They `include(<nb>.jl)`d each
+# notebook and asserted on `result.<field>`; under the Jupyter track that deep
+# execution + field-level checking moves to the isolated NBInclude execute-smoke
+# in test/smoke/wave*_notebooks.jl. The notebook-agnostic equivalence mechanics
+# below (which call DLEFJulia directly) are unchanged.
 
 @testset "DEQN and OLG equivalence mechanics" begin
     @testset "Brock-Mirman analytic policies" begin

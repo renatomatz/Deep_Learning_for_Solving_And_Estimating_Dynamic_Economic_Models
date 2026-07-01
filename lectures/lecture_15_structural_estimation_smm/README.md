@@ -36,10 +36,10 @@ After this lecture you can:
 - [`code/lecture_15_03_Structural_Estimation_BM.ipynb`](code/lecture_15_03_Structural_Estimation_BM.ipynb)
 - [`code/lecture_15_03b_Structural_Estimation_BM_Joint.ipynb`](code/lecture_15_03b_Structural_Estimation_BM_Joint.ipynb)
 
-### Julia/Lux/Pluto preview
+### Julia/Lux preview
 
-- [`code_julia/lecture_15_03_Structural_Estimation_BM_Lux.jl`](code_julia/lecture_15_03_Structural_Estimation_BM_Lux.jl) translates scalar persistence SMM with a Lux pseudo-state policy surrogate and common random numbers.
-- [`code_julia/lecture_15_03b_Structural_Estimation_BM_Joint_Lux.jl`](code_julia/lecture_15_03b_Structural_Estimation_BM_Joint_Lux.jl) translates joint `(beta, rho)` SMM with over-identified and weak-moment diagnostics.
+- [`code_julia/lecture_15_03_Structural_Estimation_BM_Lux.ipynb`](code_julia/lecture_15_03_Structural_Estimation_BM_Lux.ipynb) translates scalar persistence SMM with a Lux pseudo-state policy surrogate and common random numbers.
+- [`code_julia/lecture_15_03b_Structural_Estimation_BM_Joint_Lux.ipynb`](code_julia/lecture_15_03b_Structural_Estimation_BM_Joint_Lux.ipynb) translates joint `(beta, rho)` SMM with over-identified and weak-moment diagnostics.
 
 ## In the lecture script
 

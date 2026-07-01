@@ -1,0 +1,15 @@
+# Environment for the notebook execute-smoke scripts (wave1..6_notebooks.jl).
+#
+# The smoke scripts run each converted .ipynb with NBInclude in an isolated
+# module. NBInclude is a *test-only* execution helper: it is not used by the
+# DLEFJulia library, by test/runtests.jl, or by test/python_julia_equivalence.jl,
+# so it lives here (its only consumer) rather than in the package's deps/test
+# target -- a package `[extras]` entry would not be loadable by these scripts
+# when run directly (only inside `Pkg.test`'s sandbox).
+#
+# NBInclude pulls only JSON + SoftGlobalScope (NOT IJulia -> no ZMQ / Jupyter
+# kernel / Python-Conda install). Each notebook's first code cell re-activates
+# the main julia/ project for its own dependencies (DLEFJulia, Lux, ...).
+[deps]
+NBInclude = "0db19996-df87-5ea3-a455-e3a50d440464"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"

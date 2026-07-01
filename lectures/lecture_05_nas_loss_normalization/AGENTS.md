@@ -18,11 +18,11 @@ with ReLoBRaLo, SoftAdapt, and GradNorm.
   comparisons.
 - `code/lecture_05_05_IRBC_Exercise.ipynb` is a student exercise and
   intentionally contains TODOs.
-- Current Julia/Lux/Pluto previews:
-  - `code_julia/lecture_05_02_NAS_Random_Search_10D_Lux.jl`
-  - `code_julia/lecture_05_03_NAS_RandomSearch_Hyperband_Lux.jl`
-  - `code_julia/lecture_05_04_Loss_Normalization_Lux.jl`
-  - `code_julia/lecture_05_05_IRBC_Exercise_Lux.jl`
+- Current Julia/Lux previews:
+  - `code_julia/lecture_05_02_NAS_Random_Search_10D_Lux.ipynb`
+  - `code_julia/lecture_05_03_NAS_RandomSearch_Hyperband_Lux.ipynb`
+  - `code_julia/lecture_05_04_Loss_Normalization_Lux.ipynb`
+  - `code_julia/lecture_05_05_IRBC_Exercise_Lux.ipynb`
 - Two slide decks live under `slides/`.
 - `figures/`, `code/nas_outputs/`, and `code/nas_results/` contain checked-in
   teaching artifacts.
@@ -48,8 +48,7 @@ inspected README, slide sources, or notebook save paths.
 
 Run Julia previews from `code_julia/` with the shared `../../../julia` project;
 the notebooks activate it with `Pkg.activate(joinpath(@__DIR__, "..", "..",
-"..", "julia"))` and import `DLEFJulia`. Keep them as Pluto `.jl` notebooks,
-not Jupyter/IJulia replacements.
+"..", "julia"))` and import `DLEFJulia`. Keep them as Jupyter `.ipynb` notebooks.
 
 The previews preserve the course's `RUN_MODE = "smoke"` and `SEED = 0`
 convention, with `teaching` and `production` budgets defined locally. Use smoke
@@ -58,7 +57,7 @@ mode for documentation or loadability checks. The targeted smoke coverage is
 
 ```bash
 cd julia
-julia --project=. test/smoke/wave2_notebooks.jl
+julia --project=test/smoke test/smoke/wave2_notebooks.jl
 ```
 
 These are compact Lux-native translations, not full production parity claims.

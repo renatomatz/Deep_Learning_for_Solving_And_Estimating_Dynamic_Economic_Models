@@ -16,7 +16,7 @@ Common contents:
 - `README.md`: authoritative local index.
 - `slides/`: Beamer `.tex` source and built PDF, plus any slide-local assets.
 - `code/`: notebooks, scripts, local data, or checked-in outputs when present.
-- `code_julia/`: Pluto `.jl` notebooks for the Julia/Lux preview track when
+- `code_julia/`: Jupyter `.ipynb` notebooks for the Julia/Lux preview track when
   present.
 - `figures/`: lecture-level generated or teaching figures when present.
 
@@ -51,10 +51,10 @@ Do not execute all notebooks as a validation strategy. Many are expensive,
 dependency-sensitive, or intentionally saved with outputs. Prefer targeted runs
 of the relevant notebook cells or scripts.
 
-For Julia translations, use Pluto `.jl` notebooks under `code_julia/`, not
-Jupyter/IJulia notebooks. Each translated notebook should start with
-`### A Pluto.jl notebook ###`, activate the shared project with
-`Pkg.activate(joinpath(@__DIR__, "..", "..", "..", "julia"))`, and import
+For Julia translations, use Jupyter `.ipynb` notebooks under `code_julia/`
+(nbformat 4, `julia` kernel), committed output-free. Each translated notebook's
+first code cell activates the shared project with
+`Pkg.activate(joinpath(@__DIR__, "..", "..", "..", "julia"))` and imports
 `DLEFJulia`; run it from its own `code_julia/` directory when relative paths
 matter. Preserve `RUN_MODE = "smoke"` / `SEED = 0` conventions unless local
 guidance documents an exception.
@@ -74,13 +74,14 @@ small-run behavior, not production parity or convergence quality. Use targeted
 smoke checks only; do not validate a documentation or small notebook change by
 running the whole course.
 
-Checked-in Python notebook outputs, Julia Pluto cell structure, generated slide
+Checked-in Python notebook outputs, Julia notebook cell order, generated slide
 figures, and lecture figures are teaching artifacts. Do not clear, renumber, or
 regenerate outputs just to inspect material, and do not churn generated files
-unless the task explicitly requires rebuilding them.
+unless the task explicitly requires rebuilding them. The Julia `.ipynb` notebooks
+are committed output-free; do not save executed cell outputs into them.
 
 The previously documented Lecture 07, Lecture 08, Lecture 09, and Lecture 11
-Julia coverage gaps now have Pluto counterparts under `code_julia/` and smoke
+Julia coverage gaps now have Jupyter counterparts under `code_julia/` and smoke
 coverage under `julia/test/smoke/`. Several previews remain smoke-first
 redesigns rather than full artifact reproduction, so use the lecture-local
 guidance and equivalence tests before claiming production parity.
